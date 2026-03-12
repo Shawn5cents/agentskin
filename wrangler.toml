@@ -1,0 +1,18 @@
+name = "agentskin-worker"
+main = "backend/server.js"
+compatibility_date = "2024-03-11"
+
+# Your official domain
+route = { pattern = "api.agentskin.dev/*", custom_domain = true }
+
+[vars]
+NODE_ENV = "production"
+STRIPE_CHECKOUT_URL = "https://buy.stripe.com/test_..."
+
+# Persistence Layer (v4.0 Roadmap)
+# [[kv_namespaces]]
+# binding = "AGENTSKIN_KV"
+# id = "xxxxxxxxxxxxxxxxxxxxxxxx"
+
+[observability]
+enabled = true

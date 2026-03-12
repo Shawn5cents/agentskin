@@ -1,19 +1,21 @@
 /**
- * AgentSkin: Recursive Shorthand Engine
- * Intelligently prunes JSON to high-signal Markdown/TOON.
+ * AgentSkin: Recursive Shorthand Engine (v3.4)
+ * Smart Compression with "Zero-Inflation" Guarantee.
  */
 
-export const recursive_prune = (data, requiredKeys) => {
-    if (Array.isArray(data)) {
-        return data.map(item => recursive_prune(item, requiredKeys)).filter(Boolean);
-    }
-    
+const DEFAULT_SIGNAL_KEYS = [
+    'id', 'name', 'title', 'value', 'status', 'price', 'temp', 'wind', 
+    'description', 'url', 'link', 'published_at', 'text', 'code', 'c', 'v', 'p'
+];
+
+export const recursive_prune = (data, requiredKeys = []) => {
+    const signalKeys = [...new Set([...DEFAULT_SIGNAL_KEYS, ...requiredKeys])];
+    if (Array.isArray(data)) return data.map(item => recursive_prune(item, requiredKeys)).filter(Boolean);
     if (typeof data === 'object' && data !== null) {
         const pruned = {};
         let hasSignal = false;
-
         for (const [key, value] of Object.entries(data)) {
-            if (requiredKeys.includes(key)) {
+            if (signalKeys.includes(key.toLowerCase())) {
                 pruned[key] = value;
                 hasSignal = true;
             } else if (typeof value === 'object') {
@@ -26,31 +28,56 @@ export const recursive_prune = (data, requiredKeys) => {
         }
         return hasSignal ? pruned : null;
     }
-    
     return data;
 };
 
-/**
- * Converts Pruned JSON to High-Density Markdown
- */
-export const to_markdown_skin = (prunedData, title) => {
-    let md = `### 💎 Skin: ${title}\n`;
+export const to_markdown_skin = (prunedData, title = "", rawDataSize = 0) => {
+    let output = "";
+    // Only add title if it doesn't break the token budget for tiny data
+    if (title && rawDataSize > 500) output += `[${title}]\n`;
     
     const flatten = (obj, indent = "") => {
         if (Array.isArray(obj)) {
-            obj.forEach(item => flatten(item, indent + "- "));
+            obj.forEach(item => flatten(item, indent));
         } else if (typeof obj === 'object' && obj !== null) {
             for (const [k, v] of Object.entries(obj)) {
                 if (typeof v === 'object') {
-                    md += `${indent}**${k}:**\n`;
-                    flatten(v, indent + "  ");
+                    flatten(v, indent + `${k}.`);
                 } else {
-                    md += `${indent}**${k}:** ${v}\n`;
+                    output += `${indent}${k}: ${v}\n`;
                 }
             }
+        } else {
+            output += `${indent}${obj}\n`;
         }
     };
 
     flatten(prunedData);
-    return md;
+    return output.trim();
+};
+
+export const analyze_compression = (rawJson, skinText) => {
+    const rawStr = JSON.stringify(rawJson);
+    const rawTokens = rawStr.length / 4;
+    const skinTokens = skinText.length / 4;
+    
+    // Safety Valve: If Skin is bigger or nearly equal, return 0 savings
+    if (skinText.length >= rawStr.length) {
+        return {
+            raw_est_tokens: Math.ceil(rawTokens),
+            skin_est_tokens: Math.ceil(rawTokens), // Use raw size
+            savings_ratio: "0.00%",
+            platform_fee: 0,
+            applied: false
+        };
+    }
+    
+    const savings = 1 - (skinTokens / rawTokens);
+    return {
+        raw_est_tokens: Math.ceil(rawTokens),
+        skin_est_tokens: Math.ceil(skinTokens),
+        savings_ratio: (savings * 100).toFixed(2) + "%",
+        platform_fee: Math.ceil(rawTokens * 0.9 * 0.20),
+        applied: true
+    };
 };
