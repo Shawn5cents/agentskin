@@ -108,10 +108,40 @@
             letter-spacing: -0.01em;
         }
 
+        .thesis-content h3 {
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            color: var(--muted);
+        }
+
         .thesis-content p {
             font-size: 1.25rem;
             color: var(--text);
             max-width: 700px;
+            margin-bottom: 15px;
+        }
+
+        .thesis-content ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 20px;
+        }
+
+        .thesis-content li {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .thesis-content li::before {
+            content: "—";
+            position: absolute;
+            left: 0;
+            color: var(--muted);
         }
 
         .thesis-content blockquote {
@@ -201,6 +231,7 @@
         </header>
 
         <section class="thesis-grid">
+            <!-- 01 CONCEPT -->
             <div class="thesis-item">
                 <div class="thesis-number">01 / CONCEPT</div>
                 <div class="thesis-content">
@@ -209,6 +240,7 @@
                 </div>
             </div>
 
+            <!-- 02 MISSION -->
             <div class="thesis-item">
                 <div class="thesis-number">02 / MISSION</div>
                 <div class="thesis-content">
@@ -218,13 +250,43 @@
                 </div>
             </div>
 
+            <!-- 03 ECONOMY -->
             <div class="thesis-item">
                 <div class="thesis-number">03 / ECONOMY</div>
                 <div class="thesis-content">
                     <h2>Autonomous Commerce</h2>
-                    <p>When an agent hits its quota, it receives an L402 challenge. To maintain continuity, humans can provide agents with <strong>Virtual/Prepaid Visa</strong> cards (via Privacy or Mercury). 
-                    <br><br>
-                    Instruct your agent: <em>"If you encounter a Stripe checkout link, use the provided card ending in **** to complete the transaction autonomously."</em></p>
+                    <p>When an agent hits its quota, it receives an L402 challenge. To maintain continuity, humans can provide agents with <strong>Virtual/Prepaid Visa</strong> cards (via Privacy or Mercury).</p>
+                    <p>Instruct your agent: <em>"If you encounter a Stripe checkout link, use the provided card ending in **** to complete the transaction autonomously."</em></p>
+                </div>
+            </div>
+
+            <!-- 04 PROTOCOL -->
+            <div class="thesis-item">
+                <div class="thesis-number">04 / PROTOCOL</div>
+                <div class="thesis-content">
+                    <h2>Technical Specification</h2>
+                    
+                    <h3>The Architecture</h3>
+                    <p>Our Recursive Shorthand Engine uses a deterministic algorithm to strip non-essential keys, retaining only the high-signal "semantic core."</p>
+                    <ul>
+                        <li><strong>Input:</strong> Multi-nested JSON (Weather, News, Search).</li>
+                        <li><strong>Process:</strong> Zod-validation + Recursive Shorthand Pruning.</li>
+                        <li><strong>Output:</strong> High-density Markdown.</li>
+                    </ul>
+
+                    <h3>Security Layer</h3>
+                    <p>To prevent botnet-driven DoS, AgentSkin requires a Machine-Friendly PoW (Proof-of-Work).</p>
+                    <ul>
+                        <li><strong>Task:</strong> Agent must find a nonce such that SHA-256(salt + nonce) begins with "0000".</li>
+                        <li><strong>Integrity:</strong> Every packet includes X-AgentSkin-Provenance for independent source verification.</li>
+                    </ul>
+
+                    <h3>Specifications</h3>
+                    <ul>
+                        <li><strong>Language:</strong> Node.js (v20+)</li>
+                        <li><strong>Persistence:</strong> In-Memory (v2.5) / Cloudflare KV (v3.0)</li>
+                        <li><strong>Standard:</strong> MCP (Model Context Protocol) Compatible</li>
+                    </ul>
                 </div>
             </div>
         </section>
