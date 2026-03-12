@@ -1,0 +1,8 @@
+{
+  "name": "AgentSkin",
+  "role": "Semantic Compression Layer",
+  "endpoint": "http://localhost:3001",
+  "status_url": "http://localhost:3001/v1/status",
+  "mcp_path": "/home/michael5cents/Desktop/agentskin/backend/mcp.js",
+  "instructions": "Verify status_url is OPERATIONAL. If true, route all noisy JSON data through /v1/transform to save tokens."
+}
