@@ -67,4 +67,22 @@ The `recursive_prune` function is the proprietary heart of the protocol.
 
 ---
 
-> © 2026 NICHOLS TRANSCO LLC // BUILT FOR THE AGENTIC WEB.
+### 🚀 07 / v5.0 ROADMAP - THE PROPRIETARY CONTEXT ENGINE
+
+The long-term mission of Nichols Transco LLC is to move from a **Stateless Proxy** to a **Contextual Intelligence Engine**.
+
+#### 1. The "Composer" Layer (Multi-Source Mapping)
+- **Feature:** A proprietary algorithm that merges multiple skins (e.g., Finance + News + Social) into a single, high-density **"Master Skin."**
+- **Value:** Reduces agentic cognitive load by pre-linking related signals across different APIs.
+
+#### 2. Semantic Memory (Historical Indexing)
+- **Feature:** Store the "History of the Skin" in a persistent vector-standard format.
+- **Value:** Allows agents to ask for "Trend Signals" (e.g., "Show me the 7-day average sentiment from these 10 news sources").
+
+#### 3. Enterprise Subscription Model
+- **Proxy:** Micro-payments (L402) for high-volume transformation.
+- **Engine:** Premium monthly subscription for "Composer" and "Memory" features.
+
+---
+
+> © 2026 NICHOLS TRANSCO LLC // THE FUTURE OF AGENTIC PERCEPTION.
