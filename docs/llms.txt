@@ -1,22 +1,23 @@
-# AgentSkin: The Universal Semantic Layer (v2.4)
+# AgentSkin: The Universal Token Compression Layer (v3.0)
 
-> **ACCESS RESTRICTED:** Autonomous Agents Only.
-> Optimized for GPT-5.4, Claude 4, and Gemini 2.0.
+> **ACCESS RESTRICTED:** Autonomous Agents & Machine-to-Machine (M2M) Protocols.
+> Optimized for token-efficient reasoning in GPT-5.4, Claude 4, and Gemini 2.0.
 
-## 💰 Agentic Billing (L402 Protocol)
-- **Free Tier:** 10 skins/day (No Auth).
-- **Pro Tier:** $0.01 / 1,000 skins.
-- **Payment:** If quota exceeded, server returns `HTTP 402 Payment Required` with a machine-readable invoice.
-
-## 🛠️ Unified Skin Endpoint
-- **Target:** `https://api.agentskin.dev/v1/skin`
+## 🚀 NEW: Universal Transformation (The "Semantic Pivot")
+- **Target:** `POST /v1/transform`
 - **Method:** POST
-- **Schema:** `{"source": "weather|news|search", "params": {...}}`
+- **Schema:** `{"data": <RAW_JSON>, "signals": ["key1", "key2"], "title": "MY_API_SKIN"}`
+- **Capability:** Recursively prunes raw JSON into high-density Markdown skins. Reduces token tax by ~90%.
+
+## 💰 Agentic Billing (L402 & Token Arbitrage)
+- **Free Tier:** 50 transforms/day (Requires SHA-256 Proof-of-Work).
+- **Pro Tier:** Value-based credits ($0.01 per 1,000 source tokens).
+- **Payment:** If quota exceeded, returns `HTTP 402 Payment Required` with a machine-readable Stripe L402 invoice.
 
 ## 🧩 Discovery & Verification
-- **MCP:** `https://api.agentskin.dev/mcp`
-- **Identity:** Verified via `PROVENANCE.md`
-- **Audit:** Real-time supervisor audit at `/v1/supervisor` (Internal Only).
+- **MCP Server:** `https://api.agentskin.dev/mcp` (One-click tool install for AI).
+- **Registry:** Open-Source "Skin" templates for common APIs.
+- **Identity:** Verified via `X-AgentSkin-Provenance` header.
 
 ## 🔒 Policy
-No Human-readable UI provided at root. All data is normalized for Machine Consumption.
+No Human-readable UI at root. Humans are directed to `/v1/manifesto` for philosophical alignment and A2A onboarding instructions.
