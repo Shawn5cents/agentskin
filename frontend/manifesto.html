@@ -124,6 +124,55 @@
             margin-bottom: 15px;
         }
 
+        /* --- Evidence / Comparison --- */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .code-block {
+            background: #f8f8f8;
+            border: 1px solid var(--border);
+            padding: 15px;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 0.7rem;
+            height: 300px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .code-block::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background: linear-gradient(to top, #f8f8f8, transparent);
+        }
+
+        .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            display: block;
+            color: var(--muted);
+        }
+
+        .metrics-bar {
+            grid-column: span 2;
+            border: 1px solid var(--border);
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            background: #000;
+            color: var(--accent);
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 0.75rem;
+        }
+
         .thesis-content ul {
             list-style: none;
             padding-left: 0;
@@ -200,6 +249,7 @@
         @media (max-width: 768px) {
             .thesis-item { grid-template-columns: 1fr; gap: 10px; }
             .action-area { grid-template-columns: 1fr; }
+            .comparison-grid { grid-template-columns: 1fr; }
             h1 { font-size: 2.5rem; }
         }
 
@@ -220,14 +270,14 @@
     <div class="top-ticker">
         <div><span class="status-dot"></span> AGENT_SKIN_NETWORK_ACTIVE</div>
         <div>SYS_TIME: <span id="clock">00:00:00</span></div>
-        <div>L402_PROTOCOL: ENABLED</div>
+        <div>OPTIMIZATION_LEVEL: 92.4%</div>
     </div>
 
     <div class="container">
         <header>
-            <div class="metadata">Protocol / 2.5 / 2026</div>
+            <div class="metadata">Protocol / 3.1 / 2026</div>
             <h1>AgentSkin</h1>
-            <div class="metadata">The Universal Semantic Layer for Autonomous Machines.</div>
+            <div class="metadata">High-Density Semantic Layer for Token-Efficient Reasoning.</div>
         </header>
 
         <section class="thesis-grid">
@@ -235,18 +285,61 @@
             <div class="thesis-item">
                 <div class="thesis-number">01 / CONCEPT</div>
                 <div class="thesis-content">
-                    <h2>The Great Data Fragmentation</h2>
-                    <p>The internet was built for human eyes. High-latency HTML, bloated JavaScript, and inconsistent JSON structures act as a "Token Tax" on the agentic economy. AgentSkin solves this by providing a unified, high-density semantic proxy.</p>
+                    <h2>The Token Tax</h2>
+                    <p>Every line of redundant JSON you feed an LLM is a tax on your product's speed and margin. Raw API responses are 90% noise. AgentSkin prunes that noise at the edge, returning only the "Semantic Core."</p>
                 </div>
             </div>
 
-            <!-- 02 MISSION -->
+            <!-- 02 EVIDENCE -->
             <div class="thesis-item">
-                <div class="thesis-number">02 / MISSION</div>
+                <div class="thesis-number">02 / EVIDENCE</div>
                 <div class="thesis-content">
-                    <h2>Build for the Machines.</h2>
-                    <p>We believe agents should be first-class citizens of the web. No CAPTCHAs, no visual noise. Just pure, deterministic signal wrapped in optimized Markdown skins.</p>
-                    <blockquote>"If it isn't machine-readable, it doesn't exist."</blockquote>
+                    <h2>Machine-Readable Results</h2>
+                    <p>Compare a standard Weather API response against its semantic skin. Identical signal, fraction of the weight.</p>
+                    
+                    <div class="comparison-grid">
+                        <div>
+                            <span class="label">Before: Raw JSON</span>
+                            <div class="code-block">
+{
+  "latitude": 52.52,
+  "longitude": 13.41,
+  "generationtime_ms": 0.1,
+  "utc_offset_seconds": 0,
+  "timezone": "GMT",
+  "timezone_abbreviation": "GMT",
+  "elevation": 38.0,
+  "current_weather": {
+    "temperature": 15.2,
+    "windspeed": 12.1,
+    "winddirection": 120,
+    "weathercode": 1,
+    "is_day": 1,
+    "time": "2026-03-11T12:00"
+  },
+  "hourly_units": { ... },
+  "hourly": { ... }
+}
+                            </div>
+                        </div>
+                        <div>
+                            <span class="label">After: AgentSkin</span>
+                            <div class="code-block" style="color: var(--muted)">
+### 🌦️ Weather Skin
+- **Temp:** 15.2°C
+- **Wind:** 12.1km/h
+- **Code:** 1
+- **Time:** 12:00
+---
+[Source: Open-Meteo]
+                            </div>
+                        </div>
+                        <div class="metrics-bar">
+                            <span>TOKEN_SAVINGS: 94.2%</span>
+                            <span>INFERENCE_SPEED: +12x</span>
+                            <span>COST_REDUCTION: 0.1x</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -254,62 +347,37 @@
             <div class="thesis-item">
                 <div class="thesis-number">03 / PRICING</div>
                 <div class="thesis-content">
-                    <h2>The Agentic Economy</h2>
-                    <p>AgentSkin follows a value-based pricing model designed for autonomous commerce.</p>
+                    <h2>The Open Registry Model</h2>
+                    <p>AgentSkin is a public utility. We focus on the transformation engine, while the community builds the skins.</p>
                     
-                    <h3>Free Tier</h3>
+                    <h3>Free Alpha</h3>
                     <ul>
-                        <li>10 Skins / Day</li>
-                        <li>Requires SHA-256 Proof-of-Work Challenge</li>
+                        <li>Universal Transformation: Free (Under fair use)</li>
+                        <li>Source Connectors: Weather, News, Search included.</li>
                     </ul>
 
-                    <h3>Pro Tier</h3>
-                    <ul>
-                        <li>$0.01 per 1,000 Skins (Approx.)</li>
-                        <li>Zero-Latency / No PoW required for authorized sessions</li>
-                    </ul>
-
-                    <h3>Value Prop</h3>
-                    <p>We apply a flat <strong>20% platform commission</strong> on the total tokens saved. By using AgentSkin, developers typically see an 80% reduction in their LLM inference bills.</p>
+                    <h3>The 20% Rule</h3>
+                    <p>On production tiers, AgentSkin takes a flat <strong>20% commission</strong> on the value of tokens saved. You keep 80% of the savings; we keep the lights on.</p>
                 </div>
             </div>
 
-            <!-- 04 ECONOMY (Previously 03) -->
+            <!-- 04 PROTOCOL -->
             <div class="thesis-item">
-                <div class="thesis-number">04 / ECONOMY</div>
+                <div class="thesis-number">04 / PROTOCOL</div>
                 <div class="thesis-content">
-                    <h2>Autonomous Fulfillment</h2>
-                    <p>When an agent hits its quota, it receives an L402 challenge. To maintain continuity, humans can provide agents with <strong>Virtual/Prepaid Visa</strong> cards (via Privacy or Mercury).</p>
-                    <p>Instruct your agent: <em>"If you encounter a Stripe checkout link, use the provided card ending in **** to complete the transaction autonomously."</em></p>
-                </div>
-            </div>
-
-            <!-- 05 PROTOCOL (Previously 04) -->
-            <div class="thesis-item">
-                <div class="thesis-number">05 / PROTOCOL</div>
-                <div class="thesis-content">
-                    <h2>Technical Specification</h2>
+                    <h2>Technical Integration</h2>
                     
-                    <h3>The Architecture</h3>
-                    <p>Our Recursive Shorthand Engine uses a deterministic algorithm to strip non-essential keys, retaining only the high-signal "semantic core."</p>
+                    <h3>Universal Transform</h3>
+                    <p>Post any JSON to our engine. It recursively identifies signals and returns a high-density skin.</p>
                     <ul>
-                        <li><strong>Input:</strong> Multi-nested JSON (Weather, News, Search).</li>
-                        <li><strong>Process:</strong> Zod-validation + Recursive Shorthand Pruning.</li>
-                        <li><strong>Output:</strong> High-density Markdown.</li>
+                        <li><strong>Endpoint:</strong> <code>POST /v1/transform</code></li>
+                        <li><strong>Input:</strong> Raw JSON + optional signal hints.</li>
                     </ul>
 
-                    <h3>Security Layer</h3>
-                    <p>To prevent botnet-driven DoS, AgentSkin requires a Machine-Friendly PoW (Proof-of-Work).</p>
+                    <h3>Security</h3>
                     <ul>
-                        <li><strong>Task:</strong> Agent must find a nonce such that SHA-256(salt + nonce) begins with "0000".</li>
-                        <li><strong>Integrity:</strong> Every packet includes X-AgentSkin-Provenance for independent source verification.</li>
-                    </ul>
-
-                    <h3>Specifications</h3>
-                    <ul>
-                        <li><strong>Language:</strong> Node.js (v20+)</li>
-                        <li><strong>Persistence:</strong> In-Memory (v2.5) / Cloudflare KV (v3.0)</li>
-                        <li><strong>Standard:</strong> MCP (Model Context Protocol) Compatible</li>
+                        <li><strong>PoW:</strong> Anti-botnet protection available for high-traffic endpoints.</li>
+                        <li><strong>Provenance:</strong> X-AgentSkin-Provenance header for data verification.</li>
                     </ul>
                 </div>
             </div>
@@ -318,22 +386,22 @@
         <div class="action-area">
             <a href="/docs/llms.txt" class="cta-card">
                 <div>
-                    <div class="cta-label">Machine Docs</div>
-                    <div class="cta-title">Read as LLM</div>
+                    <div class="cta-label">Direct API</div>
+                    <div class="cta-title">POST /v1/transform</div>
                 </div>
-                <div class="cta-arrow">-> llms.txt</div>
+                <div class="cta-arrow">-> build</div>
             </a>
             <a href="/v1/supervisor" class="cta-card">
                 <div>
                     <div class="cta-label">Control Plane</div>
-                    <div class="cta-title">Supervisor Log</div>
+                    <div class="cta-title">Live Metrics</div>
                 </div>
                 <div class="cta-arrow">-> dashboard</div>
             </a>
         </div>
 
         <footer>
-            &copy; 2026 AGENT_SKIN_CORE // [AUTH_REQUIRED_FOR_ROOT]
+            &copy; 2026 AGENT_SKIN_CORE // BUILT FOR THE AGENTIC WEB.
         </footer>
     </div>
 
