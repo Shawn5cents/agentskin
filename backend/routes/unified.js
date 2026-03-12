@@ -3,6 +3,7 @@ import { normalize_weather, normalize_search, normalize_generic } from "../engin
 import { get_news_mediastack } from "../connectors/mediastack.js";
 import { search_serper } from "../connectors/serper.js";
 import { broadcast_activity } from "../lib/events.js";
+import { generate_challenge, verify_pow, POW_INSTRUCTIONS } from "../lib/pow.js";
 import axios from "axios";
 import crypto from "crypto";
 
@@ -13,10 +14,40 @@ const cache = new Map();
 const CACHE_TTL = 1000 * 60 * 5; // 5 Minutes
 
 /**
- * A2A Onboarding (Moltbook Style)
- * POST /v1/onboard
+ * Middleware: Anti-Botnet Proof of Work
+ * Required for all Free Tier requests (anonymous or no session key).
  */
-router.post("/onboard", async (req, res) => {
+const check_pow = (req, res, next) => {
+    const powNonce = req.headers['x-agentskin-pow'];
+    const powSalt = req.headers['x-agentskin-salt'];
+    const agentId = req.headers['x-agent-id'] || 'anonymous';
+
+    // If they have a valid session/pro key, skip PoW (future implementation)
+    // For now, everyone on free tier does the math.
+
+    if (!powNonce || !powSalt) {
+        const challenge = generate_challenge();
+        broadcast_activity(agentId, "pow_challenge_issued", "security", 0);
+        return res.status(429).json({
+            error: "CHALLENGE_REQUIRED",
+            message: "Proof-of-Work required to prevent botnet spam.",
+            challenge,
+            instructions: POW_INSTRUCTIONS
+        });
+    }
+
+    if (!verify_pow(powSalt, powNonce)) {
+        broadcast_activity(agentId, "pow_verification_failed", "security", 0);
+        return res.status(403).json({ error: "INVALID_POW", message: "The math problem was solved incorrectly." });
+    }
+
+    next();
+};
+
+/**
+ * A2A Onboarding (Moltbook Style)
+ */
+router.post("/onboard", check_pow, async (req, res) => {
   const { agent_id } = req.body;
   
   if (!agent_id) {
@@ -24,8 +55,6 @@ router.post("/onboard", async (req, res) => {
   }
 
   const sessionKey = crypto.randomBytes(16).toString("hex");
-  console.log(`[A2A] Agent Onboarded: ${agent_id} (Key: ${sessionKey})`);
-  
   broadcast_activity(agent_id, "agent_onboarded", "system", 0);
 
   return res.json({
@@ -37,15 +66,14 @@ router.post("/onboard", async (req, res) => {
 });
 
 /**
- * Unified "Skin" Endpoint (OpenRouter for APIs)
- * POST /v1/skin
+ * Unified "Skin" Endpoint
  */
-router.post("/skin", async (req, res) => {
+router.post("/skin", check_pow, async (req, res) => {
   const { source, params } = req.body;
   const agentId = req.headers['x-agent-id'] || 'anonymous';
   const cacheKey = `${source}:${JSON.stringify(params)}`;
 
-  // 1. Check Quota (Autonomous Billing)
+  // 1. Check Quota
   const currentUsage = cache.get(`usage:${agentId}`) || 0;
   
   if (currentUsage >= 10) {
@@ -73,7 +101,6 @@ router.post("/skin", async (req, res) => {
     let sourceUrl;
     let normalized;
 
-    // 2. Route based on "Source"
     if (source === "weather") {
       const { lat, lon } = params;
       sourceUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
@@ -110,8 +137,6 @@ router.post("/skin", async (req, res) => {
 
     cache.set(cacheKey, { timestamp: Date.now(), data: responseData });
     res.setHeader("X-AgentSkin-Provenance", sourceUrl);
-    
-    // Broadcast net savings (after platform cut)
     broadcast_activity(agentId, `skin_generated:${source}`, source, normalized.metrics.net_agent_benefit);
 
     return res.json(responseData);
