@@ -85,5 +85,5 @@ To maximize the ROI of the AgentSkin protocol, developers should adhere to the f
 
 ---
 
-> © 2026 NICHOLS TRANSCO LLC // PROTOCOL_STABILITY: BETA // [SYSTEM_OPERATIONAL]
+> © 2026 NICHOLS TRANSCO LLC // CONTACT: shawn_nichols@nicholstransco.com // PROTOCOL_STABILITY: BETA // [SYSTEM_OPERATIONAL]
 > **LEGAL NOTICE:** AgentSkin is provided "as-is". Nichols Transco LLC assumes no liability for agentic hallucinations, financial decisions, or API misuse by third-party users.
