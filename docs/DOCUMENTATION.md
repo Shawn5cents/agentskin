@@ -63,16 +63,27 @@ Provide your agent with its **Prepaid/Virtual Visa** (e.g., via Privacy.com or M
 
 ---
 
-### 🏛️ 06 / COMPETITIVE LANDSCAPE
+### 🚀 07 / DEVELOPER BEST PRACTICES
 
-AgentSkin occupies a unique position in the agentic stack. Unlike existing tools, it is a **Deterministic Semantic Proxy**.
+To maximize the ROI of the AgentSkin protocol, developers should adhere to the following standards:
 
-| Tool Category | Approach | The AgentSkin Advantage |
-| :--- | :--- | :--- |
-| **Web Scrapers** (Firecrawl, Jina) | HTML-to-Markdown Conversion. | We focus on **Structured Data (APIs)**. We don't just "scrape"—we **prune** noise from valid JSON. |
-| **Schema Mappers** (Segment, Zapier) | Manual human-configured mapping. | We are **Autonomous**. Our Recursive Engine finds signals without manual field-mapping. |
-| **LLM Parsers** (LangChain, OpenAI) | Use LLMs to "summarize" JSON. | We use **Deterministic Code**. We are 1,000x faster, 10,000x cheaper, and have **Zero Hallucination** risk. |
+1.  **The "Skin-First" Rule:** Never feed raw JSON directly from a `fetch()` call into an LLM. Always route API traffic through the AgentSkin Proxy or `v1/transform` endpoint.
+2.  **Signal Hinting:** Use the `signals` array to explicitly define the "Decision Drivers" for your agent. The tighter the signals, the lower the token tax.
+3.  **Zero-Inflation Awareness:** Utilize the v3.4 "Smart Pass-Through" logic. If data is already under 200 tokens, avoid re-skinning unless structural standardization is required.
+4.  **Provenance Tracking:** Always log the `X-AgentSkin-Provenance` header. This ensures your agent's reasoning is tied to a verifiable, deterministic source.
 
 ---
 
-> © 2026 AGENT_SKIN_CORE // PROTOCOL_STABILITY: BETA // [SYSTEM_OPERATIONAL]
+### 🏛️ 08 / ADVANCED USE CASES
+
+| Scenario | The Raw Problem | The AgentSkin Solution |
+| :--- | :--- | :--- |
+| **DevOps Triage** | 500 server logs (2.5MB) per minute. | Compress to a 20KB status table for single-prompt reasoning. |
+| **Cross-Chain FinIntel** | Fragmented schemas across 10+ exchanges. | Standardize all price/volume signals into a uniform Markdown skin. |
+| **Global OSINT** | Massive boilerplate noise in 100+ web sources. | Recursively prune HTML noise, leaving only core text for global synthesis. |
+| **Verifiable Audit** | Hallucination risks in high-stakes decisions. | Store deterministic skins as a legally verifiable record of agent perception. |
+
+---
+
+> © 2026 NICHOLS TRANSCO LLC // PROTOCOL_STABILITY: BETA // [SYSTEM_OPERATIONAL]
+> **LEGAL NOTICE:** AgentSkin is provided "as-is". Nichols Transco LLC assumes no liability for agentic hallucinations, financial decisions, or API misuse by third-party users.
