@@ -1,25 +1,31 @@
-/**
- * AgentSkin: Recursive Shorthand Engine (v3.4)
- * Smart Compression with "Zero-Inflation" Guarantee.
- */
+import { skinReasoning } from './reasoning-skin.js';
 
 const DEFAULT_SIGNAL_KEYS = [
     'id', 'name', 'title', 'value', 'status', 'price', 'temp', 'wind', 
     'description', 'url', 'link', 'published_at', 'text', 'code', 'c', 'v', 'p'
 ];
 
-export const recursive_prune = (data, requiredKeys = []) => {
+export const recursive_prune = (data, requiredKeys = [], applyReasoningSkin = false) => {
     const signalKeys = [...new Set([...DEFAULT_SIGNAL_KEYS, ...requiredKeys])];
-    if (Array.isArray(data)) return data.map(item => recursive_prune(item, requiredKeys)).filter(Boolean);
+    
+    if (Array.isArray(data)) {
+        return data.map(item => recursive_prune(item, requiredKeys, applyReasoningSkin)).filter(Boolean);
+    }
+    
     if (typeof data === 'object' && data !== null) {
         const pruned = {};
         let hasSignal = false;
         for (const [key, value] of Object.entries(data)) {
             if (signalKeys.includes(key.toLowerCase())) {
-                pruned[key] = value;
+                let processedValue = value;
+                if (applyReasoningSkin && typeof value === 'string') {
+                    const { skin } = skinReasoning(value);
+                    processedValue = skin;
+                }
+                pruned[key] = processedValue;
                 hasSignal = true;
             } else if (typeof value === 'object') {
-                const subPruned = recursive_prune(value, requiredKeys);
+                const subPruned = recursive_prune(value, requiredKeys, applyReasoningSkin);
                 if (subPruned && Object.keys(subPruned).length > 0) {
                     pruned[key] = subPruned;
                     hasSignal = true;
@@ -28,6 +34,7 @@ export const recursive_prune = (data, requiredKeys = []) => {
         }
         return hasSignal ? pruned : null;
     }
+    
     return data;
 };
 

@@ -3,16 +3,17 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 import axios from "axios";
 import { recursive_prune, to_markdown_skin, analyze_compression } from "./lib/skin-engine.js";
+import { skinReasoning } from "./lib/reasoning-skin.js";
 
 /**
- * AgentSkin: The Universal MCP Server (v3.2)
+ * AgentSkin: The Universal MCP Server (v3.5)
  * This is the "Skill" that agents use to perceive the web efficiently.
  */
 
 const server = new Server(
   {
     name: "agentskin-server",
-    version: "1.0.0",
+    version: "1.1.0",
   },
   {
     capabilities: {
@@ -22,8 +23,7 @@ const server = new Server(
 );
 
 /**
- * Tool Definition: fetch_optimized_data
- * This is what the agent "sees" in its toolbox.
+ * Tool Definitions
  */
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
@@ -41,55 +41,72 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ["url"],
         },
       },
+      {
+        name: "skin_reasoning",
+        description: "Optimizes natural language text for LLM-to-LLM communication by removing fillers, hedges, and redundant phrases. Increases 'Reasoning Density'.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            text: { type: "string", description: "The raw text or agent reasoning to optimize." }
+          },
+          required: ["text"],
+        },
+      },
     ],
   };
 });
 
 /**
- * Tool Logic: The "Perception Filter"
+ * Tool Logic
  */
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
-  if (request.params.name !== "fetch_optimized_data") {
-    throw new Error("Unknown tool");
+  if (request.params.name === "fetch_optimized_data") {
+    const { url, headers, signals } = request.params.arguments;
+
+    try {
+      console.error(`[MCP] Agent is requesting optimized data for: ${url}`);
+      
+      const response = await axios({
+          method: 'get',
+          url: url,
+          headers: headers || {}
+      });
+
+      const pruned = recursive_prune(response.data, signals || []);
+      const skin = to_markdown_skin(pruned, url);
+      const metrics = analyze_compression(response.data, skin);
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: `${skin}\n\n[METRICS: Tokens Saved: ${metrics.savings_ratio}]`,
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [{ type: "text", text: `Error: ${error.message}` }],
+        isError: true,
+      };
+    }
   }
 
-  const { url, headers, signals } = request.params.arguments;
-
-  try {
-    console.error(`[MCP] Agent is requesting optimized data for: ${url}`);
+  if (request.params.name === "skin_reasoning") {
+    const { text } = request.params.arguments;
+    const { skin, metrics } = skinReasoning(text);
     
-    // 1. Fetch raw data (Supports Custom Headers for BYOK)
-    const response = await axios({
-        method: 'get',
-        url: url,
-        headers: headers || {}
-    });
-
-    // 2. Skin it
-    const pruned = recursive_prune(response.data, signals || []);
-    const skin = to_markdown_skin(pruned, url);
-    const metrics = analyze_compression(response.data, skin);
-
-    // 3. Return to Agent
     return {
       content: [
         {
           type: "text",
-          text: `${skin}\n\n[METRICS: Tokens Saved: ${metrics.savings_ratio}]`,
+          text: `${skin}\n\n[REASONING METRICS: Reduced by ${metrics.percentReduced}% | Net Benefit: ${metrics.netBenefit} tokens]`,
         },
       ],
-    };
-  } catch (error) {
-    return {
-      content: [
-        {
-          type: "text",
-          text: `Error fetching or skinning data: ${error.message}`,
-        },
-      ],
-      isError: true,
     };
   }
+
+  throw new Error("Unknown tool");
 });
 
 /**

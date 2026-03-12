@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { recursive_prune, to_markdown_skin } from "./lib/skin-engine.js";
+import { skinReasoning } from "./lib/reasoning-skin.js";
 
 /**
- * AgentSkin: The Semantic Engine (v2.5)
- * Deterministic Normalization + OpenRouter-style Commission Logic.
+ * AgentSkin: The Semantic Engine (v2.6)
+ * Deterministic Normalization + Reasoning Skin Integration.
  */
 
 const COMMISSION_RATE = 0.20; // 20% flat cut on token savings value
@@ -16,6 +17,20 @@ export const calculate_savings_and_cut = (rawTokens) => {
         platform_fee: platformCut,
         net_agent_benefit: savings - platformCut
     };
+};
+
+// --- REASONING SKIN ---
+export const normalize_reasoning = (rawText, source = "REASONING") => {
+  const { skin, metrics } = skinReasoning(rawText);
+  return {
+    skin: `### 🧠 ${source} (Skinned)\n${skin}`,
+    data: { original: rawText, skinned: skin },
+    metrics: {
+        total_saved: metrics.estimatedTokenSavings,
+        platform_fee: metrics.platformFee,
+        net_agent_benefit: metrics.netBenefit
+    }
+  };
 };
 
 // --- WEATHER ---
@@ -105,6 +120,10 @@ ${results}
  * Generic Normalization for Unknown Sources
  */
 export const normalize_generic = (rawData, source, signalKeys = ['title', 'text', 'value', 'status']) => {
+    if (typeof rawData === 'string') {
+        return normalize_reasoning(rawData, source);
+    }
+
     const pruned = recursive_prune(rawData, signalKeys);
     const skin = to_markdown_skin(pruned, source.toUpperCase());
     
