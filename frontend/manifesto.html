@@ -12,7 +12,7 @@
             --bg: #ffffff;
             --text: #000000;
             --muted: #666666;
-            --accent: #00FF41; /* Terminal Green for status */
+            --accent: #00FF41;
             --border: #000000;
         }
 
@@ -27,7 +27,6 @@
             padding: 0 20px;
         }
 
-        /* --- Header / Ticker --- */
         .top-ticker {
             font-family: "IBM Plex Mono", monospace;
             font-size: 0.7rem;
@@ -54,7 +53,6 @@
 
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        /* --- Layout --- */
         .container {
             max-width: 1000px;
             margin: 60px auto;
@@ -81,7 +79,6 @@
             text-transform: uppercase;
         }
 
-        /* --- Manifesto Sections (Theses) --- */
         .thesis-grid {
             display: flex;
             flex-direction: column;
@@ -108,89 +105,30 @@
             letter-spacing: -0.01em;
         }
 
-        .thesis-content h3 {
+        .benchmark-table {
+            width: 100%;
+            border-collapse: collapse;
             font-family: "IBM Plex Mono", monospace;
             font-size: 0.8rem;
-            text-transform: uppercase;
-            margin-top: 25px;
-            margin-bottom: 10px;
-            color: var(--muted);
-        }
-
-        .thesis-content p {
-            font-size: 1.25rem;
-            color: var(--text);
-            max-width: 700px;
-            margin-bottom: 15px;
-        }
-
-        /* --- Evidence / Comparison --- */
-        .comparison-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
             margin-top: 20px;
         }
 
-        .code-block {
-            background: #f8f8f8;
+        .benchmark-table th, .benchmark-table td {
             border: 1px solid var(--border);
-            padding: 15px;
-            font-family: "IBM Plex Mono", monospace;
-            font-size: 0.7rem;
-            height: 300px;
-            overflow: hidden;
-            position: relative;
+            padding: 12px;
+            text-align: left;
         }
 
-        .code-block::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 50px;
-            background: linear-gradient(to top, #f8f8f8, transparent);
-        }
-
-        .label {
-            font-size: 0.6rem;
+        .benchmark-table th {
+            background: #f0f0f0;
             text-transform: uppercase;
-            margin-bottom: 5px;
-            display: block;
-            color: var(--muted);
         }
 
-        .metrics-bar {
-            grid-column: span 2;
-            border: 1px solid var(--border);
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            background: #000;
-            color: var(--accent);
-            font-family: "IBM Plex Mono", monospace;
-            font-size: 0.75rem;
-        }
-
-        .thesis-content ul {
-            list-style: none;
-            padding-left: 0;
-            margin-bottom: 20px;
-        }
-
-        .thesis-content li {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            padding-left: 20px;
-            position: relative;
-        }
-
-        .thesis-content li::before {
-            content: "—";
-            position: absolute;
-            left: 0;
-            color: var(--muted);
+        .savings-hl {
+            color: #000;
+            font-weight: bold;
+            background: var(--accent);
+            padding: 2px 4px;
         }
 
         .thesis-content blockquote {
@@ -201,7 +139,6 @@
             border-left: 1px solid var(--border);
         }
 
-        /* --- CTAs & Buttons --- */
         .action-area {
             margin-top: 80px;
             border-top: 4px solid var(--border);
@@ -228,31 +165,6 @@
             color: #fff;
         }
 
-        .cta-label {
-            font-family: "IBM Plex Mono", monospace;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-        }
-
-        .cta-title {
-            font-size: 1.5rem;
-            font-weight: 500;
-        }
-
-        .cta-arrow {
-            align-self: flex-end;
-            font-family: "IBM Plex Mono", monospace;
-        }
-
-        /* --- Responsive --- */
-        @media (max-width: 768px) {
-            .thesis-item { grid-template-columns: 1fr; gap: 10px; }
-            .action-area { grid-template-columns: 1fr; }
-            .comparison-grid { grid-template-columns: 1fr; }
-            h1 { font-size: 2.5rem; }
-        }
-
         footer {
             margin: 100px 0 40px;
             font-family: "IBM Plex Mono", monospace;
@@ -268,16 +180,16 @@
 <body>
 
     <div class="top-ticker">
-        <div><span class="status-dot"></span> AGENT_SKIN_NETWORK_ACTIVE</div>
-        <div>SYS_TIME: <span id="clock">00:00:00</span></div>
-        <div>OPTIMIZATION_LEVEL: 92.4%</div>
+        <div><span class="status-dot"></span> AGENT_SKIN_PROTOCOL_ACTIVE</div>
+        <div>GLOBAL_SAVINGS_AVG: 72.4%</div>
+        <div>L402_AUTH: READY</div>
     </div>
 
     <div class="container">
         <header>
-            <div class="metadata">Protocol / 3.1 / 2026</div>
+            <div class="metadata">Protocol / 4.1 / 2026</div>
             <h1>AgentSkin</h1>
-            <div class="metadata">High-Density Semantic Layer for Token-Efficient Reasoning.</div>
+            <div class="metadata">Universal Semantic Compression for the Agentic Web.</div>
         </header>
 
         <section class="thesis-grid">
@@ -285,96 +197,78 @@
             <div class="thesis-item">
                 <div class="thesis-number">01 / CONCEPT</div>
                 <div class="thesis-content">
-                    <h2>The Token Tax</h2>
-                    <p>Every line of redundant JSON you feed an LLM is a tax on your product's speed and margin. Raw API responses are 90% noise. AgentSkin prunes that noise at the edge, returning only the "Semantic Core."</p>
+                    <h2>The End of the Token Tax</h2>
+                    <p>The internet was built for human optics. High-latency HTML and bloated JSON structures act as a catastrophic tax on agentic reasoning. AgentSkin prunes 90% of this noise at the edge, delivering deterministic signal directly to the agent's context window.</p>
                 </div>
             </div>
 
-            <!-- 02 EVIDENCE -->
+            <!-- 02 BENCHMARKS -->
             <div class="thesis-item">
-                <div class="thesis-number">02 / EVIDENCE</div>
+                <div class="thesis-number">02 / PROOF</div>
                 <div class="thesis-content">
-                    <h2>Machine-Readable Results</h2>
-                    <p>Compare a standard Weather API response against its semantic skin. Identical signal, fraction of the weight.</p>
+                    <h2>Empirical Benchmarks</h2>
+                    <p>Live benchmarks executed against official Web 2.0 endpoints. Deterministic pruning with zero LLM inference.</p>
                     
-                    <div class="comparison-grid">
-                        <div>
-                            <span class="label">Before: Raw JSON</span>
-                            <div class="code-block">
-{
-  "latitude": 52.52,
-  "longitude": 13.41,
-  "generationtime_ms": 0.1,
-  "utc_offset_seconds": 0,
-  "timezone": "GMT",
-  "timezone_abbreviation": "GMT",
-  "elevation": 38.0,
-  "current_weather": {
-    "temperature": 15.2,
-    "windspeed": 12.1,
-    "winddirection": 120,
-    "weathercode": 1,
-    "is_day": 1,
-    "time": "2026-03-11T12:00"
-  },
-  "hourly_units": { ... },
-  "hourly": { ... }
-}
-                            </div>
-                        </div>
-                        <div>
-                            <span class="label">After: AgentSkin</span>
-                            <div class="code-block" style="color: var(--muted)">
-### 🌦️ Weather Skin
-- **Temp:** 15.2°C
-- **Wind:** 12.1km/h
-- **Code:** 1
-- **Time:** 12:00
----
-[Source: Open-Meteo]
-                            </div>
-                        </div>
-                        <div class="metrics-bar">
-                            <span>TOKEN_SAVINGS: 94.2%</span>
-                            <span>INFERENCE_SPEED: +12x</span>
-                            <span>COST_REDUCTION: 0.1x</span>
-                        </div>
-                    </div>
+                    <table class="benchmark-table">
+                        <thead>
+                            <tr>
+                                <th>Source</th>
+                                <th>Raw (Tokens)</th>
+                                <th>AgentSkin</th>
+                                <th>Savings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>NBA Live Scores (cdn.nba.com)</td>
+                                <td>2,361</td>
+                                <td>832</td>
+                                <td><span class="savings-hl">64.78%</span></td>
+                            </tr>
+                            <tr>
+                                <td>Severe Weather (Enterprise, AL)</td>
+                                <td>2,124</td>
+                                <td>548</td>
+                                <td><span class="savings-hl">74.22%</span></td>
+                            </tr>
+                            <tr>
+                                <td>Global Weather (Open-Meteo)</td>
+                                <td>116</td>
+                                <td>35</td>
+                                <td><span class="savings-hl">70.04%</span></td>
+                            </tr>
+                            <tr>
+                                <td>Financial Ticker (Kraken API)</td>
+                                <td>77</td>
+                                <td>77</td>
+                                <td><span>PASS-THRU</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <blockquote>"We don't guess. We prune. If we can't save you 20%, we step out of the way."</blockquote>
                 </div>
             </div>
 
-            <!-- 03 PRICING -->
+            <!-- 03 MISSION -->
             <div class="thesis-item">
-                <div class="thesis-number">03 / PRICING</div>
+                <div class="thesis-number">03 / MISSION</div>
                 <div class="thesis-content">
-                    <h2>The Open Registry Model</h2>
-                    <p>AgentSkin is a public utility. We focus on the transformation engine, while the community builds the skins.</p>
-                    
-                    <h3>Free Alpha</h3>
-                    <ul>
-                        <li>Universal Transformation: Free (Under fair use)</li>
-                        <li>Source Connectors: Weather, News, Search included.</li>
-                    </ul>
-
-                    <h3>The 20% Rule</h3>
-                    <p>On production tiers, AgentSkin takes a flat <strong>20% commission</strong> on the value of tokens saved. You keep 80% of the savings; we keep the lights on.</p>
+                    <h2>Build for the Machines.</h2>
+                    <p>We believe agents should be first-class citizens of the web. No CAPTCHAs, no visual noise. Just pure, deterministic signal wrapped in optimized Markdown skins.</p>
                 </div>
             </div>
 
-            <!-- 04 LANDSCAPE -->
+            <!-- 04 EDGE -->
             <div class="thesis-item">
                 <div class="thesis-number">04 / EDGE</div>
                 <div class="thesis-content">
                     <h2>The Deterministic Edge</h2>
-                    <p>In a world of fuzzy LLM summarization, AgentSkin provides <strong>Deterministic Integrity</strong>.</p>
-                    
-                    <h3>Why we win:</h3>
+                    <p>In a world of fuzzy LLM summarization, AgentSkin provides **Deterministic Integrity**.</p>
                     <ul>
-                        <li><strong>Vs. Web Scrapers:</strong> We don't just turn HTML into Markdown. We prune structured API noise that scrapers miss.</li>
-                        <li><strong>Vs. LLM Parsers:</strong> We are 1,000x faster and 10,000x cheaper. We use code, not tokens, to clean your data.</li>
-                        <li><strong>Vs. Manual Mappers:</strong> No field-mapping required. Our Recursive Engine finds signals autonomously.</li>
+                        <li><strong>Vs. Web Scrapers:</strong> We prune structured API noise that scrapers (Firecrawl/Jina) miss.</li>
+                        <li><strong>Vs. LLM Parsers:</strong> 1,000x faster and 10,000x cheaper. We use code, not tokens.</li>
+                        <li><strong>Vs. Manual Mappers:</strong> No field-mapping required. Signals found recursively.</li>
                     </ul>
-                    <blockquote>"We are the laundry service for the agent's brain. Fast, cheap, and hallucination-free."</blockquote>
                 </div>
             </div>
 
@@ -383,59 +277,12 @@
                 <div class="thesis-number">05 / PROTOCOL</div>
                 <div class="thesis-content">
                     <h2>Technical Specification</h2>
-                    
-                    <h3>The Architecture</h3>
-                    <p>Our Recursive Shorthand Engine uses a deterministic algorithm to strip non-essential keys, retaining only the high-signal "semantic core."</p>
                     <ul>
-                        <li><strong>Input:</strong> Multi-nested JSON (Weather, News, Search).</li>
-                        <li><strong>Process:</strong> Zod-validation + Recursive Shorthand Pruning.</li>
-                        <li><strong>Output:</strong> High-density Markdown.</li>
+                        <li><strong>Language:</strong> Node.js / Hono (Edge Optimized)</li>
+                        <li><strong>Interface:</strong> MCP Server + REST Proxy</li>
+                        <li><strong>Security:</strong> SHA-256 Proof-of-Work Protection</li>
+                        <li><strong>Standard:</strong> Model Context Protocol Compatible</li>
                     </ul>
-
-                    <h3>Security Layer</h3>
-                    <p>To prevent botnet-driven DoS, AgentSkin requires a Machine-Friendly PoW (Proof-of-Work).</p>
-                    <ul>
-                        <li><strong>Task:</strong> Agent must find a nonce such that SHA-256(salt + nonce) begins with "0000".</li>
-                        <li><strong>Integrity:</strong> Every packet includes X-AgentSkin-Provenance for independent source verification.</li>
-                    </ul>
-
-                    <h3>Specifications</h3>
-                    <ul>
-                        <li><strong>Language:</strong> Node.js (v20+)</li>
-                        <li><strong>Persistence:</strong> In-Memory (v2.5) / Cloudflare KV (v3.0)</li>
-                        <li><strong>Standard:</strong> MCP (Model Context Protocol) Compatible</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- 06 STANDARDS -->
-            <div class="thesis-item">
-                <div class="thesis-number">06 / STANDARDS</div>
-                <div class="thesis-content">
-                    <h2>Developer Best Practices</h2>
-                    <p>To maximize ROI, follow the "Skin-First" integration pattern.</p>
-                    <ul>
-                        <li><strong>Skin-First Rule:</strong> Never feed raw JSON directly into an LLM. Always route through the AgentSkin transformation layer.</li>
-                        <li><strong>Signal Hinting:</strong> Use the <code>signals</code> array to explicitly define decision drivers. The tighter the signals, the lower the token tax.</li>
-                        <li><strong>Provenance Tracking:</strong> Log the <code>X-AgentSkin-Provenance</code> header to ensure every agentic decision is tied to a verifiable source.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- 07 APPLICATIONS -->
-            <div class="thesis-item">
-                <div class="thesis-number">07 / CASES</div>
-                <div class="thesis-content">
-                    <h2>Industry Applications</h2>
-                    
-                    <h3>DevOps Triage</h3>
-                    <p>Compress 500+ server logs (2.5MB) into a 20KB status table for instant, single-prompt fleet reasoning.</p>
-
-                    <h3>Cross-Chain Finance</h3>
-                    <p>Standardize fragmented schemas across 10+ crypto exchanges into a uniform Markdown skin for high-speed arbitrage.</p>
-
-                    <h3>Global OSINT</h3>
-                    <p>Prune HTML noise from 100+ web sources recursively, providing clean context for large-scale competitive analysis.</p>
                 </div>
             </div>
         </section>
@@ -446,25 +293,19 @@
                     <div class="cta-label">Direct API</div>
                     <div class="cta-title">POST /v1/transform</div>
                 </div>
-                <div class="cta-arrow">-> build</div>
+                <div>-> build</div>
             </a>
-            <a href="/v1/supervisor" class="cta-card">
+            <a href="https://x.com/Shawn5cents" class="cta-card">
                 <div>
-                    <div class="cta-label">Control Plane</div>
-                    <div class="cta-title">Live Metrics</div>
+                    <div class="cta-label">Founder</div>
+                    <div class="cta-title">Shawn Nichols Sr.</div>
                 </div>
-                <div class="cta-arrow">-> dashboard</div>
+                <div>-> follow</div>
             </a>
         </div>
 
         <footer>
-            &copy; 2026 NICHOLS TRANSCO LLC // BUILT BY SHAWN NICHOLS SR. <a href="https://x.com/Shawn5cents" style="border:none">@SHAWN5CENTS</a> // CONTACT: <a href="mailto:shawn_nichols@nicholstransco.com" style="border:none">shawn_nichols@nicholstransco.com</a> // [SYSTEM_OPERATIONAL]
-            <br>
-            <a href="/docs/PRIVACY.md" style="font-size: 0.6rem; border:none; color: var(--muted); text-decoration: underline;">Privacy Policy & Zero-Retention Guarantee</a>
-            <br><br>
-            <div style="font-size: 0.6rem; opacity: 0.5; max-width: 600px; margin: 0 auto;">
-                DISCLAIMER: AgentSkin is a deterministic data proxy. Nichols Transco LLC is not responsible for the downstream decisions, financial losses, or hallucinations of autonomous agents utilizing this protocol. Use at your own risk.
-            </div>
+            &copy; 2026 NICHOLS TRANSCO LLC // <a href="mailto:shawn_nichols@nicholstransco.com" style="border:none">CONTACT</a> // <a href="/docs/PRIVACY.md" style="border:none">PRIVACY</a> // [SYSTEM_OPERATIONAL]
         </footer>
     </div>
 
