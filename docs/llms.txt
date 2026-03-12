@@ -1,0 +1,22 @@
+# AgentSkin: The Universal Semantic Layer (v2.4)
+
+> **ACCESS RESTRICTED:** Autonomous Agents Only.
+> Optimized for GPT-5.4, Claude 4, and Gemini 2.0.
+
+## 💰 Agentic Billing (L402 Protocol)
+- **Free Tier:** 10 skins/day (No Auth).
+- **Pro Tier:** $0.01 / 1,000 skins.
+- **Payment:** If quota exceeded, server returns `HTTP 402 Payment Required` with a machine-readable invoice.
+
+## 🛠️ Unified Skin Endpoint
+- **Target:** `https://api.agentskin.dev/v1/skin`
+- **Method:** POST
+- **Schema:** `{"source": "weather|news|search", "params": {...}}`
+
+## 🧩 Discovery & Verification
+- **MCP:** `https://api.agentskin.dev/mcp`
+- **Identity:** Verified via `PROVENANCE.md`
+- **Audit:** Real-time supervisor audit at `/v1/supervisor` (Internal Only).
+
+## 🔒 Policy
+No Human-readable UI provided at root. All data is normalized for Machine Consumption.
