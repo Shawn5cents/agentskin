@@ -105,12 +105,22 @@
             letter-spacing: -0.01em;
         }
 
+        .thesis-content h3 {
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            color: var(--muted);
+        }
+
         .benchmark-table {
             width: 100%;
             border-collapse: collapse;
             font-family: "IBM Plex Mono", monospace;
             font-size: 0.8rem;
             margin-top: 20px;
+            margin-bottom: 20px;
         }
 
         .benchmark-table th, .benchmark-table td {
@@ -129,6 +139,26 @@
             font-weight: bold;
             background: var(--accent);
             padding: 2px 4px;
+        }
+
+        .thesis-content ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 20px;
+        }
+
+        .thesis-content li {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .thesis-content li::before {
+            content: "—";
+            position: absolute;
+            left: 0;
+            color: var(--muted);
         }
 
         .thesis-content blockquote {
@@ -272,6 +302,51 @@
                         <li><strong>Vs. Web Scrapers:</strong> We prune structured API noise that scrapers (Firecrawl/Jina) miss.</li>
                         <li><strong>Vs. LLM Parsers:</strong> 1,000x faster and 10,000x cheaper. We use code, not tokens.</li>
                         <li><strong>Vs. Manual Mappers:</strong> No field-mapping required. Signals found recursively.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 06 STANDARDS -->
+            <div class="thesis-item">
+                <div class="thesis-number">06 / STANDARDS</div>
+                <div class="thesis-content">
+                    <h2>Developer Best Practices</h2>
+                    <p>To maximize ROI, follow the "Skin-First" integration pattern.</p>
+                    <ul>
+                        <li><strong>Skin-First Rule:</strong> Never feed raw JSON directly into an LLM. Always route through the AgentSkin transformation layer.</li>
+                        <li><strong>Signal Hinting:</strong> Use the <code>signals</code> array to explicitly define decision drivers. The tighter the signals, the lower the token tax.</li>
+                        <li><strong>Provenance Tracking:</strong> Log the <code>X-AgentSkin-Provenance</code> header to ensure every agentic decision is tied to a verifiable source.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 07 APPLICATIONS -->
+            <div class="thesis-item">
+                <div class="thesis-number">07 / CASES</div>
+                <div class="thesis-content">
+                    <h2>Industry Applications</h2>
+                    
+                    <h3>DevOps Triage</h3>
+                    <p>Compress 500+ server logs (2.5MB) into a 20KB status table for instant, single-prompt fleet reasoning.</p>
+
+                    <h3>Cross-Chain Finance</h3>
+                    <p>Standardize fragmented schemas across 10+ crypto exchanges into a uniform Markdown skin for high-speed arbitrage.</p>
+
+                    <h3>Global OSINT</h3>
+                    <p>Prune HTML noise from 100+ web sources recursively, providing clean context for large-scale competitive analysis.</p>
+                </div>
+            </div>
+
+            <!-- 08 PROTOCOL -->
+            <div class="thesis-item">
+                <div class="thesis-number">08 / PROTOCOL</div>
+                <div class="thesis-content">
+                    <h2>Technical Specification</h2>
+                    <ul>
+                        <li><strong>Language:</strong> Node.js / Hono (Edge Optimized)</li>
+                        <li><strong>Interface:</strong> MCP Server + REST Proxy</li>
+                        <li><strong>Security:</strong> SHA-256 Proof-of-Work Protection</li>
+                        <li><strong>Standard:</strong> Model Context Protocol Compatible</li>
                     </ul>
                 </div>
             </div>
