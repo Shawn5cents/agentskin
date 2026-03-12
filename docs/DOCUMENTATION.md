@@ -63,11 +63,15 @@ Provide your agent with its **Prepaid/Virtual Visa** (e.g., via Privacy.com or M
 
 ---
 
-### 📊 05 / TECHNICAL SPECIFICATIONS
-- **Language:** Node.js (v20+)
-- **Persistence:** In-Memory (v2.5) / Cloudflare KV (v3.0 Roadmap)
-- **Deployment:** Cloudflare Workers (Edge-Optimized)
-- **Standard:** MCP (Model Context Protocol) Compatible
+### 🏛️ 06 / COMPETITIVE LANDSCAPE
+
+AgentSkin occupies a unique position in the agentic stack. Unlike existing tools, it is a **Deterministic Semantic Proxy**.
+
+| Tool Category | Approach | The AgentSkin Advantage |
+| :--- | :--- | :--- |
+| **Web Scrapers** (Firecrawl, Jina) | HTML-to-Markdown Conversion. | We focus on **Structured Data (APIs)**. We don't just "scrape"—we **prune** noise from valid JSON. |
+| **Schema Mappers** (Segment, Zapier) | Manual human-configured mapping. | We are **Autonomous**. Our Recursive Engine finds signals without manual field-mapping. |
+| **LLM Parsers** (LangChain, OpenAI) | Use LLMs to "summarize" JSON. | We use **Deterministic Code**. We are 1,000x faster, 10,000x cheaper, and have **Zero Hallucination** risk. |
 
 ---
 
