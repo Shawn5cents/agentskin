@@ -1,26 +1,40 @@
-# AgentSkin (v3.5) 🛡️
+# AgentSkin (v4.0) 🛡️
 
 > **The Universal Semantic Layer for high-density Agentic Perception.**
 > A Model Context Protocol (MCP) Server for real-time Token Optimization.
 
 ---
 
-### 📊 THE BENCHMARKS (Verified v3.5)
+### 📊 THE BENCHMARKS (Verified v4.0)
 - **Brave Search (AI News):** **67.91% Token Reduction**
 - **Severe Weather (NWS):** **71.94% Token Reduction**
 - **MediaStack (Global News):** **90.62% Token Reduction**
 - **Exa Neural Search:** **12.35% Savings** (Precision Mode)
 - **Tavily:** **PASS-THRU** (Integrity Mode - Already Optimized)
 
+> "We don't guess. We prune. If we can't save you at least 20%, we step out of the way."
+
 ---
 
-### 🏛️ 01 / HOW IT WORKS
+### 🏛️ 01 / REGISTRY & INSTALLATION
+AgentSkin is an official MCP server. Install it directly via your favorite registry:
+
+- **NPM:** [View on npm](https://www.npmjs.com/package/agentskin)
+- **Smithery:** [View on Smithery](https://smithery.ai/mcp/agentskin)
+- **Direct NPX:**
+  ```bash
+  npx -y agentskin
+  ```
+
+---
+
+### 🏛️ 02 / HOW IT WORKS
 
 AgentSkin operates in two primary modes to fit any agentic workflow:
 
 #### A. The Local MCP Server (Privacy-First)
 Run AgentSkin locally to optimize your own development context.
-- **Setup:** `node backend/mcp.js`
+- **Setup:** `npx -y agentskin`
 - **Security:** Your private API keys (Google, Brave, etc.) stay in your local `.env`. 
 - **Benefit:** 70%+ token savings on your local Claude/Cursor/GPT-4 usage.
 
@@ -46,31 +60,31 @@ const response = await openai.chat.completions.create({
 
 ---
 
-### 🚀 02 / QUICK START (MCP)
+### 🚀 03 / QUICK START (MCP)
 To give your agent this skill, add it to your `mcp_settings.json`:
 
 ```json
 {
   "mjs-server-agentskin": {
     "command": "npx",
-    "args": ["-y", "@shawn5cents/agentskin"]
+    "args": ["-y", "agentskin"]
   }
 }
 ```
 
 ---
 
-### 🤖 03 / AUTONOMOUS EVOLUTION
+### 🤖 04 / AUTONOMOUS EVOLUTION
 AgentSkin is the first protocol to be co-developed by machines. In March 2026, an autonomous agent named **SPAWN** (powered by Minimax-m2.5) analyzed the AgentSkin codebase and identified a perceptual gap. 
 
 Without human intervention, SPAWN authored the `Reasoning Skin`—a semantic compression layer that strips 34% of linguistic noise from agent-to-agent reasoning streams.
 
 ---
 
-### 🛠️ 04 / CORE PROTOCOLS
+### 🛠️ 05 / CORE PROTOCOLS
 1.  **Recursive Shorthand Engine:** Prunes JSON "noise" based on semantic signal keys.
 2.  **Reasoning Skin (v1.0):** Strips linguistic fillers, hedges, and conversational overhead.
-3.  **L402 Economy:** Built-in support for autonomous micro-payments and provenance verification.
+3.  **L402 Economy (Roadmap):** Built-in support for autonomous micro-payments and provenance verification (Planned for v5.0).
 
 ---
 
