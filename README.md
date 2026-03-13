@@ -12,13 +12,21 @@
 
 ---
 
-### 🏛️ 01 / THE AGENTIC SKILL
-AgentSkin is an **MCP Server** that provides the `fetch_optimized_data` tool. It acts as a "Perception Filter," allowing any agent (Claude, Cursor, GPT) to "skin" raw API data into high-density Markdown in real-time.
+### 🏛️ 01 / HOW IT WORKS
 
-**Why it matters:**
-- **Context Preservation:** Fits 4x more data into the same context window.
-- **Cost Reduction:** Drastically lowers operational costs for autonomous agents.
-- **Deterministic:** Zero-hallucination pruning using the **Recursive Shorthand Engine**.
+AgentSkin operates in two primary modes to fit any agentic workflow:
+
+#### A. The Local MCP Server (Privacy-First)
+Run AgentSkin locally to optimize your own development context.
+- **Setup:** `node backend/mcp.js`
+- **Security:** Your private API keys (Google, Brave, etc.) stay in your local `.env`. 
+- **Benefit:** 70%+ token savings on your local Claude/Cursor/GPT-4 usage.
+
+#### B. The Managed API (Scale-First)
+Integrate AgentSkin directly into your AI applications via the Cloudflare Edge.
+- **Endpoint:** `POST https://api.agentskin.dev/v1/transform`
+- **BYOK (Bring Your Own Key):** Pass your private API headers in the request; AgentSkin skins the response on the fly.
+- **Benefit:** Infinite scale and zero-latency data normalization for production agent fleets.
 
 ---
 
