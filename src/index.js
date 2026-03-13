@@ -337,7 +337,7 @@ const MANIFESTO_HTML = `
 {
   "mjs-server-agentskin": {
     "command": "npx",
-    "args": ["-y", "@shawn5cents/agentskin"]
+    "args": ["-y", "agentskin"]
   }
 }</pre>
                     <h3>Managed API</h3>
