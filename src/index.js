@@ -273,8 +273,9 @@ const MANIFESTO_HTML = `
             <div class="thesis-item">
                 <div class="thesis-number">04 / ECONOMY</div>
                 <div class="thesis-content">
-                    <h2>Autonomous Commerce</h2>
-                    <p>When an agent hits its quota, it receives an L402 challenge. To maintain continuity, humans provide agents with **Virtual/Prepaid Visa** cards.</p>
+                    <h2>Future Machine Economy</h2>
+                    <p>The **L402 Protocol** represents the future of autonomous machine-to-machine commerce. In the next phase of AgentSkin, agents will autonomously purchase their own token-savings credits using Lightning-based micro-payments.</p>
+                    <p><strong>Status:</strong> Currently inactive. We are prioritizing free, open access for the agentic community to build the "Semantic Layer" first. All current local MCP usage is <strong>100% Free</strong>.</p>
                 </div>
             </div>
             <div class="thesis-item">
