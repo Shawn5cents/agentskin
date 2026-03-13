@@ -265,7 +265,7 @@ const MANIFESTO_HTML = `
                             <tr><td>Severe Weather (NWS)</td><td>1,919</td><td>539</td><td><span class="savings-hl">71.94%</span></td></tr>
                             <tr><td>MediaStack (Global News)</td><td>4,800</td><td>450</td><td><span class="savings-hl">90.62%</span></td></tr>
                             <tr><td>Tavily (Agent-Optimized)</td><td>4,112</td><td>4,062</td><td><span>PASS-THRU</span></td></tr>
-                            <tr><td>Exa Neural Search</td><td>371</td><td>325</td><td><span class="savings-hl">12.35%</span></td></tr>
+                            <tr><td>Exa Neural Search</td><td>371</td><td>360</td><td><span>PASS-THRU</span></td></tr>
                         </tbody>
                     </table>
                     <blockquote>"We don't guess. We prune. If we can't save you at least 20%, we step out of the way."</blockquote>

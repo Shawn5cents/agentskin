@@ -9,7 +9,7 @@
 - **Brave Search (AI News):** **67.91% Token Reduction**
 - **Severe Weather (NWS):** **71.94% Token Reduction**
 - **MediaStack (Global News):** **90.62% Token Reduction**
-- **Exa Neural Search:** **12.35% Savings** (Precision Mode)
+- **Exa Neural Search:** **PASS-THRU** (Already Optimized)
 - **Tavily:** **PASS-THRU** (Integrity Mode - Already Optimized)
 
 > "We don't guess. We prune. If we can't save you at least 20%, we step out of the way."
