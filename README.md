@@ -29,8 +29,8 @@ Integrate AgentSkin directly into your AI applications via the Cloudflare Edge.
 - **Endpoint:** `POST https://api.agentskin.dev/v1/transform`
 - **BYOK (Bring Your Own Key):** Pass your private API headers in the request; AgentSkin skins the response on the fly.
 
-#### C. Universal Integration (OpenAI / Google / Anthropic)
-Works with any LLM provider. Simply prune before you prompt:
+#### C. Universal Integration (OpenAI, Anthropic, Google, Meta, Mistral, DeepSeek)
+Works with any LLM provider or open-weight model. Simply prune before you prompt:
 ```javascript
 // 1. Prune
 const { skin } = await fetch('https://api.agentskin.dev/v1/transform', {

@@ -342,8 +342,8 @@ const MANIFESTO_HTML = `
                     <h3>Managed API</h3>
                     <pre style="background:#000; color:#fff; padding:15px; font-size:0.8rem;">POST https://api.agentskin.dev/v1/transform</pre>
 
-                    <h3>Universal Integration (OpenAI / Google / Anthropic)</h3>
-                    <p>Simply fetch and feed. Works with any LLM SDK.</p>
+                    <h3>Universal Integration (OpenAI, Anthropic, Google, Meta, Mistral, DeepSeek)</h3>
+                    <p>Simply fetch and feed. Works with any LLM SDK or open-weight model.</p>
                     <pre style="background:#000; color:#fff; padding:15px; font-size:0.8rem; overflow-x:auto;">
 // 1. Prune noisy data
 const { skin } = await fetch('https://api.agentskin.dev/v1/transform', {
