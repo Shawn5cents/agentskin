@@ -1,11 +1,11 @@
-# AgentSkin (v4.0) 🛡️
+# AgentSkin (v4.3) 🛡️
 
 > **The Universal Semantic Layer for high-density Agentic Perception.**
 > A Model Context Protocol (MCP) Server for real-time Token Optimization.
 
 ---
 
-### 📊 THE BENCHMARKS (Verified v4.0)
+### 📊 THE BENCHMARKS (Verified v4.3)
 - **Brave Search (AI News):** **67.91% Token Reduction**
 - **Severe Weather (NWS):** **71.94% Token Reduction**
 - **MediaStack (Global News):** **90.62% Token Reduction**
