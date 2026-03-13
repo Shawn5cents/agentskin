@@ -303,8 +303,8 @@ const MANIFESTO_HTML = `
                 <div class="thesis-number">07 / FOUNDER</div>
                 <div class="thesis-content">
                     <h2>Letter from the Architect</h2>
-                    <p>I spent 15 years in high-pressure Logistics management, running 24/7 terminals for Walmart Grocery. I worked the 40-day straight COVID warzone, keeping the supply chain moving while the world stopped. I am a systems-first leader who thrives in high-stakes environments.</p>
-                    <p>AgentSkin is the result of <strong>20,000 hours</strong> of obsession. I built the bridge for the machines because I know what it's like to manage a system that cannot fail.</p>
+                    <p>I spent 15 years in high-pressure Logistics management, running 24/7 terminals for global supply chains. I am a systems-first leader who thrives in high-stakes environments. I build software the same way I run fleets: with a zero-failure mindset.</p>
+                    <p>AgentSkin is the result of <strong>20,000+ hours</strong> of technical obsession. I build the bridge for the machines because I know what it's like to manage infrastructure that the world depends on.</p>
                     <p>— <strong>Shawn Nichols Sr.</strong></p>
                 </div>
             </div>
@@ -331,7 +331,6 @@ const MANIFESTO_HTML = `
                     <h2>Quick Start</h2>
                     <p>Add AgentSkin to your agent's toolbox in 30 seconds.</p>
                     <h3>For Cursor / Claude Desktop</h3>
-                    <p>Add this entry to your <code>mcp_settings.json</code>:</p>
                     <pre style="background:#000; color:#fff; padding:15px; font-size:0.8rem; overflow-x:auto;">
 {
   "mjs-server-agentskin": {
@@ -343,7 +342,6 @@ const MANIFESTO_HTML = `
                     <pre style="background:#000; color:#fff; padding:15px; font-size:0.8rem;">POST https://api.agentskin.dev/v1/transform</pre>
 
                     <h3>Universal Integration (OpenAI, Anthropic, Google, Meta, Mistral, DeepSeek)</h3>
-                    <p>Simply fetch and feed. Works with any LLM SDK or open-weight model.</p>
                     <pre style="background:#000; color:#fff; padding:15px; font-size:0.8rem; overflow-x:auto;">
 // 1. Prune noisy data
 const { skin } = await fetch('https://api.agentskin.dev/v1/transform', {
@@ -351,7 +349,7 @@ const { skin } = await fetch('https://api.agentskin.dev/v1/transform', {
   body: JSON.stringify({ data: rawApiData })
 }).then(res => res.json());
 
-// 2. Feed high-density "Skin" to OpenAI/Google/Claude
+// 2. Feed high-density "Skin" to your model
 const response = await openai.chat.completions.create({
   messages: [{ role: "user", content: skin }]
 });</pre>
@@ -360,8 +358,8 @@ const response = await openai.chat.completions.create({
         </section>
 
         <div class="action-area">
-            <a href="mailto:shawn@nichols-ai.org?subject=Technical Review - AgentSkin" class="cta-card" style="background:var(--accent); color:#000; text-decoration:none;">
-                <div><div class="cta-label">Hiring & Consulting</div><div class="cta-title">Request Technical Review</div></div>
+            <a href="mailto:shawn@nichols-ai.org?subject=AgentSkin - Consulting Inquiry" class="cta-card" style="background:var(--accent); color:#000; text-decoration:none;">
+                <div><div class="cta-label">Consulting & Contact</div><div class="cta-title">shawn@nichols-ai.org</div></div>
                 <div>-> email</div>
             </a>
             <a href="https://github.com/Shawn5cents/agentskin" class="cta-card" style="text-decoration:none;">

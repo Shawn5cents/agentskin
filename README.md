@@ -77,9 +77,9 @@ Without human intervention, SPAWN authored the `Reasoning Skin`—a semantic com
 ### 💰 ABOUT THE CREATOR
 AgentSkin was built by **Shawn Nichols Sr.** (@Shawn5cents) at **Nichols Transco LLC**. 
 
-I spent 15 years in high-pressure Logistics management, running 24/7 terminals for Walmart Grocery. I worked the 40-day straight COVID warzone, keeping the supply chain moving while the world stopped. I am a systems-first leader who thrives in high-stakes environments.
+I spent 15 years in high-pressure Logistics management, running 24/7 terminals for global supply chains. I am a systems-first leader who thrives in high-stakes environments. I build software the same way I run fleets: with a zero-failure mindset.
 
-AgentSkin is the result of **20,000 hours** of obsession. I built the bridge for the machines because I know what it's like to manage a system that cannot fail.
+AgentSkin is the result of **20,000+ hours** of technical obsession. I built the bridge for the machines because I know what it's like to manage infrastructure that the world depends on.
 
 **We are building the bridge for the machines. The humans will follow.**
 
