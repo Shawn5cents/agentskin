@@ -268,6 +268,7 @@ const MANIFESTO_HTML = `
                             <tr><td>Exa Neural Search</td><td>371</td><td>325</td><td><span class="savings-hl">12.35%</span></td></tr>
                         </tbody>
                     </table>
+                    <blockquote>"We don't guess. We prune. If we can't save you at least 20%, we step out of the way."</blockquote>
                 </div>
             </div>
             <div class="thesis-item">
