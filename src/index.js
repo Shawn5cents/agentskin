@@ -256,44 +256,16 @@ const MANIFESTO_HTML = `
                 <div class="thesis-number">03 / PROOF</div>
                 <div class="thesis-content">
                     <h2>Empirical Benchmarks</h2>
-                    <p>Live benchmarks executed against official endpoints using the AgentSkin Shorthand Engine. Zero-LLM inference latency.</p>
                     <table class="benchmark-table">
                         <thead>
                             <tr><th>Source</th><th>Raw (Tokens)</th><th>AgentSkin</th><th>Savings</th></tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Brave Search (AI News)</td>
-                                <td>11,326</td>
-                                <td>3,634</td>
-                                <td><span class="savings-hl">67.91%</span></td>
-                            </tr>
-                            <tr>
-                                <td>Severe Weather (NWS)</td>
-                                <td>1,919</td>
-                                <td>539</td>
-                                <td><span class="savings-hl">71.94%</span></td>
-                            </tr>
-                            <tr>
-                                <td>MediaStack (Global News)</td>
-                                <td>4,800</td>
-                                <td>450</td>
-                                <td><span class="savings-hl">90.62%</span></td>
-                            </tr>
-                            <tr>
-                                <td>Tavily (Agent-Optimized)</td>
-                                <td>4,112</td>
-                                <td>4,062</td>
-                                <td><span>PASS-THRU</span></td>
-                            </tr>
-                            <tr>
-                                <td>Exa Neural Search</td>
-                                <td>371</td>
-                                <td>325</td>
-                                <td><span class="savings-hl">12.35%</span></td>
-                            </tr>
-
-                            <tr><td>Crypto Ticker (Kraken)</td><td>77</td><td>77</td><td><span>PASS-THRU</span></td></tr>
+                            <tr><td>Brave Search (AI News)</td><td>11,326</td><td>3,634</td><td><span class="savings-hl">67.91%</span></td></tr>
+                            <tr><td>Severe Weather (NWS)</td><td>1,919</td><td>539</td><td><span class="savings-hl">71.94%</span></td></tr>
+                            <tr><td>MediaStack (Global News)</td><td>4,800</td><td>450</td><td><span class="savings-hl">90.62%</span></td></tr>
+                            <tr><td>Tavily (Agent-Optimized)</td><td>4,112</td><td>4,062</td><td><span>PASS-THRU</span></td></tr>
+                            <tr><td>Exa Neural Search</td><td>371</td><td>325</td><td><span class="savings-hl">12.35%</span></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -321,7 +293,7 @@ const MANIFESTO_HTML = `
                 <div class="thesis-number">06 / ORIGIN</div>
                 <div class="thesis-content">
                     <h2>Autonomous Evolution</h2>
-                    <p>AgentSkin is the first protocol to be co-developed by machines. In March 2026, an autonomous agent named <strong>SPAWN</strong> (powered by Minimax-m2.5) analyzed the AgentSkin codebase and identified a perceptual gap.</p>
+                    <p>AgentSkin is the first protocol to be co-developed by machines. In March 2026, an autonomous agent named <strong>SPAWN</strong> analyzed the AgentSkin codebase and identified a perceptual gap.</p>
                     <p>Without human intervention, SPAWN authored the <code>Reasoning Skin</code>—a semantic compression layer that strips 34% of linguistic noise from agent-to-agent reasoning streams.</p>
                 </div>
             </div>
@@ -332,7 +304,7 @@ const MANIFESTO_HTML = `
                 <div class="thesis-content">
                     <h2>Letter from the Architect</h2>
                     <p>I spent 15 years in high-pressure Logistics management, running 24/7 terminals for Walmart Grocery. I worked the 40-day straight COVID warzone, keeping the supply chain moving while the world stopped. I am a systems-first leader who thrives in high-stakes environments.</p>
-                    <p>For the last 3 years, I have spent 18 hours a day in the CLI, obsessing over the Agentic Web. I didn't go to Stanford; I went to work. AgentSkin is the result of <strong>20,000 hours</strong> of obsession. I built the bridge for the machines because I know what it's like to manage a system that cannot fail.</p>
+                    <p>AgentSkin is the result of <strong>20,000 hours</strong> of obsession. I built the bridge for the machines because I know what it's like to manage a system that cannot fail.</p>
                     <p>— <strong>Shawn Nichols Sr.</strong></p>
                 </div>
             </div>
@@ -342,50 +314,45 @@ const MANIFESTO_HTML = `
                 <div class="thesis-number">08 / DEMO</div>
                 <div class="thesis-content">
                     <h2>Interactive Pruning</h2>
-                    <p>See the Recursive Shorthand Engine in action. We'll take a noisy 2KB Weather API response and "Skin" it instantly.</p>
                     <button id="demo-btn" style="background:var(--accent); border:1px solid #000; padding:10px 20px; font-family:'IBM Plex Mono'; font-weight:bold; cursor:pointer;">RUN_SKIN_SIMULATION</button>
-                    
                     <div id="demo-output" style="display:none; margin-top:20px; font-family:'IBM Plex Mono'; font-size:0.7rem; border:1px solid var(--border); padding:20px; background:#f9f9f9;">
                         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
-                            <div>
-                                <h4 style="text-transform:uppercase; color:var(--muted);">Raw JSON (2,124 Tokens)</h4>
-                                <pre style="white-space:pre-wrap; color:#cc0000;">{ "@context": [...], "geometry": { "type": "Polygon", "coordinates": [...] }, "properties": { "units": "us", "forecastGenerator": "BaselineForecastGenerator", "generatedAt": "2026-03-12T...", "updateTime": "2026-03-12T...", "validTimes": "2026-03-12T...", "elevation": { "unitCode": "wmoUnit:m", "value": 6.096 }, "periods": [ { "number": 1, "name": "Tonight", "startTime": "2026-03-12T18:00:00-04:00", "endTime": "2026-03-13T06:00:00-04:00", "isDaytime": false, "temperature": 33, "temperatureUnit": "F", "probabilityOfPrecipitation": { "unitCode": "wmoUnit:percent", "value": 1 }, "windSpeed": "5 to 10 mph", "windDirection": "NW", "icon": "...", "shortForecast": "Mostly Clear", "detailedForecast": "Mostly clear, with a low around 33..." } ] } }</pre>
-                            </div>
-                            <div>
-                                <h4 style="text-transform:uppercase; color:var(--accent);">AgentSkin (539 Tokens)</h4>
-                                <pre style="white-space:pre-wrap; color:#006600;">[WEATHER_GOV_FORECAST]
-properties.elevation.value: 6.096
-properties.periods.name: Tonight
-properties.periods.temperature: 33
-properties.periods.probabilityOfPrecipitation.value: 1
-properties.periods.shortForecast: Mostly Clear
-[SAVINGS: 71.94%]</pre>
-                            </div>
+                            <div><h4>Raw JSON (2,124 Tokens)</h4><pre style="white-space:pre-wrap; color:#cc0000;">{ "@context": [...], "properties": { "elevation": { "value": 6.096 }, "periods": [ { "name": "Tonight", "temperature": 33, "probabilityOfPrecipitation": { "value": 1 } } ] } }</pre></div>
+                            <div><h4>AgentSkin (539 Tokens)</h4><pre style="white-space:pre-wrap; color:#006600;">elevation.value: 6.096\nperiods.name: Tonight\nperiods.temperature: 33\n[SAVINGS: 71.94%]</pre></div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- 09 QUICK START -->
+            <div class="thesis-item">
+                <div class="thesis-number">09 / ADOPT</div>
+                <div class="thesis-content">
+                    <h2>Quick Start</h2>
+                    <p>Add AgentSkin to your agent's toolbox in 30 seconds.</p>
+                    <h3>For Cursor / Claude Desktop</h3>
+                    <p>Add this entry to your <code>mcp_settings.json</code>:</p>
+                    <pre style="background:#000; color:#fff; padding:15px; font-size:0.8rem; overflow-x:auto;">
+{
+  "mjs-server-agentskin": {
+    "command": "npx",
+    "args": ["-y", "@shawn5cents/agentskin"]
+  }
+}</pre>
+                    <h3>Managed API</h3>
+                    <pre style="background:#000; color:#fff; padding:15px; font-size:0.8rem;">POST https://api.agentskin.dev/v1/transform</pre>
+                </div>
+            </div>
         </section>
 
-        <script>
-            document.getElementById('demo-btn').addEventListener('click', function() {
-                this.innerText = 'PROCESSING...';
-                setTimeout(() => {
-                    document.getElementById('demo-output').style.display = 'block';
-                    this.innerText = 'SIMULATION_COMPLETE';
-                    this.style.background = '#ccc';
-                }, 800);
-            });
-        </script>
-
         <div class="action-area">
-            <a href="https://api.agentskin.dev/llms.txt" class="cta-card">
-                <div><div class="cta-label">Direct API</div><div class="cta-title">POST /v1/transform</div></div>
-                <div>-> build</div>
+            <a href="mailto:shawn@nichols-ai.org?subject=Technical Review - AgentSkin" class="cta-card" style="background:var(--accent); color:#000; text-decoration:none;">
+                <div><div class="cta-label">Hiring & Consulting</div><div class="cta-title">Request Technical Review</div></div>
+                <div>-> email</div>
             </a>
-            <a href="https://x.com/Shawn5cents" class="cta-card">
-                <div><div class="cta-label">Founder</div><div class="cta-title">Shawn Nichols Sr.</div></div>
-                <div>-> follow</div>
+            <a href="https://github.com/Shawn5cents/agentskin" class="cta-card" style="text-decoration:none;">
+                <div><div class="cta-label">Open Source</div><div class="cta-title">View on GitHub</div></div>
+                <div>-> star</div>
             </a>
         </div>
 
@@ -393,6 +360,17 @@ properties.periods.shortForecast: Mostly Clear
             &copy; 2026 NICHOLS TRANSCO LLC // BUILT BY SHAWN NICHOLS SR.
         </footer>
     </div>
+
+    <script>
+        document.getElementById('demo-btn').addEventListener('click', function() {
+            this.innerText = 'PROCESSING...';
+            setTimeout(() => {
+                document.getElementById('demo-output').style.display = 'block';
+                this.innerText = 'SIMULATION_COMPLETE';
+                this.style.background = '#ccc';
+            }, 800);
+        });
+    </script>
 </body>
 </html>
 `;
@@ -426,7 +404,6 @@ app.get('/sitemap.xml', (c) => {
     return c.body('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://agentskin.dev/</loc><priority>1.0</priority></url></urlset>');
 });
 
-// If user hits agentskin.dev (Root) -> Serve Manifesto
 app.get('/', (c) => {
     const host = c.req.header('host');
     if (host === 'api.agentskin.dev') {
@@ -435,13 +412,9 @@ app.get('/', (c) => {
     return c.html(MANIFESTO_HTML);
 });
 
-// If user hits agentskin.dev/v1/manifesto -> Serve Manifesto
 app.get('/v1/manifesto', (c) => c.html(MANIFESTO_HTML));
-
-// If user hits api.agentskin.dev/v1/supervisor -> Serve Supervisor
 app.get('/v1/supervisor', (c) => c.html(SUPERVISOR_HTML));
 
-// --- API ---
 app.post('/v1/transform', async (c) => {
     try {
         const body = await c.req.json();
@@ -454,7 +427,6 @@ app.post('/v1/transform', async (c) => {
     }
 });
 
-// --- START SERVER (Local) ---
 if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
     const port = 3003;
     console.log(`\n🚀 AgentSkin SHOWCASE LIVE at: http://localhost:${port}`);
