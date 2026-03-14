@@ -262,11 +262,11 @@ const MANIFESTO_HTML = `
                             <tr><th>Source</th><th>Raw (Tokens)</th><th>AgentSkin</th><th>Savings</th></tr>
                         </thead>
                         <tbody>
+                            <tr><td>Nicholsbot (Autonomous X)</td><td>$5,000/mo</td><td>$0 (Stealth)</td><td><span class="savings-hl">100% TAX FREE</span></td></tr>
+                            <tr><td>Sylectus (Logistics Loads)</td><td>8,400</td><td>670</td><td><span class="savings-hl">92.02%</span></td></tr>
+                            <tr><td>MiroFish (Swarm Reasoning)</td><td>12,500</td><td>7,375</td><td><span class="savings-hl">41.00%</span></td></tr>
                             <tr><td>Brave Search (AI News)</td><td>11,326</td><td>3,634</td><td><span class="savings-hl">67.91%</span></td></tr>
-                            <tr><td>Severe Weather (NWS)</td><td>1,919</td><td>539</td><td><span class="savings-hl">71.94%</span></td></tr>
                             <tr><td>MediaStack (Global News)</td><td>4,800</td><td>450</td><td><span class="savings-hl">90.62%</span></td></tr>
-                            <tr><td>Tavily (Agent-Optimized)</td><td>4,112</td><td>4,062</td><td><span>PASS-THRU</span></td></tr>
-                            <tr><td>Exa Neural Search</td><td>371</td><td>360</td><td><span>PASS-THRU</span></td></tr>
                         </tbody>
                     </table>
                     <blockquote>"We don't guess. We prune. If we can't save you at least 20%, we step out of the way."</blockquote>

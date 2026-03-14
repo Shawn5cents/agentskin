@@ -9,11 +9,11 @@
 
 
 ### 📊 THE BENCHMARKS (Verified v4.3)
-- **Brave Search (AI News):** **67.91% Token Reduction**
-- **Severe Weather (NWS):** **71.94% Token Reduction**
+- **Nicholsbot (Autonomous X):** **100% API Tax Reduction** (via Stealth)
+- **Sylectus (Logistics Loads):** **92.02% Token Reduction**
 - **MediaStack (Global News):** **90.62% Token Reduction**
-- **Exa Neural Search:** **PASS-THRU** (Already Optimized)
-- **Tavily:** **PASS-THRU** (Integrity Mode - Already Optimized)
+- **Brave Search (AI News):** **67.91% Token Reduction**
+- **MiroFish (Swarm Reasoning):** **41.00% Linguistic Pruning**
 
 > "We don't guess. We prune. If we can't save you at least 20%, we step out of the way."
 
@@ -84,7 +84,20 @@ Without human intervention, SPAWN authored the `Reasoning Skin`—a semantic com
 
 ---
 
-### 🛠️ 05 / CORE PROTOCOLS
+### 🛠️ 05 / THE 7 HANDS (OpenFang Architecture)
+AgentSkin is the core protocol powering the **Nicholsbot** fleet. We've implemented 7 specialized Standard Operating Procedures (SOPs):
+
+1.  **Twitter Hand:** Autonomous X management via stealth browsing (0 API Tax).
+2.  **Collector Hand:** OSINT intelligence gathering with HTML noise pruning.
+3.  **Clip-Maker Hand:** Automated video production (Whisper + FFmpeg).
+4.  **Lead-Gen Hand:** Business discovery and scoring.
+5.  **Predictor Hand:** Superforecasting calibrated via Brier scores.
+6.  **Deep-Research Hand:** Fact-checking using the CRAAP framework.
+7.  **Trader Hand:** Market intelligence and technical analysis.
+
+---
+
+### 🛠️ 06 / CORE PROTOCOLS
 1.  **Recursive Shorthand Engine:** Prunes JSON "noise" based on semantic signal keys.
 2.  **Reasoning Skin (v1.0):** Strips linguistic fillers, hedges, and conversational overhead.
 3.  **L402 & Agent Wallets (v5.0 Roadmap):** 
