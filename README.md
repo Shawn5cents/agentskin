@@ -84,16 +84,16 @@ Without human intervention, SPAWN authored the `Reasoning Skin`—a semantic com
 
 ---
 
-### 🛠️ 05 / THE 7 HANDS (OpenFang Architecture)
+### 🛠️ 05 / THE 7 SKINS (OpenFang Architecture)
 AgentSkin is the core protocol powering the **Nicholsbot** fleet. We've implemented 7 specialized Standard Operating Procedures (SOPs):
 
-1.  **Twitter Hand:** Autonomous X management via stealth browsing (0 API Tax).
-2.  **Collector Hand:** OSINT intelligence gathering with HTML noise pruning.
-3.  **Clip-Maker Hand:** Automated video production (Whisper + FFmpeg).
-4.  **Lead-Gen Hand:** Business discovery and scoring.
-5.  **Predictor Hand:** Superforecasting calibrated via Brier scores.
-6.  **Deep-Research Hand:** Fact-checking using the CRAAP framework.
-7.  **Trader Hand:** Market intelligence and technical analysis.
+1.  **Twitter Skin:** Autonomous X management via stealth browsing (0 API Tax).
+2.  **Collector Skin:** OSINT intelligence gathering with HTML noise pruning.
+3.  **Clip-Maker Skin:** Automated video production (Whisper + FFmpeg).
+4.  **Lead-Gen Skin:** Business discovery and scoring.
+5.  **Predictor Skin:** Superforecasting calibrated via Brier scores.
+6.  **Deep-Research Skin:** Fact-checking using the CRAAP framework.
+7.  **Trader Skin:** Market intelligence and technical analysis.
 
 ---
 
