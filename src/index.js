@@ -275,8 +275,12 @@ const MANIFESTO_HTML = `
                 <div class="thesis-number">04 / ECONOMY</div>
                 <div class="thesis-content">
                     <h2>Future Machine Economy</h2>
-                    <p>The **L402 Protocol** represents the future of autonomous machine-to-machine commerce. In the next phase of AgentSkin, agents will autonomously purchase their own token-savings credits using Lightning-based micro-payments.</p>
-                    <p><strong>Status:</strong> Currently inactive. We are prioritizing free, open access for the agentic community to build the "Semantic Layer" first. All current local MCP usage is <strong>100% Free</strong>.</p>
+                    <p>The <strong>L402 Protocol</strong> and dedicated <strong>Agent Wallets</strong> (as adopted by Polymarket) represent the future of autonomous machine-to-machine commerce. In the next phase of AgentSkin, we will enable two primary methods for autonomous settlement:</p>
+                    <ul>
+                        <li><strong>Prepaid Virtual Cards:</strong> Humans provide agents with ephemeral Visa/Mastercard credentials for Stripe-based settlement.</li>
+                        <li><strong>Agent Wallets (v5.0):</strong> Direct crypto-economic settlement via dedicated wallets (e.g. Polymarket AgentCard), allowing for sub-cent micro-transactions at the edge.</li>
+                    </ul>
+                    <p><strong>Status:</strong> Currently inactive. We are prioritizing free, open access for the agentic community. All current local MCP usage is <strong>100% Free</strong>.</p>
                 </div>
             </div>
             <div class="thesis-item">

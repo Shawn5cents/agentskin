@@ -35,5 +35,11 @@ export const search_serper = async (query) => {
     ).join("\n\n") + 
     `\n---\n[Source: Google via Serper.dev](https://serper.dev)`;
 
-  return { skin, data: validated.organic };
+  const metrics = {
+      raw_est_tokens: JSON.stringify(response.data).length / 4,
+      skin_est_tokens: skin.length / 4,
+      savings_ratio: (1 - (skin.length / JSON.stringify(response.data).length) * 100).toFixed(2) + "%"
+  };
+
+  return { skin, metrics, source: "Serper Search" };
 };

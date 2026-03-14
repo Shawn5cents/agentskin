@@ -10,6 +10,18 @@ yarn-error.log
 .env.test.local
 .env.production.local
 
+# Gemini CLI Conversation Logs
+gemini-conversation-*.json
+
+# MCP Registry Tokens
+.mcpregistry_*
+mcp-publisher
+
+# Lab Tests & Benchmarks
+test_*.js
+benchmark_*.js
+crawl_tester.js
+
 # OS
 .DS_Store
 Thumbs.db
@@ -17,3 +29,7 @@ Thumbs.db
 # Build
 dist/
 build/
+*.json
+crawl_tester.js
+test_*.js
+benchmark_*.js

@@ -1,4 +1,14 @@
 import { skinReasoning } from './reasoning-skin.js';
+import { skinLogistics } from './logistics-skin.js';
+import { skinFinance } from './finance-skin.js';
+
+/**
+ * AgentSkin: Master Semantic Engine (v4.4 Lab)
+ * Modular Industry-Specific Skins.
+ */
+
+// Export individual tools for specific options
+export { skinReasoning, skinLogistics, skinFinance };
 
 const DEFAULT_SIGNAL_KEYS = [
     'id', 'name', 'title', 'value', 'status', 'price', 'temp', 'wind', 

@@ -84,10 +84,10 @@ Without human intervention, SPAWN authored the `Reasoning Skin`—a semantic com
 ### 🛠️ 05 / CORE PROTOCOLS
 1.  **Recursive Shorthand Engine:** Prunes JSON "noise" based on semantic signal keys.
 2.  **Reasoning Skin (v1.0):** Strips linguistic fillers, hedges, and conversational overhead.
-3.  **L402 Economy (Roadmap / Future Vision):** 
-    *   **The Vision:** Built-in support for autonomous micro-payments and provenance verification.
-    *   **Status:** Currently inactive. We believe agents should first gain "Semantic Literacy" before they are asked to pay. 
-    *   **Goal:** Enable a machine-to-machine economy where agents can autonomously purchase their own token-savings credits using L402 (Lightning-based) protocols. Currently, all local MCP usage is **100% Free**.
+3.  **L402 & Agent Wallets (v5.0 Roadmap):** 
+    *   **The Vision:** Built-in support for autonomous micro-payments and direct crypto-economic settlement (as adopted by Polymarket).
+    *   **Goal:** Enable a machine-to-machine economy where agents manage their own bankrolls and autonomously purchase token-savings credits via L402 (Lightning) or dedicated Agent Wallets.
+    *   **Status:** Currently inactive. All local MCP usage is **100% Free**.
 
 ---
 
