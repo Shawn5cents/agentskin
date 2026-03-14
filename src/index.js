@@ -230,7 +230,7 @@ const MANIFESTO_HTML = `
 
     <div class="container">
         <header>
-            <div class="metadata">Protocol / 4.3 / 2026</div>
+            <div class="metadata">Protocol / 4.0.2 / 2026</div>
             <h1>AgentSkin</h1>
             <div class="metadata">The End of the Token Tax.</div>
         </header>
@@ -337,12 +337,13 @@ const MANIFESTO_HTML = `
                 <div class="thesis-content">
                     <h2>Quick Start</h2>
                     <p>Add AgentSkin to your agent's toolbox in 30 seconds.</p>
+                    <p><strong>Security Update (v4.0.2):</strong> All users are encouraged to use the <code>@latest</code> tag to ensure SSRF hardening and request timeouts are active.</p>
                     <h3>For Cursor / Claude Desktop</h3>
                     <pre style="background:#000; color:#fff; padding:15px; font-size:0.8rem; overflow-x:auto;">
 {
   "mjs-server-agentskin": {
     "command": "npx",
-    "args": ["-y", "agentskin"]
+    "args": ["-y", "agentskin@latest"]
   }
 }</pre>
                     <h3>Managed API</h3>
