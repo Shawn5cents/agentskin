@@ -305,11 +305,12 @@ const MANIFESTO_HTML = `
                 <div class="thesis-number">07 / FOUNDER</div>
                 <div class="thesis-content">
                     <h2>Letter from the Architect</h2>
-                    <p>I spent 15 years in high-pressure Logistics management, running 24/7 terminals for global supply chains. I am a systems-first leader who thrives in high-stakes environments. I build software the same way I run fleets: with a zero-failure mindset.</p>
-                    <p>AgentSkin is the result of <strong>20,000+ hours</strong> of technical obsession. I build the bridge for the machines because I know what it's like to manage infrastructure that the world depends on.</p>
+                    <p>I spent my career in high-pressure Logistics management, running 24/7 terminals for global supply chains. I am a systems-first leader who thrives in high-stakes environments. I build software the same way I run fleets: with a zero-failure mindset.</p>
+                    <p>AgentSkin is the result of deep technical obsession. I built the bridge for the machines because I know what it's like to manage infrastructure that the world depends on.</p>
                     <p>— <strong>Shawn Nichols Sr.</strong></p>
                 </div>
             </div>
+
 
             <!-- 08 INTERACTIVE DEMO -->
             <div class="thesis-item">
