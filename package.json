@@ -1,9 +1,12 @@
 {
-  "name": "agentskin-server",
-  "version": "4.0.0",
+  "name": "agentskin",
+  "version": "4.0.1",
   "description": "Agentic Semantic Proxy: The Legit Normalization Layer for Autonomous Agents.",
   "type": "module",
   "main": "src/index.js",
+  "bin": {
+    "agentskin": "backend/mcp.js"
+  },
   "scripts": {
     "start": "bun run src/index.js"
   },
