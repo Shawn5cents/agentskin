@@ -1,9 +1,12 @@
-# AgentSkin (v4.0.3) 🛡️
+# AgentSkin (v4.3.0) 🛡️
 
 > **The Universal Semantic Layer for high-density Agentic Perception.**
 > A Model Context Protocol (MCP) Server for real-time Token Optimization.
 
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-CashApp-00D632?style=for-the-badge&logo=cashapp&logoColor=white)](https://cash.app/$shawn5cents)
+
 ---
+
 
 ### 📊 THE BENCHMARKS (Verified v4.3)
 - **Brave Search (AI News):** **67.91% Token Reduction**
