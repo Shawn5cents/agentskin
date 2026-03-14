@@ -12,6 +12,7 @@
 - **Nicholsbot (Autonomous X):** **100% API Tax Reduction** (via Stealth)
 - **Sylectus (Logistics Loads):** **92.02% Token Reduction**
 - **MediaStack (Global News):** **90.62% Token Reduction**
+- **Deep Research (Collector):** **85.00% Noise Pruning**
 - **Brave Search (AI News):** **67.91% Token Reduction**
 - **MiroFish (Swarm Reasoning):** **41.00% Linguistic Pruning**
 

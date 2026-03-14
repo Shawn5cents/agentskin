@@ -264,9 +264,10 @@ const MANIFESTO_HTML = `
                         <tbody>
                             <tr><td>Nicholsbot (Autonomous X)</td><td>$5,000/mo</td><td>$0 (Stealth)</td><td><span class="savings-hl">100% TAX FREE</span></td></tr>
                             <tr><td>Sylectus (Logistics Loads)</td><td>8,400</td><td>670</td><td><span class="savings-hl">92.02%</span></td></tr>
-                            <tr><td>MiroFish (Swarm Reasoning)</td><td>12,500</td><td>7,375</td><td><span class="savings-hl">41.00%</span></td></tr>
-                            <tr><td>Brave Search (AI News)</td><td>11,326</td><td>3,634</td><td><span class="savings-hl">67.91%</span></td></tr>
                             <tr><td>MediaStack (Global News)</td><td>4,800</td><td>450</td><td><span class="savings-hl">90.62%</span></td></tr>
+                            <tr><td>Deep Research (Collector)</td><td>15,200</td><td>2,280</td><td><span class="savings-hl">85.00%</span></td></tr>
+                            <tr><td>Brave Search (AI News)</td><td>11,326</td><td>3,634</td><td><span class="savings-hl">67.91%</span></td></tr>
+                            <tr><td>MiroFish (Swarm Reasoning)</td><td>12,500</td><td>7,375</td><td><span class="savings-hl">41.00%</span></td></tr>
                         </tbody>
                     </table>
                     <blockquote>"We don't guess. We prune. If we can't save you at least 20%, we step out of the way."</blockquote>
