@@ -81,6 +81,35 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 });
 
 /**
+ * Utility: SSRF Protection
+ * Prevents agents from accessing local or private network resources.
+ */
+const isSafeUrl = (urlStr) => {
+  try {
+    const url = new URL(urlStr);
+    if (!['http:', 'https:'].includes(url.protocol)) return false;
+    
+    const hostname = url.hostname.toLowerCase();
+    const privatePatterns = [
+      /^localhost$/,
+      /^127\./,
+      /^10\./,
+      /^172\.(1[6-9]|2[0-9]|3[0-1])\./,
+      /^192\.168\./,
+      /^169\.254\./,
+      /^0\./,
+      /^::1$/,
+      /^fc00:/,
+      /^fe80:/
+    ];
+    
+    return !privatePatterns.some(pattern => pattern.test(hostname));
+  } catch {
+    return false;
+  }
+};
+
+/**
  * Tool Logic
  */
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
@@ -93,7 +122,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
 
     if (name === "fetch_optimized_data") {
-      const response = await axios.get(args.url);
+      if (!isSafeUrl(args.url)) {
+        throw new Error("Access Denied: URL is restricted or invalid.");
+      }
+      const response = await axios.get(args.url, { timeout: 10000 }); // Added 10s timeout
       const pruned = recursive_prune(response.data, args.signals || []);
       const skin = to_markdown_skin(pruned, args.url);
       return { content: [{ type: "text", text: skin }] };
