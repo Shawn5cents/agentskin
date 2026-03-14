@@ -33,3 +33,8 @@ build/
 crawl_tester.js
 test_*.js
 benchmark_*.js
+
+# Proprietary Fleet & Lab Logic
+DOCS_FOR_AGENTSKIN/utils/
+backend/lab/mirofish/
+__pycache__/
