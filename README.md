@@ -84,7 +84,7 @@ Without human intervention, SPAWN authored the `Reasoning Skin`—a semantic com
 
 ---
 
-### 🛠️ 05 / THE 7 SKINS (OpenFang Architecture)
+### 🛠️ 05 / THE 7 SKINS (AgentSkin Architecture)
 AgentSkin is the core protocol powering the **Nicholsbot** fleet. We've implemented 7 specialized Standard Operating Procedures (SOPs):
 
 1.  **Twitter Skin:** Autonomous X management via stealth browsing (0 API Tax).

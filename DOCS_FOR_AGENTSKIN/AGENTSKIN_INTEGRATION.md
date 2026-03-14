@@ -9,7 +9,7 @@ By applying high-density semantic pruning and stealth browser automation, we byp
 
 ---
 
-## 🛠 1. The 7 "Skins" (OpenFang Architecture)
+## 🛠 1. The 7 "Skins" (AgentSkin Architecture)
 We ported 7 expert Standard Operating Procedures (SOPs) into Nicholsbot's skill registry. Each skin is designed to work with AgentSkin's deterministic signal philosophy.
 
 1.  **`twitter`**: Autonomous X management via stealth browsing (0 API Tax).
