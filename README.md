@@ -1,4 +1,4 @@
-# AgentSkin (v4.3) 🛡️
+# AgentSkin (v4.0.2) 🛡️
 
 > **The Universal Semantic Layer for high-density Agentic Perception.**
 > A Model Context Protocol (MCP) Server for real-time Token Optimization.
@@ -23,7 +23,7 @@ AgentSkin is an official MCP server. Install it directly via your favorite regis
 - **Smithery:** [View on Smithery](https://smithery.ai/mcp/agentskin)
 - **Direct NPX:**
   ```bash
-  npx -y agentskin
+  npx -y agentskin@latest
   ```
 
 ---
@@ -34,8 +34,8 @@ AgentSkin operates in two primary modes to fit any agentic workflow:
 
 #### A. The Local MCP Server (Privacy-First)
 Run AgentSkin locally to optimize your own development context.
-- **Setup:** `npx -y agentskin`
-- **Security:** Your private API keys (Google, Brave, etc.) stay in your local `.env`. 
+- **Setup:** `npx -y agentskin@latest`
+- **Security:** Version 4.0.2+ includes SSRF hardening and request timeouts. Your private API keys (Google, Brave, etc.) stay in your local `.env`. 
 - **Benefit:** 70%+ token savings on your local Claude/Cursor/GPT-4 usage.
 
 #### B. The Managed API (Scale-First)
@@ -67,7 +67,7 @@ To give your agent this skill, add it to your `mcp_settings.json`:
 {
   "mjs-server-agentskin": {
     "command": "npx",
-    "args": ["-y", "agentskin"]
+    "args": ["-y", "agentskin@latest"]
   }
 }
 ```
