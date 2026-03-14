@@ -1,6 +1,6 @@
 {
   "name": "agentskin",
-  "version": "4.3.0",
+  "version": "4.0.3",
   "description": "Agentic Semantic Proxy: The Legit Normalization Layer for Autonomous Agents.",
   "type": "module",
   "main": "backend/mcp.js",

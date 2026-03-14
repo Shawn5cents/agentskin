@@ -231,7 +231,7 @@ const MANIFESTO_HTML = `
 
     <div class="container">
         <header>
-            <div class="metadata">Protocol / 4.3.0 / 2026</div>
+            <div class="metadata">Protocol / 4.0.3 / 2026</div>
             <h1>AgentSkin</h1>
             <div class="metadata">The End of the Token Tax.</div>
         </header>

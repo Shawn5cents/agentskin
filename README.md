@@ -1,4 +1,4 @@
-# AgentSkin (v4.3.0) 🛡️
+# AgentSkin (v4.0.3) 🛡️
 
 > **The Universal Semantic Layer for high-density Agentic Perception.**
 > A Model Context Protocol (MCP) Server for real-time Token Optimization.
