@@ -341,12 +341,13 @@ const MANIFESTO_HTML = `
                     <p><strong>Security Update (v4.0.2):</strong> All users are encouraged to use the <code>@latest</code> tag to ensure SSRF hardening and request timeouts are active.</p>
                     <h3>For Cursor / Claude Desktop</h3>
                     <pre style="background:#000; color:#fff; padding:15px; font-size:0.8rem; overflow-x:auto;">
-{
-  "mjs-server-agentskin": {
-    "command": "npx",
-    "args": ["-y", "agentskin@latest"]
-  }
-}</pre>
+                    {
+                    "mjs-server-agentskin": {
+                    "command": "npx",
+                    "args": ["-y", "agentskin@latest"]
+                    }
+                    }</pre>
+
                     <h3>Managed API</h3>
                     <pre style="background:#000; color:#fff; padding:15px; font-size:0.8rem;">POST https://api.agentskin.dev/v1/transform</pre>
 
