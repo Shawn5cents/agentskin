@@ -225,7 +225,7 @@ const MANIFESTO_HTML = `
 
     <div class="top-ticker">
         <div><span class="status-dot"></span> AGENT_SKIN_NETWORK_ACTIVE</div>
-        <div>GLOBAL_SAVINGS_AVG: 72.4%</div>
+        <div>GLOBAL_SAVINGS_AVG: 75.3%</div>
         <div>L402_PROTOCOL: READY</div>
     </div>
 
