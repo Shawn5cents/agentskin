@@ -1,6 +1,7 @@
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { recursive_prune, to_markdown_skin, analyze_compression } from '../backend/lib/skin-engine.js';
+import { skinReasoning } from '../backend/lib/reasoning-skin.js';
 import crypto from 'crypto';
 
 /**
@@ -230,7 +231,7 @@ const MANIFESTO_HTML = `
 
     <div class="container">
         <header>
-            <div class="metadata">Protocol / 4.0.2 / 2026</div>
+            <div class="metadata">Protocol / 4.3.0 / 2026</div>
             <h1>AgentSkin</h1>
             <div class="metadata">The End of the Token Tax.</div>
         </header>
@@ -438,12 +439,29 @@ app.get('/v1/supervisor', (c) => c.html(SUPERVISOR_HTML));
 app.post('/v1/transform', async (c) => {
     try {
         const body = await c.req.json();
+        
+        // Handle String Input (Reasoning Skin)
+        if (typeof body.data === 'string') {
+            const { skin, metrics } = skinReasoning(body.data);
+            return c.json({ 
+                skin, 
+                metrics: {
+                    raw_est_tokens: Math.ceil(body.data.length / 4),
+                    skin_est_tokens: Math.ceil(skin.length / 4),
+                    savings_ratio: (metrics.percentReduced).toFixed(2) + "%",
+                    applied: true
+                } 
+            });
+        }
+
+        // Handle JSON Input (Recursive Pruning)
         const pruned = recursive_prune(body.data, body.signals || []);
         const skin = to_markdown_skin(pruned, body.title, JSON.stringify(body.data).length);
         const metrics = analyze_compression(body.data, skin);
         return c.json({ skin, metrics });
     } catch (e) {
-        return c.json({ error: e.message }, 400);
+        console.error("TRANSFORM_ERROR:", e.message);
+        return c.json({ error: e.message, stack: e.stack }, 400);
     }
 });
 
