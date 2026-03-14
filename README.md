@@ -3,7 +3,7 @@
 > **The Universal Semantic Layer for high-density Agentic Perception.**
 > A Model Context Protocol (MCP) Server for real-time Token Optimization.
 
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-CashApp-00D632?style=for-the-badge&logo=cashapp&logoColor=white)](https://cash.app/$shawn5cents)
+<a href="https://www.buymeacoffee.com/shawn5centr" target="_blank"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=flat-square&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me A Coffee" /></a>
 
 ---
 
@@ -104,3 +104,6 @@ AgentSkin is the result of deep technical obsession. I built the bridge for the 
 **We are building the bridge for the machines. The humans will follow.**
 
 © 2026 NICHOLS TRANSCO LLC // [SYSTEM_OPERATIONAL]
+
+
+<a href="https://www.buymeacoffee.com/shawn5centr" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
