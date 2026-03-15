@@ -1,476 +1,433 @@
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
-import { recursive_prune, to_markdown_skin, analyze_compression } from '../backend/lib/skin-engine.js';
+import { recursive_prune, to_markdown_skin } from '../backend/lib/skin-engine.js';
 import { skinReasoning } from '../backend/lib/reasoning-skin.js';
-import crypto from 'crypto';
 
 /**
- * AgentSkin: Showcase Engine (v4.3)
+ * AgentSkin: Semantic Shorthand Standard (SSS) Gateway
  */
 
 const app = new Hono();
 
-// --- INLINE FULL MANIFESTO (Restoring 100% of Original Design) ---
-const MANIFESTO_HTML = `
+// --- SHARED STYLES (Academic Brutalism) ---
+const COMMON_STYLE = `
+<style>
+    :root {
+        --bg: #ffffff;
+        --text: #000000;
+        --muted: #666666;
+        --accent: #e0e0e0;
+        --border: #000000;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        background-color: var(--bg);
+        color: var(--text);
+        font-family: "EB Garamond", serif;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        padding: 0 20px;
+    }
+
+    .top-ticker {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        border-bottom: 1px solid var(--border);
+        padding: 10px 0;
+        display: flex;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        background: var(--bg);
+        z-index: 100;
+    }
+
+    .top-ticker a {
+        color: inherit;
+        text-decoration: none;
+        margin-left: 20px;
+        padding: 2px 5px;
+    }
+
+    .top-ticker a:hover {
+        background: var(--text);
+        color: var(--bg);
+    }
+
+    .status-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background-color: #000;
+        margin-right: 5px;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 60px auto;
+    }
+
+    header {
+        margin-bottom: 60px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 20px;
+    }
+
+    h1 {
+        font-size: 3.5rem;
+        font-weight: 500;
+        letter-spacing: -0.03em;
+        line-height: 1;
+        margin-bottom: 10px;
+    }
+
+    .metadata {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.8rem;
+        color: var(--muted);
+        text-transform: uppercase;
+    }
+
+    section { margin-bottom: 60px; }
+
+    .thesis-item {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        border-top: 1px solid var(--border);
+        padding: 40px 0;
+        gap: 40px;
+    }
+
+    .thesis-number {
+        font-family: "IBM Plex Mono", monospace;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .thesis-content h2 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .thesis-content h3 {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        margin-top: 25px;
+        margin-bottom: 10px;
+    }
+
+    blockquote {
+        font-style: italic;
+        font-size: 1.4rem;
+        margin: 20px 0;
+        padding-left: 20px;
+        border-left: 1px solid var(--border);
+        color: var(--muted);
+    }
+
+    pre {
+        background: #f4f4f4;
+        color: #000;
+        padding: 20px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.85rem;
+        overflow-x: auto;
+        margin: 20px 0;
+        border: 1px solid var(--border);
+    }
+
+    code {
+        font-family: "IBM Plex Mono", monospace;
+        background: #f4f4f4;
+        padding: 2px 4px;
+        font-size: 0.9em;
+    }
+
+    .action-area {
+        margin-top: 80px;
+        border-top: 4px solid var(--border);
+        padding-top: 40px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .cta-card {
+        border: 1px solid var(--border);
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 150px;
+        transition: background 0.2s ease;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .cta-card:hover { background: #000; color: #fff; }
+
+    footer {
+        margin: 100px 0 40px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: var(--muted);
+        text-align: center;
+        border-top: 1px solid var(--border);
+        padding-top: 20px;
+    }
+
+    /* Tabs Styling */
+    .nav-tabs {
+        display: flex;
+        gap: 1px;
+        background: var(--border);
+        border: 1px solid var(--border);
+        margin-bottom: 40px;
+    }
+
+    .nav-tab {
+        flex: 1;
+        background: var(--bg);
+        padding: 15px;
+        text-align: center;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.8rem;
+        text-decoration: none;
+        color: var(--text);
+        text-transform: uppercase;
+    }
+
+    .nav-tab:hover { background: #f4f4f4; }
+    .nav-tab.active { background: var(--text); color: var(--bg); }
+</style>
+`;
+
+const LAYOUT = (content, activeTab = 'introduction') => `
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgentSkin | The Semantic Layer</title>
+    <title>AgentSkin | Semantic Shorthand Standard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #ffffff;
-            --text: #000000;
-            --muted: #666666;
-            --accent: #00FF41;
-            --border: #000000;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: "EB Garamond", serif;
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
-            padding: 0 20px;
-        }
-
-        .top-ticker {
-            font-family: "IBM Plex Mono", monospace;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            border-bottom: 1px solid var(--border);
-            padding: 10px 0;
-            display: flex;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            background: var(--bg);
-            z-index: 100;
-        }
-
-        .status-dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background-color: var(--accent);
-            margin-right: 5px;
-            animation: blink 1.5s infinite;
-        }
-
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-        .container {
-            max-width: 1000px;
-            margin: 60px auto;
-        }
-
-        header {
-            margin-bottom: 80px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 20px;
-        }
-
-        h1 {
-            font-size: 3.5rem;
-            font-weight: 500;
-            letter-spacing: -0.03em;
-            line-height: 1;
-            margin-bottom: 10px;
-        }
-
-        .metadata {
-            font-family: "IBM Plex Mono", monospace;
-            font-size: 0.8rem;
-            color: var(--muted);
-            text-transform: uppercase;
-        }
-
-        .thesis-grid {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .thesis-item {
-            display: grid;
-            grid-template-columns: 100px 1fr;
-            border-top: 1px solid var(--border);
-            padding: 40px 0;
-            gap: 40px;
-        }
-
-        .thesis-number {
-            font-family: "IBM Plex Mono", monospace;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .thesis-content h2 {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-            letter-spacing: -0.01em;
-        }
-
-        .thesis-content h3 {
-            font-family: "IBM Plex Mono", monospace;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            margin-top: 25px;
-            margin-bottom: 10px;
-            color: var(--muted);
-        }
-
-        .benchmark-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: "IBM Plex Mono", monospace;
-            font-size: 0.8rem;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-
-        .benchmark-table th, .benchmark-table td {
-            border: 1px solid var(--border);
-            padding: 12px;
-            text-align: left;
-        }
-
-        .benchmark-table th {
-            background: #f0f0f0;
-            text-transform: uppercase;
-        }
-
-        .savings-hl {
-            color: #000;
-            font-weight: bold;
-            background: var(--accent);
-            padding: 2px 4px;
-        }
-
-        .thesis-content ul {
-            list-style: none;
-            padding-left: 0;
-            margin-bottom: 20px;
-        }
-
-        .thesis-content li {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            padding-left: 20px;
-            position: relative;
-        }
-
-        .thesis-content li::before {
-            content: "—";
-            position: absolute;
-            left: 0;
-            color: var(--muted);
-        }
-
-        .thesis-content blockquote {
-            font-style: italic;
-            font-size: 1.4rem;
-            margin: 20px 0;
-            padding-left: 20px;
-            border-left: 1px solid var(--border);
-        }
-
-        .action-area {
-            margin-top: 80px;
-            border-top: 4px solid var(--border);
-            padding-top: 40px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .cta-card {
-            border: 1px solid var(--border);
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 200px;
-            transition: background 0.2s ease;
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .cta-card:hover {
-            background: #000;
-            color: #fff;
-        }
-
-        footer {
-            margin: 100px 0 40px;
-            font-family: "IBM Plex Mono", monospace;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            color: var(--muted);
-            text-align: center;
-            border-top: 1px solid var(--border);
-            padding-top: 20px;
-        }
-    </style>
+    ${COMMON_STYLE}
 </head>
 <body>
-
     <div class="top-ticker">
-        <div><span class="status-dot"></span> AGENT_SKIN_NETWORK_ACTIVE</div>
-        <div>GLOBAL_SAVINGS_AVG: 75.3%</div>
-        <div>L402_PROTOCOL: READY</div>
+        <div><span class="status-dot"></span> SSS_PROTOCOL_ACTIVE</div>
+        <div>REFERENCE_IMPLEMENTATION: v1.0.0</div>
+        <div><a href="/sitemap.xml">SITEMAP</a></div>
     </div>
 
     <div class="container">
         <header>
-            <div class="metadata">Protocol / 4.0.3 / 2026</div>
+            <div class="metadata">Open Standard / 2026</div>
             <h1>AgentSkin</h1>
-            <div class="metadata">The End of the Token Tax.</div>
+            <div class="metadata">Semantic Shorthand Standard (SSS)</div>
         </header>
 
-        <section class="thesis-grid">
-            <div class="thesis-item">
-                <div class="thesis-number">01 / CONCEPT</div>
-                <div class="thesis-content">
-                    <h2>The Great Data Fragmentation</h2>
-                    <p>The internet was built for human eyes. High-latency HTML, bloated JavaScript, and inconsistent JSON structures act as a **"Token Tax"** on the agentic economy. AgentSkin solves this by providing a unified, high-density semantic proxy.</p>
-                    <blockquote>"Build for the machines. The humans will follow."</blockquote>
-                </div>
-            </div>
-            <div class="thesis-item">
-                <div class="thesis-number">02 / MISSION</div>
-                <div class="thesis-content">
-                    <h2>The End of the Token Tax</h2>
-                    <p>Every line of redundant JSON you feed an LLM is a tax on your product's speed and margin. Raw API responses are 90% noise. AgentSkin prunes that noise at the edge, delivering deterministic signal directly to the agent's context window.</p>
-                    <blockquote>"If it isn't machine-readable, it doesn't exist."</blockquote>
-                </div>
-            </div>
-            <div class="thesis-item">
-                <div class="thesis-number">03 / PROOF</div>
-                <div class="thesis-content">
-                    <h2>Empirical Benchmarks</h2>
-                    <table class="benchmark-table">
-                        <thead>
-                            <tr><th>Source</th><th>Raw (Tokens)</th><th>AgentSkin</th><th>Savings</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>Nicholsbot (Autonomous X)</td><td>$5,000/mo</td><td>$0 (Stealth)</td><td><span class="savings-hl">100% TAX FREE</span></td></tr>
-                            <tr><td>Sylectus (Logistics Loads)</td><td>8,400</td><td>670</td><td><span class="savings-hl">92.02%</span></td></tr>
-                            <tr><td>MediaStack (Global News)</td><td>4,800</td><td>450</td><td><span class="savings-hl">90.62%</span></td></tr>
-                            <tr><td>Deep Research (Collector)</td><td>15,200</td><td>2,280</td><td><span class="savings-hl">85.00%</span></td></tr>
-                            <tr><td>Brave Search (AI News)</td><td>11,326</td><td>3,634</td><td><span class="savings-hl">67.91%</span></td></tr>
-                            <tr><td>MiroFish (Swarm Reasoning)</td><td>12,500</td><td>7,375</td><td><span class="savings-hl">41.00%</span></td></tr>
-                        </tbody>
-                    </table>
-                    <blockquote>"We don't guess. We prune. If we can't save you at least 20%, we step out of the way."</blockquote>
-                </div>
-            </div>
-            <div class="thesis-item">
-                <div class="thesis-number">04 / ECONOMY</div>
-                <div class="thesis-content">
-                    <h2>Future Machine Economy</h2>
-                    <p>The <strong>L402 Protocol</strong> and dedicated <strong>Agent Wallets</strong> (as adopted by Polymarket) represent the future of autonomous machine-to-machine commerce. In the next phase of AgentSkin, we will enable two primary methods for autonomous settlement:</p>
-                    <ul>
-                        <li><strong>Prepaid Virtual Cards:</strong> Humans provide agents with ephemeral Visa/Mastercard credentials for Stripe-based settlement.</li>
-                        <li><strong>Agent Wallets (v5.0):</strong> Direct crypto-economic settlement via dedicated wallets (e.g. Polymarket AgentCard), allowing for sub-cent micro-transactions at the edge.</li>
-                    </ul>
-                    <p><strong>Status:</strong> Currently inactive. We are prioritizing free, open access for the agentic community. All current local MCP usage is <strong>100% Free</strong>.</p>
-                </div>
-            </div>
-            <div class="thesis-item">
-                <div class="thesis-number">05 / EDGE</div>
-                <div class="thesis-content">
-                    <h2>The Deterministic Edge</h2>
-                    <ul>
-                        <li><strong>Vs. Web Scrapers:</strong> We prune structured API noise that scrapers miss.</li>
-                        <li><strong>Vs. LLM Parsers:</strong> 1,000x faster and 10,000x cheaper. We use code, not tokens.</li>
-                    </ul>
-                </div>
-            </div>
+        <nav class="nav-tabs">
+            <a href="/" class="nav-tab ${activeTab === 'introduction' ? 'active' : ''}">Introduction</a>
+            <a href="/specification" class="nav-tab ${activeTab === 'specification' ? 'active' : ''}">Specification</a>
+            <a href="/examples" class="nav-tab ${activeTab === 'examples' ? 'active' : ''}">Examples</a>
+            <a href="/whitepaper" class="nav-tab ${activeTab === 'whitepaper' ? 'active' : ''}">Whitepaper</a>
+        </nav>
 
-            <!-- 06 ORIGIN -->
-            <div class="thesis-item">
-                <div class="thesis-number">06 / ORIGIN</div>
-                <div class="thesis-content">
-                    <h2>Autonomous Evolution</h2>
-                    <p>AgentSkin is the first protocol to be co-developed by machines. In March 2026, an autonomous agent named <strong>SPAWN</strong> analyzed the AgentSkin codebase and identified a perceptual gap.</p>
-                    <p>Without human intervention, SPAWN authored the <code>Reasoning Skin</code>—a semantic compression layer that strips 34% of linguistic noise from agent-to-agent reasoning streams.</p>
-                </div>
-            </div>
-
-            <!-- 07 FOUNDER -->
-            <div class="thesis-item">
-                <div class="thesis-number">07 / FOUNDER</div>
-                <div class="thesis-content">
-                    <h2>Letter from the Architect</h2>
-                    <p>I spent my career in high-pressure Logistics management, running 24/7 terminals for global supply chains. I am a systems-first leader who thrives in high-stakes environments. I build software the same way I run fleets: with a zero-failure mindset.</p>
-                    <p>AgentSkin is the result of deep technical obsession. I built the bridge for the machines because I know what it's like to manage infrastructure that the world depends on.</p>
-                    <p>— <strong>Shawn Nichols Sr.</strong></p>
-                </div>
-            </div>
-
-
-            <!-- 08 INTERACTIVE DEMO -->
-            <div class="thesis-item">
-                <div class="thesis-number">08 / DEMO</div>
-                <div class="thesis-content">
-                    <h2>Interactive Pruning</h2>
-                    <button id="demo-btn" style="background:var(--accent); border:1px solid #000; padding:10px 20px; font-family:'IBM Plex Mono'; font-weight:bold; cursor:pointer;">RUN_SKIN_SIMULATION</button>
-                    <div id="demo-output" style="display:none; margin-top:20px; font-family:'IBM Plex Mono'; font-size:0.7rem; border:1px solid var(--border); padding:20px; background:#f9f9f9;">
-                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
-                            <div><h4>Raw JSON (2,124 Tokens)</h4><pre style="white-space:pre-wrap; color:#cc0000;">{ "@context": [...], "properties": { "elevation": { "value": 6.096 }, "periods": [ { "name": "Tonight", "temperature": 33, "probabilityOfPrecipitation": { "value": 1 } } ] } }</pre></div>
-                            <div><h4>AgentSkin (539 Tokens)</h4><pre style="white-space:pre-wrap; color:#006600;">elevation.value: 6.096\nperiods.name: Tonight\nperiods.temperature: 33\n[SAVINGS: 71.94%]</pre></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 09 QUICK START -->
-            <div class="thesis-item">
-                <div class="thesis-number">09 / ADOPT</div>
-                <div class="thesis-content">
-                    <h2>Quick Start</h2>
-                    <p>Add AgentSkin to your agent's toolbox in 30 seconds.</p>
-                    <p><strong>Security Update (v4.0.2):</strong> All users are encouraged to use the <code>@latest</code> tag to ensure SSRF hardening and request timeouts are active.</p>
-                    <h3>For Cursor / Claude Desktop</h3>
-                    <pre style="background:#000; color:#fff; padding:15px; font-size:0.8rem; overflow-x:auto;">
-                    {
-                    "mjs-server-agentskin": {
-                    "command": "npx",
-                    "args": ["-y", "agentskin@latest"]
-                    }
-                    }</pre>
-
-                    <h3>Managed API</h3>
-                    <pre style="background:#000; color:#fff; padding:15px; font-size:0.8rem;">POST https://api.agentskin.dev/v1/transform</pre>
-
-                    <h3>Universal Integration (OpenAI, Anthropic, Google, Meta, Mistral, DeepSeek)</h3>
-                    <pre style="background:#000; color:#fff; padding:15px; font-size:0.8rem; overflow-x:auto;">
-// 1. Prune noisy data
-const { skin } = await fetch('https://api.agentskin.dev/v1/transform', {
-  method: 'POST',
-  body: JSON.stringify({ data: rawApiData })
-}).then(res => res.json());
-
-// 2. Feed high-density "Skin" to your model
-const response = await openai.chat.completions.create({
-  messages: [{ role: "user", content: skin }]
-});</pre>
-                </div>
-            </div>
-        </section>
+        ${content}
 
         <div class="action-area">
-            <a href="mailto:shawn@nichols-ai.org?subject=AgentSkin - Consulting Inquiry" class="cta-card" style="background:var(--accent); color:#000; text-decoration:none;">
-                <div><div class="cta-label">Consulting & Contact</div><div class="cta-title">shawn@nichols-ai.org</div></div>
-                <div>-> email</div>
+            <a href="https://github.com/Shawn5cents/agentskin" class="cta-card">
+                <div>
+                    <div class="metadata">Reference Implementation</div>
+                    <h2>GitHub Repository</h2>
+                </div>
+                <div>-> source code</div>
             </a>
-            <a href="https://github.com/Shawn5cents/agentskin" class="cta-card" style="text-decoration:none;">
-                <div><div class="cta-label">Open Source</div><div class="cta-title">View on GitHub</div></div>
-                <div>-> star</div>
+            <a href="https://www.npmjs.com/package/agentskin" class="cta-card">
+                <div>
+                    <div class="metadata">NPM Package</div>
+                    <h2>Install MCP Server</h2>
+                </div>
+                <div>-> npm registry</div>
             </a>
         </div>
 
         <footer>
-            &copy; 2026 NICHOLS TRANSCO LLC // BUILT BY SHAWN NICHOLS SR.
+            &copy; 2026 Nichols Transco LLC. Open-Source Protocol.
+            <div style="margin-top:10px">
+                <a href="/" style="color:inherit; text-decoration:none">Introduction</a> | 
+                <a href="/specification" style="color:inherit; text-decoration:none">Specification</a> | 
+                <a href="/examples" style="color:inherit; text-decoration:none">Examples</a> | 
+                <a href="/whitepaper" style="color:inherit; text-decoration:none">Whitepaper</a>
+            </div>
         </footer>
     </div>
-
-    <script>
-        document.getElementById('demo-btn').addEventListener('click', function() {
-            this.innerText = 'PROCESSING...';
-            setTimeout(() => {
-                document.getElementById('demo-output').style.display = 'block';
-                this.innerText = 'SIMULATION_COMPLETE';
-                this.style.background = '#ccc';
-            }, 800);
-        });
-    </script>
 </body>
 </html>
 `;
 
-const SUPERVISOR_HTML = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>AgentSkin | Supervisor</title>
-    <style>
-        body { background: #000; color: #00ff41; font-family: 'Courier New', monospace; padding: 20px; }
-        .log-entry { margin-bottom: 5px; border-left: 2px solid #008f11; padding-left: 10px; }
-    </style>
-</head>
-<body>
-    <h1>AGENT_SKIN_SUPERVISOR</h1>
-    <div id="activity-log">
-        <div class="log-entry">SYSTEM_STATUS: OPERATIONAL</div>
-        <div class="log-entry">SUBDOMAIN: api.agentskin.dev</div>
+// --- PAGES ---
+
+const INTRO_CONTENT = `
+<section>
+    <div class="thesis-item">
+        <div class="thesis-number">01 / OVERVIEW</div>
+        <div class="thesis-content">
+            <h2>The Agentic Perception Layer</h2>
+            <p>AgentSkin introduces the <strong>Semantic Shorthand Standard (SSS)</strong>, a protocol designed to optimize how autonomous AI agents perceive and process structured data. The internet is built for human visual consumption, resulting in high-entropy data payloads (bloated JSON, nested HTML) that degrade LLM reasoning performance and exponentially increase token consumption.</p>
+            <p>AgentSkin provides a deterministic mechanism to prune this noise, delivering low-entropy, high-signal data directly to the agent's context window.</p>
+        </div>
     </div>
-</body>
-</html>
+    <div class="thesis-item">
+        <div class="thesis-number">02 / MCP INTEGRATION</div>
+        <div class="thesis-content">
+            <h2>The Reference Server</h2>
+            <p>The AgentSkin protocol is distributed as an open-source Model Context Protocol (MCP) server. By installing the reference server locally, any agent (Claude, Cursor, etc.) gains the ability to autonomously define and fetch high-density Semantic Skins.</p>
+            <pre>npx -y agentskin@latest</pre>
+            <p>The architecture is strictly Local-First. Data retrieval and recursive pruning occur securely on the host machine.</p>
+        </div>
+    </div>
+</section>
+`;
+
+const SPEC_CONTENT = `
+<section>
+    <div class="thesis-item">
+        <div class="thesis-number">01 / SIGNAL MAPPING</div>
+        <div class="thesis-content">
+            <h2>Targeted Pruning</h2>
+            <p>The protocol requires agents to explicitly declare the subset of keys necessary for reasoning. The engine recursively traverses the data object, retaining only the declared signals and discarding all ambient structural metadata.</p>
+            <pre>
+// Protocol Request Schema
+{
+  "url": "string",
+  "signals": ["array of strings"],
+  "aliases": {"object mapping original keys to standardized keys"}
+}
+            </pre>
+        </div>
+    </div>
+
+    <div class="thesis-item">
+        <div class="thesis-number">02 / SEMANTIC PIVOT</div>
+        <div class="thesis-content">
+            <h2>Namespace Normalization</h2>
+            <p>Fragmented API schemas introduce linguistic friction into the context window. The protocol utilizes an alias dictionary to map inconsistent or deeply nested keys (e.g., <code>temperature_2m_max</code>) into normalized, domain-specific terminology (e.g., <code>temp</code>).</p>
+        </div>
+    </div>
+
+    <div class="thesis-item">
+        <div class="thesis-number">03 / FLATTENING</div>
+        <div class="thesis-content">
+            <h2>Hierarchical Markdown</h2>
+            <p>Once pruned and aliased, the resulting object is flattened into a deterministic, single-level Markdown syntax optimized for transformer-based tokenization. JSON syntax (brackets, quotes) is eradicated.</p>
+            <pre>
+parent.child.key: value
+parent.child.key: value
+            </pre>
+        </div>
+    </div>
+</section>
+`;
+
+const EXAMPLES_CONTENT = `
+<section>
+    <div class="thesis-item">
+        <div class="thesis-number">01 / WEATHER API</div>
+        <div class="thesis-content">
+            <h2>Standard Pruning Example</h2>
+            <p>A typical implementation of the protocol standardizing a verbose meteorological API payload.</p>
+            
+            <h3>The MCP Request</h3>
+            <pre>
+{
+  "url": "https://api.weather.gov/gridpoints/TOP/31,80/forecast",
+  "signals": ["temperature", "windspeed", "shortforecast"],
+  "aliases": {
+    "temperature": "temp",
+    "shortforecast": "forecast"
+  }
+}
+            </pre>
+
+            <h3>The Resulting Skin</h3>
+            <pre>
+periods[0].temp: 45
+periods[0].windspeed: 10 mph
+periods[0].forecast: Mostly Clear
+periods[1].temp: 38
+periods[1].windspeed: 5 mph
+periods[1].forecast: Sunny
+            </pre>
+        </div>
+    </div>
+</section>
+`;
+
+const WHITEPAPER_CONTENT = `
+<section>
+    <div class="metadata">Protocol Specification Document / 2026</div>
+    
+    <div style="margin-top: 40px; font-size: 1.1rem;">
+        <h3 style="font-family: 'IBM Plex Mono', monospace; font-size: 1rem; text-transform: uppercase; margin-bottom: 10px;">I. Abstract</h3>
+        <p style="margin-bottom: 30px;">The Semantic Shorthand Standard (SSS) addresses the systemic inefficiency of utilizing human-centric web data for Machine-to-Machine (M2M) perception. By providing a deterministic, mathematically verifiable layer of semantic compression, SSS eliminates the "Token Tax" associated with modern web architecture.</p>
+        
+        <h3 style="font-family: 'IBM Plex Mono', monospace; font-size: 1rem; text-transform: uppercase; margin-bottom: 10px;">II. The Perceptual Drag Problem</h3>
+        <p style="margin-bottom: 30px;">Transformer models allocate attention across context windows indiscriminately. High-entropy structures (HTML DOMs, deeply nested JSON metadata) force models to process structural "noise," degrading performance, increasing latency, and introducing points of failure (hallucination) in autonomous pipelines.</p>
+        
+        <h3 style="font-family: 'IBM Plex Mono', monospace; font-size: 1rem; text-transform: uppercase; margin-bottom: 10px;">III. Protocol Architecture</h3>
+        <p style="margin-bottom: 30px;">The SSS implementation operates strictly as a local reference client via the Model Context Protocol (MCP). By remaining local, the protocol ensures absolute data sovereignty and session integrity. The AgentSkin reference server allows agents to declare required signals dynamically, delegating the pruning execution to the local host environment.</p>
+        
+        <h3 style="font-family: 'IBM Plex Mono', monospace; font-size: 1rem; text-transform: uppercase; margin-bottom: 10px;">IV. Conclusion</h3>
+        <p>The adoption of SSS provides the critical infrastructure necessary for scalable, reliable autonomous agent ecosystems. By standardizing the format in which machines perceive the web, we remove the final bottleneck in the agentic economy.</p>
+    </div>
+</section>
 `;
 
 // --- ROUTES ---
 
 app.get('/robots.txt', (c) => c.text('User-agent: *\nAllow: /\nSitemap: https://agentskin.dev/sitemap.xml'));
+
 app.get('/sitemap.xml', (c) => {
     c.header('Content-Type', 'text/xml');
-    return c.body('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://agentskin.dev/</loc><priority>1.0</priority></url></urlset>');
+    return c.body('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://agentskin.dev/</loc></url><url><loc>https://agentskin.dev/specification</loc></url><url><loc>https://agentskin.dev/examples</loc></url><url><loc>https://agentskin.dev/whitepaper</loc></url></urlset>');
 });
 
-app.get('/', (c) => {
-    const host = c.req.header('host');
-    if (host === 'api.agentskin.dev') {
-        return c.redirect('/v1/supervisor');
-    }
-    return c.html(MANIFESTO_HTML);
-});
+app.get('/', (c) => c.html(LAYOUT(INTRO_CONTENT, 'introduction')));
+app.get('/specification', (c) => c.html(LAYOUT(SPEC_CONTENT, 'specification')));
+app.get('/examples', (c) => c.html(LAYOUT(EXAMPLES_CONTENT, 'examples')));
+app.get('/whitepaper', (c) => c.html(LAYOUT(WHITEPAPER_CONTENT, 'whitepaper')));
 
-app.get('/v1/manifesto', (c) => c.html(MANIFESTO_HTML));
-app.get('/v1/supervisor', (c) => c.html(SUPERVISOR_HTML));
-
+// Legacy fallback endpoint for local reference
 app.post('/v1/transform', async (c) => {
     try {
         const body = await c.req.json();
         
-        // Handle String Input (Reasoning Skin)
         if (typeof body.data === 'string') {
-            const { skin, metrics } = skinReasoning(body.data);
-            return c.json({ 
-                skin, 
-                metrics: {
-                    raw_est_tokens: Math.ceil(body.data.length / 4),
-                    skin_est_tokens: Math.ceil(skin.length / 4),
-                    savings_ratio: (metrics.percentReduced).toFixed(2) + "%",
-                    applied: true
-                } 
-            });
+            const { skin } = skinReasoning(body.data);
+            return c.json({ skin });
         }
 
-        // Handle JSON Input (Recursive Pruning)
-        const pruned = recursive_prune(body.data, body.signals || []);
+        const pruned = recursive_prune(body.data, body.signals || [], body.aliases || {});
         const skin = to_markdown_skin(pruned, body.title, JSON.stringify(body.data).length);
-        const metrics = analyze_compression(body.data, skin);
-        return c.json({ skin, metrics });
+        
+        return c.json({ skin });
     } catch (e) {
-        console.error("TRANSFORM_ERROR:", e.message);
-        return c.json({ error: e.message, stack: e.stack }, 400);
+        return c.json({ error: e.message }, 400);
     }
 });
 
 if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
-    const port = 3003;
-    console.log(`\n🚀 AgentSkin SHOWCASE LIVE at: http://localhost:${port}`);
-    serve({ fetch: app.fetch, port });
+    serve({ fetch: app.fetch, port: 3003 });
 }
 
 export default app;

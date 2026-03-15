@@ -1,23 +1,36 @@
 {
   "name": "agentskin",
-  "version": "4.0.3",
-  "description": "Agentic Semantic Proxy: The Legit Normalization Layer for Autonomous Agents.",
+  "version": "1.0.0",
+  "description": "AgentSkin: The official reference implementation of the Semantic Shorthand Standard (SSS) for Agentic Perception.",
   "type": "module",
   "main": "backend/mcp.js",
   "bin": {
     "agentskin": "backend/mcp.js"
   },
+  "files": [
+    "backend/",
+    "README.md",
+    "LICENSE",
+    "docs/",
+    "MANIFESTO.md",
+    "PROJECT_STATE.md"
+  ],
   "scripts": {
-    "start": "node backend/mcp.js",
-    "web": "node src/index.js",
-    "test": "node test_weather_gov.js"
+    "start": "node backend/mcp.js"
   },
   "dependencies": {
-    "@hono/node-server": "^1.13.8",
     "@modelcontextprotocol/sdk": "^1.0.1",
     "axios": "^1.7.9",
-    "dotenv": "^16.6.1",
-    "hono": "^4.7.2",
     "zod": "^3.24.2"
-  }
+  },
+  "keywords": [
+    "mcp",
+    "agentic",
+    "perception",
+    "semantic",
+    "token-optimization",
+    "ai-agents"
+  ],
+  "author": "Shawn Nichols Sr. (Nichols Transco LLC)",
+  "license": "MIT"
 }

@@ -1,41 +1,42 @@
 import { skinReasoning } from './reasoning-skin.js';
-import { skinLogistics } from './logistics-skin.js';
-import { skinFinance } from './finance-skin.js';
 
 /**
- * AgentSkin: Master Semantic Engine (v4.4 Lab)
- * Modular Industry-Specific Skins.
+ * AgentSkin: Master Semantic Engine (v4.2.0)
+ * Open Protocol for Recursive Object Pruning.
  */
 
 // Export individual tools for specific options
-export { skinReasoning, skinLogistics, skinFinance };
+export { skinReasoning };
 
 const DEFAULT_SIGNAL_KEYS = [
     'id', 'name', 'title', 'value', 'status', 'price', 'temp', 'wind', 
     'description', 'url', 'link', 'published_at', 'text', 'code', 'c', 'v', 'p'
 ];
 
-export const recursive_prune = (data, requiredKeys = [], applyReasoningSkin = false) => {
+export const recursive_prune = (data, requiredKeys = [], aliases = {}, applyReasoningSkin = false) => {
     const signalKeys = [...new Set([...DEFAULT_SIGNAL_KEYS, ...requiredKeys])];
     
     if (Array.isArray(data)) {
-        return data.map(item => recursive_prune(item, requiredKeys, applyReasoningSkin)).filter(Boolean);
+        return data.map(item => recursive_prune(item, requiredKeys, aliases, applyReasoningSkin)).filter(Boolean);
     }
     
     if (typeof data === 'object' && data !== null) {
         const pruned = {};
         let hasSignal = false;
         for (const [key, value] of Object.entries(data)) {
-            if (signalKeys.includes(key.toLowerCase())) {
+            const lowerKey = key.toLowerCase();
+            const targetKey = aliases[lowerKey] || aliases[key] || key;
+            
+            if (signalKeys.includes(lowerKey) || signalKeys.includes(targetKey.toLowerCase())) {
                 let processedValue = value;
                 if (applyReasoningSkin && typeof value === 'string') {
                     const { skin } = skinReasoning(value);
                     processedValue = skin;
                 }
-                pruned[key] = processedValue;
+                pruned[targetKey] = processedValue;
                 hasSignal = true;
             } else if (typeof value === 'object') {
-                const subPruned = recursive_prune(value, requiredKeys, applyReasoningSkin);
+                const subPruned = recursive_prune(value, requiredKeys, aliases, applyReasoningSkin);
                 if (subPruned && Object.keys(subPruned).length > 0) {
                     pruned[key] = subPruned;
                     hasSignal = true;
