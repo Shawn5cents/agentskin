@@ -1,0 +1,17 @@
+{
+  "name": "agentskin-server",
+  "version": "4.0.3",
+  "description": "Agentic Semantic Proxy: The Legit Normalization Layer for Autonomous Agents.",
+  "type": "module",
+  "main": "mcp.js",
+  "scripts": {
+    "start": "node mcp.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.1",
+    "axios": "^1.7.9",
+    "cheerio": "^1.0.0",
+    "zod": "^3.24.2",
+    "dotenv": "^16.6.1"
+  }
+}
