@@ -83,9 +83,13 @@ This package is designed as a **Local-First, Open Studio**.
 - User session state, cookies, and network access remain strictly local and private.
 - The core engine (`skin-engine.js`) operates without external dependencies for transformation.
 
-## Documentation & Whitepaper
+## Specification & Benchmarks
 
-Read the full protocol specification and academic whitepaper at [agentskin.dev](https://agentskin.dev).
+- [Formal Specification](docs/SPECIFICATION.md)
+- [FAQ with Benchmarks](docs/FAQ.md)
+- [Local Benchmarks](benchmarks/run.js) `npm run benchmark`
+
+Online docs: [agentskin.dev](https://agentskin.dev)
 
 ---
 *Maintained by Nichols Transco LLC. Built for the machine economy.*

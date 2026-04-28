@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import "dotenv/config";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
@@ -37,9 +38,9 @@ const htmlToText = (html) => {
   const structured = {
     title: $('title').text().trim() || undefined,
     h1: $('h1').first().text().trim() || undefined,
-    h2: $('h2, h3').map((i, el) => $(el).text().trim()).get() || undefined,
-    paragraphs: $('p').map((i, el) => $(el).text().trim()).get().filter(p => p.length > 20) || undefined,
-    links: $('a[href]').map((i, el) => ({ text: $(el).text().trim(), href: $(el).attr('href') })).get().slice(0, 10) || undefined,
+    h2: $('h2, h3').map((_, el) => $(el).text().trim()).get() || undefined,
+    // eslint-disable-next-line no-unused-vars  paragraphs: $('p').map((_, el) => $(el).text().trim()).get().filter(p => p.length > 20) || undefined,
+    links: $('a[href]').map((_, el) => ({ text: $(el).text().trim(), href: $(el).attr('href') })).get().slice(0, 10) || undefined,
     meta_description: $('meta[name="description"]').attr('content') || undefined,
     body_text: text
   };
@@ -74,7 +75,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           properties: {
             url: { type: "string" },
             signals: { type: "array", items: { type: "string" }, description: "Keys to preserve (e.g. ['temp', 'wind'])" },
-            aliases: { type: "object", description: "Map messy keys to clean ones (e.g. {'temperature_2m': 'temp'})" }
+            aliases: { type: "object", description: "Map messy keys to clean ones (e.g. {'temperature_2m': 'temp'})" },
+            apply_reasoning: { type: "boolean", description: "Apply reasoning skin to string values during pruning" }
           },
           required: ["url"],
         },
@@ -142,7 +144,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       // Run the Local Skinning Engine
-      const pruned = recursive_prune(dataToSkin, args.signals || [], args.aliases || {});
+      const pruned = recursive_prune(dataToSkin, args.signals || [], args.aliases || {}, args.apply_reasoning || false);
       const skin = to_markdown_skin(pruned, args.url, JSON.stringify(dataToSkin).length);
       
       return { content: [{ type: "text", text: skin }] };
