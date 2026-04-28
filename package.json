@@ -1,6 +1,6 @@
 {
   "name": "agentskin",
-  "version": "4.2.1",
+  "version": "4.2.2",
   "description": "AgentSkin: The official reference implementation of the Semantic Shorthand Standard (SSS) for Agentic Perception.",
   "type": "module",
   "main": "backend/mcp.js",
