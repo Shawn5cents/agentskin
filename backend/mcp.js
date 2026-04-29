@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import "dotenv/config";
+import { z } from "zod";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
@@ -13,38 +14,58 @@ import { skinReasoning } from "./lib/reasoning-skin.js";
  * Open-Source Reference MCP Server.
  */
 
+// Zod Schemas for Input Validation
+const FetchArgsSchema = z.object({
+  url: z.string().url("Invalid URL format"),
+  signals: z.array(z.string()).optional().default([]),
+  aliases: z.record(z.string()).optional().default({}),
+  apply_reasoning: z.boolean().optional().default(false),
+});
+
+const SkinReasoningArgsSchema = z.object({
+  text: z.string().min(1, "Text cannot be empty"),
+});
+
 /**
  * Utility: HTML Detection & Parsing
  */
-const isHtmlContent = (contentType) => {
+export const isHtmlContent = (contentType) => {
   if (!contentType) return false;
   return contentType.includes('text/html') || contentType.includes('application/xhtml+xml');
 };
 
-const htmlToText = (html) => {
+export const htmlToText = (html) => {
   const $ = cheerio.load(html);
-  
-  // Remove script, style, and noscript elements
-  $('script, style, noscript, iframe, svg, head').remove();
-  
+
+  // Extract title and meta from head BEFORE removing head
+  const title = $('title').text().trim() || undefined;
+  const meta_description = $('meta[name="description"]').attr('content') || undefined;
+
+  // Remove script, style, and noscript elements (but not head yet for meta extraction)
+  $('script, style, noscript, iframe, svg').remove();
+
   // Get text from body, trimming whitespace
   let text = $('body').text().trim();
-  
+
   // Collapse multiple spaces into single space
   text = text.replace(/\s+/g, ' ');
-  
+
   // Convert to structured JSON for skinning
   // Extract key semantic elements
   const structured = {
-    title: $('title').text().trim() || undefined,
+    title,
     h1: $('h1').first().text().trim() || undefined,
     h2: $('h2, h3').map((_, el) => $(el).text().trim()).get() || undefined,
-    // eslint-disable-next-line no-unused-vars  paragraphs: $('p').map((_, el) => $(el).text().trim()).get().filter(p => p.length > 20) || undefined,
-    links: $('a[href]').map((_, el) => ({ text: $(el).text().trim(), href: $(el).attr('href') })).get().slice(0, 10) || undefined,
-    meta_description: $('meta[name="description"]').attr('content') || undefined,
+    links: $('a[href]').map((_, el) => {
+      const href = $(el).attr('href') || '';
+      // Strip entire href for dangerous URL schemes to prevent XSS
+      const isDangerous = /^(javascript:|data:)/i.test(href);
+      return { text: $(el).text().trim(), href: isDangerous ? '' : href };
+    }).get().slice(0, 10) || undefined,
+    meta_description,
     body_text: text
   };
-  
+
   // Remove undefined keys
   return Object.fromEntries(Object.entries(structured).filter(([_, v]) => v !== undefined));
 };
@@ -94,12 +115,20 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
  * Utility: SSRF Protection
  * Prevents agents from accessing local or private network resources.
  */
-const isSafeUrl = (urlStr) => {
+export const isSafeUrl = (urlStr) => {
   try {
     const url = new URL(urlStr);
     if (!['http:', 'https:'].includes(url.protocol)) return false;
-    
-    const hostname = url.hostname.toLowerCase();
+
+    // Strip IPv6 zone ID (e.g., fe80::1%eth0 -> fe80::1) and brackets (e.g., [::1] -> ::1)
+    let hostname = url.hostname.toLowerCase().split('%')[0].replace(/^\[|\]$/g, '');
+
+    // Block all IPv4-mapped IPv6 addresses (::ffff:...) as they all map to private ranges
+    // Node.js normalizes [::ffff:127.0.0.1] to [::ffff:7f00:1]
+    if (hostname.startsWith('::ffff:')) {
+      return false;
+    }
+
     const privatePatterns = [
       /^localhost$/,
       /^127\./,
@@ -109,15 +138,23 @@ const isSafeUrl = (urlStr) => {
       /^169\.254\./,
       /^0\./,
       /^::1$/,
+      /^::$/,
       /^fc00:/,
-      /^fe80:/
+      /^fe80:/,
     ];
-    
+
     return !privatePatterns.some(pattern => pattern.test(hostname));
   } catch {
     return false;
   }
 };
+
+// Timeout wrapper for local processing operations (30s max)
+const withTimeout = (promise, ms = 30000) =>
+  Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Processing timeout (30s exceeded)')), ms))
+  ]);
 
 /**
  * Tool Logic (100% Local-First Studio)
@@ -128,37 +165,47 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   try {
     // 1. Fetch Optimized Data: Local Pruning Studio (Privacy-First)
     if (name === "fetch_optimized_data") {
-      if (!isSafeUrl(args.url)) {
-        throw new Error("Access Denied: URL is restricted or invalid.");
+      const validated = FetchArgsSchema.parse(args);
+
+      if (!isSafeUrl(validated.url)) {
+        throw new Error("Unable to fetch the requested resource.");
       }
-      
+
       // Fetch Raw Data Locally
-      const response = await axios.get(args.url, { timeout: 10000 });
-      
+      const response = await axios.get(validated.url, { timeout: 10000 });
+
       let dataToSkin = response.data;
       const contentType = response.headers['content-type'] || '';
-      
+
       // If HTML, parse to structured text
       if (isHtmlContent(contentType)) {
         dataToSkin = htmlToText(response.data);
       }
 
-      // Run the Local Skinning Engine
-      const pruned = recursive_prune(dataToSkin, args.signals || [], args.aliases || {}, args.apply_reasoning || false);
-      const skin = to_markdown_skin(pruned, args.url, JSON.stringify(dataToSkin).length);
-      
+      // Run the Local Skinning Engine with timeout protection
+      const pruned = await withTimeout(
+        Promise.resolve(recursive_prune(dataToSkin, validated.signals, validated.aliases, validated.apply_reasoning))
+      );
+      const skin = to_markdown_skin(pruned, validated.url, JSON.stringify(dataToSkin).length);
+
       return { content: [{ type: "text", text: skin }] };
     }
 
     // 2. Reasoning Skin: Local Distillation (Privacy-First)
     if (name === "skin_reasoning") {
-      const { skin } = skinReasoning(args.text);
+      const validated = SkinReasoningArgsSchema.parse(args);
+      const { skin } = skinReasoning(validated.text);
       return { content: [{ type: "text", text: skin }] };
     }
 
     throw new Error("Unknown tool. Local-First Protocol supports 'fetch_optimized_data' and 'skin_reasoning'.");
   } catch (error) {
-    return { content: [{ type: "text", text: `AgentSkin Local Error: ${error.message}` }], isError: true };
+    // Provide user-friendly error messages without leaking internals
+    if (error instanceof z.ZodError) {
+      const messages = error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      return { content: [{ type: "text", text: `Invalid input: ${messages}` }], isError: true };
+    }
+    return { content: [{ type: "text", text: `AgentSkin Error: ${error.message}` }], isError: true };
   }
 });
 

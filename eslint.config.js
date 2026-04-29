@@ -6,4 +6,5 @@ export default [
   { languageOptions: { globals: globals.node } },
   pluginJs.configs.recommended,
   prettierConfig,
+  { rules: { 'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }] } },
 ];

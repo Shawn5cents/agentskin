@@ -78,10 +78,26 @@ When using the `fetch_optimized_data` tool, provide the `signals` and `aliases` 
 
 ## Architecture
 
-This package is designed as a **Local-First, Open Studio**. 
+This package is designed as a **Local-First, Open Studio**.
 - All data fetching and pruning happens locally on the host machine.
 - User session state, cookies, and network access remain strictly local and private.
 - The core engine (`skin-engine.js`) operates without external dependencies for transformation.
+
+## Security
+
+The reference implementation includes robust security measures:
+- **SSRF Protection:** Private network ranges (IPv4/IPv6) are blocked
+- **Input Validation:** All tool inputs validated with Zod schemas
+- **URL Sanitization:** Dangerous URL schemes (javascript:, data:) stripped from HTML links
+- **Processing Timeout:** 30s limit prevents resource exhaustion
+
+## Testing
+
+```bash
+npm test        # Run all 48 tests
+npm run lint   # Lint code quality
+npm run benchmark  # Run token compression benchmarks
+```
 
 ## Specification & Benchmarks
 

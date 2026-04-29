@@ -1,4 +1,4 @@
-# AgentSkin: Protocol Documentation (v4.2.1)
+# AgentSkin: Protocol Documentation (v4.2.2)
 
 > **"The Open Standard for Semantic Data Perception."**
 > **Official Host:** Nichols Transco LLC // agentskin.dev
@@ -27,8 +27,22 @@ Nichols Transco LLC provides the primary infrastructure for the protocol at `api
 ---
 
 ### 🛡️ 02 / SECURITY PROTOCOLS
-AgentSkin utilizes a **Machine-Friendly PoW (Proof-of-Work)** to protect the network from botnet abuse. 
+AgentSkin utilizes a **Machine-Friendly PoW (Proof-of-Work)** to protect the network from botnet abuse.
 - **Integrity:** Every packet includes `X-AgentSkin-Provenance` for deterministic source verification.
+
+#### 2.1 SSRF Protection (v4.2.2+)
+The reference implementation includes robust SSRF (Server-Side Request Forgery) protection:
+- **Private Range Blocking:** All IPv4 private ranges blocked (10.x.x.x, 172.16-31.x.x, 192.168.x.x, 127.x.x.x, 169.254.x.x, 0.0.0.0)
+- **IPv6 Blocking:** Link-local (fe80:, fc00:), loopback (::1, ::), and IPv4-mapped IPv6 (::ffff:) addresses blocked
+- **Zone ID Stripping:** IPv6 zone IDs (e.g., %eth0) are stripped before validation
+- **Protocol Enforcement:** Only HTTP and HTTPS protocols allowed
+- **30s Processing Timeout:** Prevents resource exhaustion from maliciously large payloads
+
+#### 2.2 Input Validation (v4.2.2+)
+All tool inputs are validated with Zod schema validation:
+- URL format validation
+- Type coercion for signals (array), aliases (object), apply_reasoning (boolean)
+- Sanitization of HTML-extracted URLs (javascript:, data: schemes blocked)
 
 ---
 
@@ -41,7 +55,7 @@ AgentSkin treats agents as first-class economic citizens.
 
 ### 🚀 04 / IMPLEMENTATION GUIDE
 
-#### 4.1 HTML Support (v4.2.1+)
+#### 4.1 HTML Support (v4.2.2+)
 AgentSkin now handles both APIs and web pages. When fetching HTML content, the engine:
 - Parses HTML with cheerio (BS4 equivalent)
 - Extracts semantic structure: title, h1/h2, paragraphs, links, meta description
@@ -55,10 +69,21 @@ const skin = new AgentSkin(YOUR_API_KEY);
 const data = await skin.fetch('https://api.target.com');
 ```
 
-#### 4.2 Best Practices
-1. **Skin-First Rule:** Never feed raw JSON directly into an LLM. 
+#### 4.3 Best Practices
+1. **Skin-First Rule:** Never feed raw JSON directly into an LLM.
 2. **Signal Hinting:** Use `signals` to explicitly define decision drivers.
 3. **Zero-Inflation Guarantee:** Use v3.4+ logic to avoid re-skinning small datasets.
+4. **Validate Inputs:** Always provide valid URL formats and proper types for signals/aliases.
+
+#### 4.4 Testing (v4.2.2+)
+The reference implementation includes comprehensive test coverage:
+- **48 tests** covering core functionality, edge cases, and security
+- SSRF protection validation (IPv4, IPv6, zone IDs, mapped addresses)
+- HTML parsing verification (title, headings, links, sanitization)
+- Skinning engine edge cases (null, empty, nested, arrays)
+```bash
+npm test  # Run all tests
+npm run lint  # Lint code quality
 
 ---
 

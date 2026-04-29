@@ -4,7 +4,7 @@
 
 The Semantic Shorthand Standard (SSS) defines a deterministic algorithm for pruning arbitrary JSON/HTML data into compact, hierarchical Markdown \"skins.\" Designed for agentic workflows, SSS eliminates the Token Tax by retaining only high-signal keys while normalizing schema via aliases.
 
-Reference implementation: [GitHub](https://github.com/...) | NPM: agentskin@4.2.1
+Reference implementation: [GitHub](https://github.com/shawn5cents/agentskin) | NPM: agentskin@4.2.2
 
 ## Tools Schema
 

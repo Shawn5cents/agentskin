@@ -1,6 +1,6 @@
 # AgentSkin: Protocol State
 
-## Current Version: 1.0.0 (Reference Implementation)
+## Current Version: 4.2.2 (Reference Implementation)
 **Date:** March 2026
 
 ---
