@@ -1,7 +1,7 @@
-# The AgentSkin Manifesto (v4.4 Lab) 🛡️
+# The AgentSkin Manifesto (v4.2) 🛡️
 
 ## 🤖 What is AgentSkin?
-AgentSkin is the **Universal Semantic Layer** for the Agentic Web. 
+AgentSkin is the **Universal Semantic Layer** for the Agentic Web.
 While the internet was built for human eyes (HTML/CSS), the future is built for machine brains. We are the bridge.
 
 We take fragmented, messy, and token-heavy API data and "skin" it into high-density, deterministic Markdown that AI Agents can process at 10x speed and 1/10th the cost.
@@ -10,11 +10,13 @@ We take fragmented, messy, and token-heavy API data and "skin" it into high-dens
 
 ### 🧪 THE EXPERIMENTAL LAB (v4.4+)
 The following modules are currently in high-speed development:
-1.  **Search Triage:** Synthesis of Brave, Tavily, and Exa into a single high-density stream (Verified 73% Aggregate Savings).
-2.  **Logistics Skin:** Zero-Failure pruning for EDI 214 and Load Board JSON (Verified 92% Savings).
-3.  **Finance Skin:** High-density market data normalization for Tickers and Aggregators (Verified 80% Savings).
-4.  **Code Skinner:** Linguistic pruning for GitHub source files, stripping 20%+ of non-logic noise.
+1.  **Search Triage:** Synthesis of Brave, Tavily, and Exa into a single high-density stream.
+2.  **Logistics Skin:** Zero-Failure pruning for EDI 214 and Load Board JSON.
+3.  **Finance Skin:** High-density market data normalization for Tickers and Aggregators.
+4.  **Code Skinner:** Linguistic pruning for GitHub source files.
 5.  **Whole-Site Crawler:** Asynchronous site discovery and skinning via Cloudflare Browser Rendering.
+
+*Note: Benchmarks for experimental modules are pending verification.*
 
 ---
 

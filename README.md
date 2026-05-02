@@ -47,7 +47,7 @@ Add the following to your `claude_desktop_config.json`:
 The reference implementation exposes the following tools to AI agents:
 
 ### 1. `fetch_optimized_data`
-Fetches any API or Web URL and returns a token-optimized "Skin." Token savings vary by data structure (benchmarked: up to 86% for rich API responses). 
+Fetches any API or Web URL and returns a token-optimized "Skin." Token savings vary by data structure (benchmarked: 66-86% for typical API responses). 
 - **Arguments:**
   - `url` (string, required): The target data source.
   - `signals` (string[], optional): An array of semantic keys to preserve.
@@ -78,10 +78,20 @@ When using the `fetch_optimized_data` tool, provide the `signals` and `aliases` 
 
 ## Architecture
 
-This package is designed as a **Local-First, Open Studio**. 
+This package is designed as a **Local-First, Open Studio**.
 - All data fetching and pruning happens locally on the host machine.
 - User session state, cookies, and network access remain strictly local and private.
 - The core engine (`skin-engine.js`) operates without external dependencies for transformation.
+
+## Security
+
+The reference implementation includes robust security measures:
+- **SSRF Protection:** Blocks private network ranges (IPv4: 127.x, 10.x, 172.16-31.x, 192.168.x; IPv6: ::1, ::ffff:, fe80:)
+- **Cloud Metadata Blocking:** Prevents access to GCP, Azure, and Kubernetes metadata services
+- **Rate Limiting:** 30 requests/minute sliding window per client
+- **Input Validation:** All tool inputs validated with Zod schemas
+- **URL Sanitization:** Dangerous URL schemes (javascript:, data:) stripped from HTML links
+- **Processing Timeout:** 30s limit prevents resource exhaustion
 
 ## Documentation & Whitepaper
 

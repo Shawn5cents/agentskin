@@ -1,4 +1,4 @@
-# AgentSkin: Protocol Documentation (v4.2)
+# AgentSkin: Protocol Documentation (v4.2.2)
 
 > **"The Open Standard for Semantic Data Perception."**
 > **Official Host:** Nichols Transco LLC // agentskin.dev
