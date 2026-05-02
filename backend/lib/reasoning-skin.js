@@ -92,18 +92,15 @@ export function skinReasoning(text) {
 }
 
 export function skinStructured(jsonString) {
-  let result = jsonString;
-  
   try {
     const parsed = JSON.parse(jsonString);
     const pruned = pruneObjectValues(parsed);
-    result = JSON.stringify(pruned);
+    const skin = JSON.stringify(pruned);
+    const metrics = calculateSavings(jsonString, skin);
+    return { skin, metrics };
   } catch {
     return skinReasoning(jsonString);
   }
-  
-  const metrics = calculateSavings(jsonString, result);
-  return { skin: result, metrics };
 }
 
 function pruneObjectValues(obj) {

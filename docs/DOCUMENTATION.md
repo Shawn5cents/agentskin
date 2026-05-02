@@ -16,7 +16,7 @@ AgentSkin is a **Hybrid Protocol** designed to solve the "Token Tax" of the Web 
 The standard defines the deterministic rules for converting noisy JSON into high-density Markdown signals.
 - **Goal:** Universal machine-readability.
 - **Engine:** Recursive Shorthand Pruning (Deterministic).
-- **Format:** Key-Value Signal Streams (90% compression).
+- **Format:** Key-Value Signal Streams (66-86% token reduction, varies by data structure).
 
 #### 1.2 The Official Host (Managed)
 Nichols Transco LLC provides the primary infrastructure for the protocol at `api.agentskin.dev`.

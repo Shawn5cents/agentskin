@@ -8,6 +8,49 @@ import { skinReasoning } from './reasoning-skin.js';
 // Export individual tools for specific options
 export { skinReasoning };
 
+/**
+ * Strip HTML tags and extract readable text
+ */
+export const stripHtmlTags = (html) => {
+    if (typeof html !== 'string') return html;
+
+    // First, remove script and style tags with their content
+    let text = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    text = text.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '');
+
+    // Remove HTML comments
+    text = text.replace(/<!--[\s\S]*?-->/g, '');
+
+    // Replace common block elements with newlines for readability
+    text = text.replace(/<\/(p|div|li|tr|h[1-6])>/gi, '\n');
+    text = text.replace(/<(p|div|li|tr|h[1-6])[^>]*>/gi, '\n');
+
+    // Remove all remaining HTML tags
+    text = text.replace(/<[^>]+>/g, '');
+
+    // Decode common HTML entities
+    text = text.replace(/&nbsp;/g, ' ');
+    text = text.replace(/&amp;/g, '&');
+    text = text.replace(/&lt;/g, '<');
+    text = text.replace(/&gt;/g, '>');
+    text = text.replace(/&quot;/g, '"');
+    text = text.replace(/&#39;/g, "'");
+
+    // Clean up whitespace
+    text = text.replace(/\n\s*\n/g, '\n');
+    text = text.trim();
+
+    return text;
+};
+
+/**
+ * Detect if content is HTML
+ */
+export const isHtml = (content) => {
+    if (typeof content !== 'string') return false;
+    return /<[a-z][\s\S]*>/i.test(content);
+};
+
 const DEFAULT_SIGNAL_KEYS = [
     'id', 'name', 'title', 'value', 'status', 'price', 'temp', 'wind', 
     'description', 'url', 'link', 'published_at', 'text', 'code', 'c', 'v', 'p'
