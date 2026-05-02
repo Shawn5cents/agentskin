@@ -9,6 +9,8 @@
   },
   "files": [
     "backend/",
+    "backend/package.json",
+    "backend/package-lock.json",
     "README.md",
     "LICENSE",
     "docs/",
@@ -19,8 +21,8 @@
     "start": "node backend/mcp.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "eslint . --ext .js",
-    "lint:fix": "eslint . --fix --ext .js",
+    "lint": "eslint backend/mcp.js backend/lib/ benchmarks/run.js tests/ --ext .js",
+    "lint:fix": "eslint backend/mcp.js backend/lib/ benchmarks/run.js tests/ --fix --ext .js",
     "benchmark": "node benchmarks/run.js"
   },
   "dependencies": {

@@ -72,6 +72,19 @@ describe('isSafeUrl', () => {
     expect(isSafeUrl('http://[::ffff:192.168.1.1]')).toBe(false);
   });
 
+  it('blocks cloud metadata services', () => {
+    // Google Cloud metadata
+    expect(isSafeUrl('http://metadata.google.internal/')).toBe(false);
+    expect(isSafeUrl('http://metadata.goog/')).toBe(false);
+    // AWS/Azure/GCP common IP
+    expect(isSafeUrl('http://169.254.169.254/latest/meta-data/')).toBe(false);
+    // Azure metadata
+    expect(isSafeUrl('http://metadata.azure.com/')).toBe(false);
+    // Kubernetes API
+    expect(isSafeUrl('http://kubernetes.default.svc/')).toBe(false);
+    expect(isSafeUrl('http://kubernetes.default/')).toBe(false);
+  });
+
   // Protocol validation
   it('blocks non-http protocols', () => {
     expect(isSafeUrl('file:///etc/passwd')).toBe(false);

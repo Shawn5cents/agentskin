@@ -12,6 +12,7 @@ Perceptual drag: attention wasted on noise. Benchmarks: Weather API 163 → 55 G
 
 **Benchmarked (GPT-4 cl100k_base):**
 - Weather API: 66.3% token savings
+- Savings vary by data structure and signal specificity
 - Cost drop proportional to tokens.
 - TTFT scales with input size; smaller = faster.
 

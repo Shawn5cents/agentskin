@@ -8,9 +8,17 @@ import { skinReasoning } from './reasoning-skin.js';
 // Export individual tools for specific options
 export { skinReasoning };
 
+// Default signal keys: commonly-used semantic field names preserved by default
+// Single-letter keys (c, v, p) map to common abbreviated API response fields:
+//   c = count/sount, v = value, p = price/product
+// User-provided signals are always added via the signals parameter
 const DEFAULT_SIGNAL_KEYS = [
-    'id', 'name', 'title', 'value', 'status', 'price', 'temp', 'wind', 
-    'description', 'url', 'link', 'published_at', 'text', 'code', 'c', 'v', 'p'
+    'id', 'name', 'title', 'value', 'status', 'price', 'temp', 'wind',
+    'description', 'url', 'link', 'published_at', 'text', 'code',
+    // Abbreviated keys for common API responses
+    'c',  // count, count_*, common abbreviated field
+    'v',  // value, variant, volume
+    'p'   // price, product, position
 ];
 
 export const recursive_prune = (data, requiredKeys = [], aliases = {}, applyReasoningSkin = false) => {

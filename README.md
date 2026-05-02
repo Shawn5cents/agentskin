@@ -47,7 +47,7 @@ Add the following to your `claude_desktop_config.json`:
 The reference implementation exposes the following tools to AI agents:
 
 ### 1. `fetch_optimized_data`
-Fetches any API or Web URL and returns a 90% token-optimized "Skin." 
+Fetches any API or Web URL and returns a token-optimized "Skin." Token savings vary by data structure (benchmarked: up to 66% reduction for structured JSON). 
 - **Arguments:**
   - `url` (string, required): The target data source.
   - `signals` (string[], optional): An array of semantic keys to preserve.

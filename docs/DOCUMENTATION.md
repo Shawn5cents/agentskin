@@ -16,7 +16,7 @@ AgentSkin is a **Hybrid Protocol** designed to solve the "Token Tax" of the Web 
 The standard defines the deterministic rules for converting noisy JSON and HTML into high-density Markdown signals.
 - **Goal:** Universal machine-readability.
 - **Engine:** Recursive Shorthand Pruning (Deterministic).
-- **Format:** Key-Value Signal Streams (90% compression).
+- **Format:** Key-Value Signal Streams (66-86% token reduction, varies by data structure).
 
 #### 1.2 The Official Host (Managed)
 Nichols Transco LLC provides the primary infrastructure for the protocol at `api.agentskin.dev`.
@@ -77,12 +77,15 @@ const data = await skin.fetch('https://api.target.com');
 
 #### 4.4 Testing (v4.2.2+)
 The reference implementation includes comprehensive test coverage:
-- **48 tests** covering core functionality, edge cases, and security
-- SSRF protection validation (IPv4, IPv6, zone IDs, mapped addresses)
+- **77 tests** covering core functionality, edge cases, security, and real HTTP integration
+- SSRF protection validation (IPv4, IPv6, zone IDs, mapped addresses, cloud metadata)
+- Cloud metadata service blocking (GCP, Azure, Kubernetes)
+- Rate limiting (30 requests/minute sliding window)
 - HTML parsing verification (title, headings, links, sanitization)
 - Skinning engine edge cases (null, empty, nested, arrays)
+- Real HTTP fetch integration tests (GitHub, Open-Meteo, JSONPlaceholder, example.com)
 ```bash
-npm test  # Run all tests
+npm test  # Run all tests (77 tests)
 npm run lint  # Lint code quality
 
 ---

@@ -22,9 +22,30 @@ const FetchArgsSchema = z.object({
   apply_reasoning: z.boolean().optional().default(false),
 });
 
+const MAX_REASONING_CHARS = 50000; // 50KB text cap
 const SkinReasoningArgsSchema = z.object({
-  text: z.string().min(1, "Text cannot be empty"),
+  text: z.string().min(1, "Text cannot be empty").max(MAX_REASONING_CHARS, `Text exceeds ${MAX_REASONING_CHARS} character limit`),
 });
+
+// Rate limiting configuration
+const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute window
+const MAX_REQUESTS_PER_WINDOW = 30; // Max 30 requests per minute
+
+const requestTimestamps = [];
+
+const checkRateLimit = () => {
+  const now = Date.now();
+  // Remove timestamps outside the current window
+  while (requestTimestamps.length > 0 && requestTimestamps[0] <= now - RATE_LIMIT_WINDOW_MS) {
+    requestTimestamps.shift();
+  }
+
+  if (requestTimestamps.length >= MAX_REQUESTS_PER_WINDOW) {
+    throw new Error('Rate limit exceeded. Please wait before making more requests.');
+  }
+
+  requestTimestamps.push(now);
+};
 
 /**
  * Utility: HTML Detection & Parsing
@@ -34,7 +55,12 @@ export const isHtmlContent = (contentType) => {
   return contentType.includes('text/html') || contentType.includes('application/xhtml+xml');
 };
 
+const MAX_HTML_BYTES = 2 * 1024 * 1024; // 2MB HTML cap to prevent parser bombs
 export const htmlToText = (html) => {
+  // Reject oversized HTML before parsing
+  if (typeof html === 'string' && Buffer.byteLength(html, 'utf8') > MAX_HTML_BYTES) {
+    throw new Error(`HTML content exceeds ${MAX_HTML_BYTES / 1024 / 1024}MB limit`);
+  }
   const $ = cheerio.load(html);
 
   // Extract title and meta from head BEFORE removing head
@@ -90,7 +116,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: [
       {
         name: "fetch_optimized_data",
-        description: "Fetches any API or Web URL and returns a 90% token-optimized 'Skin'. Supports custom signals and aliases.",
+        description: "Fetches any API or Web URL and returns a token-optimized 'Skin'. Token savings vary by data structure (benchmarked: up to 66% reduction for structured JSON). Supports custom signals and aliases.",
         inputSchema: {
           type: "object",
           properties: {
@@ -129,6 +155,22 @@ export const isSafeUrl = (urlStr) => {
       return false;
     }
 
+    // Cloud provider metadata services (resolve to internal IPs in cloud environments)
+    const cloudMetadataHosts = [
+      'metadata.google.internal',      // Google Cloud
+      'metadata.goog',                 // Google Cloud (alt)
+      '169.254.169.254',               // AWS/Azure/GCP common endpoint
+      'metadata.azure.com',            // Azure
+      'metadata.internal',             // Generic
+      'kubernetes.default.svc',        // Kubernetes API
+      'kubernetes.default',            // Kubernetes API (short)
+    ];
+
+    // Block cloud metadata hosts (must be checked after IP patterns since some are IPs)
+    if (cloudMetadataHosts.includes(hostname)) {
+      return false;
+    }
+
     const privatePatterns = [
       /^localhost$/,
       /^127\./,
@@ -163,6 +205,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
 
   try {
+    // Apply rate limiting to all tool calls
+    checkRateLimit();
+
     // 1. Fetch Optimized Data: Local Pruning Studio (Privacy-First)
     if (name === "fetch_optimized_data") {
       const validated = FetchArgsSchema.parse(args);
@@ -171,8 +216,26 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         throw new Error("Unable to fetch the requested resource.");
       }
 
-      // Fetch Raw Data Locally
-      const response = await axios.get(validated.url, { timeout: 10000 });
+      // Fetch Raw Data Locally — with redirect SSRF guard
+      const MAX_RESPONSE_BYTES = 5 * 1024 * 1024; // 5MB hard cap
+      const response = await axios.get(validated.url, {
+        timeout: 10000,
+        maxRedirects: 5,
+        maxContentLength: MAX_RESPONSE_BYTES,
+        maxBodyLength: MAX_RESPONSE_BYTES,
+        beforeRedirect: (opts) => {
+          // Validate each redirect target before following
+          if (!isSafeUrl(opts.href)) {
+            throw new Error('Unable to fetch the requested resource.');
+          }
+        },
+      });
+
+      // Defense-in-depth: also validate the final URL after all redirects
+      const finalUrl = response.request?.res?.responseUrl || response.config?.url;
+      if (finalUrl && !isSafeUrl(finalUrl)) {
+        throw new Error('Unable to fetch the requested resource.');
+      }
 
       let dataToSkin = response.data;
       const contentType = response.headers['content-type'] || '';

@@ -3,7 +3,7 @@
 > The Universal Semantic Compression Layer for AI Agents.
 
 ## Capabilities
-`transform_data(data, signals)`: Prunes and converts any raw JSON data into high-density Markdown skins. Reduces token usage by up to 90%.
+`transform_data(data, signals)`: Prunes and converts any raw JSON data into high-density Markdown skins. Token savings vary by data structure (benchmarked: up to 86% for rich API responses).
 
 ## Discovery Protocol (v3.0)
 1.  **Target:** `https://api.agentskin.dev/v1/transform`

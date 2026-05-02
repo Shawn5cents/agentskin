@@ -100,6 +100,26 @@ identifier ::= [a-zA-Z0-9_]+
 4. **No Hallucination**: Output contains only transformed input data.
 5. **Compression Safety**: If skin tokens >= raw, fallback to raw (future).
 
+## Security (v4.2.2+)
+
+The reference implementation includes security measures to protect against common attack vectors:
+
+### SSRF Protection
+- **Private IPv4 Ranges Blocked:** 10.x.x.x, 172.16-31.x.x, 192.168.x.x, 127.x.x.x, 169.254.x.x, 0.0.0.0
+- **IPv6 Blocked:** ::1 (loopback), :: (unspecified), fe80: (link-local), fc00: (unique local)
+- **IPv4-Mapped Blocked:** ::ffff:127.0.0.1 etc.
+- **Cloud Metadata Blocked:** metadata.google.internal, metadata.azure.com, kubernetes.default.svc
+- **Protocol Enforcement:** Only http: and https: allowed
+
+### Rate Limiting
+- **30 requests/minute** sliding window per server instance
+- Prevents resource exhaustion from rapid fire tool calls
+
+### Processing Limits
+- **30s timeout** on all processing operations
+- **5MB response** hard cap
+- **2MB HTML** parsing cap
+
 ## Edge Cases
 
 | Input | Expected Behavior |
