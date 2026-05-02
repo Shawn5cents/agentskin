@@ -47,7 +47,7 @@ Add the following to your `claude_desktop_config.json`:
 The reference implementation exposes the following tools to AI agents:
 
 ### 1. `fetch_optimized_data`
-Fetches any API or Web URL and returns a token-optimized "Skin." Token savings vary by data structure (benchmarked: up to 66% reduction for structured JSON). 
+Fetches any API or Web URL and returns a token-optimized "Skin." Token savings vary by data structure (benchmarked: 66-86% for typical API responses). 
 - **Arguments:**
   - `url` (string, required): The target data source.
   - `signals` (string[], optional): An array of semantic keys to preserve.
@@ -86,7 +86,9 @@ This package is designed as a **Local-First, Open Studio**.
 ## Security
 
 The reference implementation includes robust security measures:
-- **SSRF Protection:** Private network ranges (IPv4/IPv6) are blocked
+- **SSRF Protection:** Blocks private network ranges (IPv4: 127.x, 10.x, 172.16-31.x, 192.168.x; IPv6: ::1, ::ffff:, fe80:)
+- **Cloud Metadata Blocking:** Prevents access to GCP, Azure, and Kubernetes metadata services
+- **Rate Limiting:** 30 requests/minute sliding window per client
 - **Input Validation:** All tool inputs validated with Zod schemas
 - **URL Sanitization:** Dangerous URL schemes (javascript:, data:) stripped from HTML links
 - **Processing Timeout:** 30s limit prevents resource exhaustion
@@ -94,7 +96,7 @@ The reference implementation includes robust security measures:
 ## Testing
 
 ```bash
-npm test        # Run all 48 tests
+npm test        # Run all 77 tests
 npm run lint   # Lint code quality
 npm run benchmark  # Run token compression benchmarks
 ```

@@ -52,3 +52,30 @@ The SSS is distributed via the Model Context Protocol (MCP) as the `agentskin` r
 
 ## 🏁 V. Conclusion
 By standardizing the formatting of machine perception, the Semantic Shorthand Standard enables an ecosystem where agents can reason faster, cheaper, and with mathematical determinism. The protocol bridges the gap between the human web and the autonomous economy.
+
+---
+
+## 🔒 VI. Security Considerations (v4.2.2+)
+
+The reference implementation includes robust security measures:
+
+### SSRF Protection
+Blocks requests to private network ranges:
+- **IPv4:** 127.x.x.x (loopback), 10.x.x.x, 172.16-31.x.x, 192.168.x.x (private), 169.254.x.x (link-local), 0.0.0.0
+- **IPv6:** ::1 (loopback), ::ffff:, fe80: (link-local)
+
+### Cloud Metadata Blocking
+Prevents access to cloud provider metadata services:
+- `metadata.google.internal` (GCP)
+- `metadata.azure.com` (Azure)
+- `kubernetes.default.svc` (Kubernetes)
+
+### Rate Limiting
+30 requests/minute sliding window per client to prevent abuse.
+
+### Processing Limits
+- 30-second timeout per request
+- 5MB maximum payload size
+- 2MB maximum HTML size
+
+These measures ensure AgentSkin operates safely within autonomous agent pipelines without exposing internal network resources.
