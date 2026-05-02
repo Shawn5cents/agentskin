@@ -305,7 +305,13 @@ const INTRO_CONTENT = `
             <p>The reference implementation includes robust security measures to protect against common attack vectors in AI agent pipelines.</p>
             
             <h3>SSRF Protection</h3>
-            <p>Blocks requests to private network ranges including IPv4 (127.x.x.x, 10.x.x.x, 172.16-31.x.x, 192.168.x.x) and IPv6 variants (::1, ::ffff:, fe80:). Zone IDs are stripped and validated before processing.</p>
+            <p>Blocks requests to private network ranges including IPv4 (127.x.x.x, 10.x.x.x, 172.16-31.x.x, 192.168.x.x, 169.254.x.x) and IPv6 variants (::1, ::ffff:, fe80:). Zone IDs are stripped and validated before processing.</p>
+            
+            <h3>Cloud Metadata Blocking</h3>
+            <p>Prevents access to cloud provider metadata services (metadata.google.internal, metadata.azure.com, kubernetes.default.svc) that could expose cloud credentials or configuration.</p>
+
+            <h3>Rate Limiting</h3>
+            <p>30 requests/minute sliding window per client to prevent abuse and ensure fair resource allocation in multi-agent environments.</p>
             
             <h3>Input Validation</h3>
             <p>All tool inputs are validated with Zod schema validation. Type coercion ensures signals, aliases, and apply_reasoning parameters are properly typed before processing.</p>
@@ -317,7 +323,7 @@ const INTRO_CONTENT = `
             <p>30-second processing timeout prevents resource exhaustion from maliciously large payloads.</p>
             
             <h3>Open Source Auditing</h3>
-            <p>The security implementation is fully open-source and includes 32 security tests for continuous validation.</p>
+            <p>The security implementation is fully open-source and includes 77 tests for continuous validation.</p>
         </div>
     </div>
     <div class="thesis-item">
@@ -490,12 +496,14 @@ const FAQ_CONTENT = `
             <h2>What protections prevent malicious URLs?</h2>
             <p>The reference implementation includes enterprise-grade security measures:</p>
             <ul style="margin: 15px 0; padding-left: 20px;">
-                <li><strong>SSRF Protection:</strong> Blocks private network ranges (127.x, 10.x, 172.16-31.x, 192.168.x) and IPv6 variants</li>
+                <li><strong>SSRF Protection:</strong> Blocks private network ranges (127.x, 10.x, 172.16-31.x, 192.168.x, 169.254.x) and IPv6 variants</li>
+                <li><strong>Cloud Metadata Blocking:</strong> Prevents access to GCP, Azure, and Kubernetes metadata services</li>
+                <li><strong>Rate Limiting:</strong> 30 requests/minute per client prevents abuse</li>
                 <li><strong>Input Validation:</strong> Zod schemas validate all tool inputs with type coercion</li>
                 <li><strong>URL Sanitization:</strong> javascript: and data: URL schemes blocked from HTML extraction</li>
                 <li><strong>Resource Limits:</strong> 30-second timeout prevents resource exhaustion</li>
             </ul>
-            <p>All security features are open-source and include 32 test cases for continuous validation.</p>
+            <p>All security features are open-source and include 77 tests for continuous validation.</p>
         </div>
     </div>
 </section>
