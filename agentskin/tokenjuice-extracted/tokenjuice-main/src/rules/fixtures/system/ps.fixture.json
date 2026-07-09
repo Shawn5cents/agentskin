@@ -1,0 +1,16 @@
+{
+  "id": "system-ps-basic",
+  "ruleId": "system/ps",
+  "input": {
+    "toolName": "exec",
+    "argv": ["ps", "aux"],
+    "command": "ps aux",
+    "combinedText": "USER PID %CPU %MEM COMMAND\nvincent 123 0.0 0.1 node server.js\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "system/ps",
+    "family": "system-processes",
+    "contains": ["process", "node server.js"]
+  }
+}

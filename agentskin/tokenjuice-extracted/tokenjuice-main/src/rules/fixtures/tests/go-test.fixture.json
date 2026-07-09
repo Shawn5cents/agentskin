@@ -1,0 +1,16 @@
+{
+  "id": "tests-go-basic",
+  "ruleId": "tests/go-test",
+  "input": {
+    "toolName": "exec",
+    "argv": ["go", "test", "./..."],
+    "command": "go test ./...",
+    "combinedText": "ok  github.com/example/pkg 0.012s\nFAIL github.com/example/api 0.021s\n",
+    "exitCode": 1
+  },
+  "expect": {
+    "matchedReducer": "tests/go-test",
+    "family": "test-results",
+    "contains": ["failed package", "FAIL github.com/example/api"]
+  }
+}

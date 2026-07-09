@@ -1,0 +1,16 @@
+{
+  "id": "devops-docker-logs-basic",
+  "ruleId": "devops/docker-logs",
+  "input": {
+    "toolName": "exec",
+    "argv": ["docker", "logs", "api"],
+    "command": "docker logs api",
+    "combinedText": "server started\nwarning: deprecated config\nerror: failed to connect db\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "devops/docker-logs",
+    "family": "container-logs",
+    "contains": ["warning", "failed to connect db"]
+  }
+}

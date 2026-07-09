@@ -1,0 +1,16 @@
+{
+  "id": "git-diff-name-only-basic",
+  "ruleId": "git/diff-name-only",
+  "input": {
+    "toolName": "exec",
+    "argv": ["git", "diff", "--name-only"],
+    "command": "git diff --name-only",
+    "combinedText": "src/index.ts\ntest/core/reduce.test.ts\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "git/diff-name-only",
+    "family": "git-diff",
+    "contains": ["file", "src/index.ts"]
+  }
+}

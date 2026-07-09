@@ -1,0 +1,16 @@
+{
+  "id": "install-yarn-basic",
+  "ruleId": "install/yarn-install",
+  "input": {
+    "toolName": "exec",
+    "argv": ["yarn", "install"],
+    "command": "yarn install",
+    "combinedText": "[1/4] Resolving packages...\n[4/4] Building fresh packages...\nsuccess Saved lockfile.\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "install/yarn-install",
+    "family": "dependency-install",
+    "contains": ["Saved lockfile"]
+  }
+}

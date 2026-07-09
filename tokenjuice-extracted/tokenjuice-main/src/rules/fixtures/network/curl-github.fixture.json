@@ -1,0 +1,16 @@
+{
+  "id": "network-curl-github",
+  "ruleId": "network/curl-github",
+  "input": {
+    "toolName": "exec",
+    "argv": ["curl", "https://api.github.com/repos/vercel/next.js"],
+    "command": "curl https://api.github.com/repos/vercel/next.js",
+    "combinedText": "{\n  \"id\": 12345,\n  \"name\": \"next.js\",\n  \"full_name\": \"vercel/next.js\",\n  \"description\": \"The React Framework\",\n  \"stargazers_count\": 100000,\n  \"language\": \"JavaScript\"\n}",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "network/curl-github",
+    "family": "network-http",
+    "contains": ["next.js", "description"]
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "name": "skin_api_response",
+  "description": "Optimize an API JSON response using AgentSkin SSS. Recursively prunes JSON to keep only signal-matched keys, applies semantic aliases, and flattens to markdown. Up to 88% token reduction on rich JSON APIs (GitHub, Stripe, npm, etc.).",
+  "publisher": "agentskin",
+  "version": "2.0.0",
+  "parameters": {
+    "type": "object",
+    "required": ["data"],
+    "properties": {
+      "data": {
+        "type": "object",
+        "description": "JSON response data to optimize. Can be any JSON-serializable structure."
+      },
+      "url": {
+        "type": "string",
+        "description": "Original URL of the API. When provided, auto-classification matches against built-in API rule families (GitHub, npm, HackerNews, weather, etc.) to select the right signals/aliases."
+      },
+      "signals": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Field names to preserve. If empty and url is provided, signals are auto-selected from the matched rule. If empty and url is missing, uses DEFAULT_SIGNAL_KEYS."
+      },
+      "aliases": {
+        "type": "object",
+        "additionalProperties": { "type": "string" },
+        "description": "Key alias mappings for readability (e.g. {\"stargazers_count\": \"stars\"})."
+      },
+      "autoClassify": {
+        "type": "boolean",
+        "default": true,
+        "description": "If true and url is provided, auto-select signals/aliases from matched rule. If false, only use explicit signals/aliases."
+      },
+      "stripAnsi": {
+        "type": "boolean",
+        "default": true,
+        "description": "Strip ANSI escape codes from the JSON before parsing."
+      },
+      "smallThreshold": {
+        "type": "number",
+        "default": 300,
+        "description": "Bypass optimization for payloads below this size (chars). Avoids overhead on already-compact responses."
+      }
+    }
+  },
+  "returns": {
+    "type": "object",
+    "properties": {
+      "skin": { "type": "string", "description": "Optimized markdown skin." },
+      "metrics": {
+        "type": "object",
+        "properties": {
+          "applied": { "type": "boolean" },
+          "reason": { "type": "string" },
+          "raw_chars": { "type": "number" },
+          "skin_chars": { "type": "number" },
+          "savings_ratio": { "type": "string" }
+        }
+      },
+      "compaction": { "type": "object", "description": "CompactionMetadata with kinds array and authoritative flag." },
+      "rule": { "type": "object", "description": "Matched URL rule, or null if no rule matched." }
+    }
+  },
+  "handler": "import { skin } from '../../agentskin/backend/lib/skin-engine.js'; return await skin(args.data, { url: args.url, signals: args.signals, aliases: args.aliases, autoClassify: args.autoClassify, stripAnsi: args.stripAnsi, smallThreshold: args.smallThreshold });",
+  "examples": [
+    {
+      "description": "Optimize a GitHub API response",
+      "input": {
+        "data": { "id": 12345, "name": "next.js", "node_id": "MDEwOlJlcG9z...", "owner": { "login": "vercel", "avatar_url": "..." } },
+        "url": "https://api.github.com/repos/vercel/next.js"
+      },
+      "output": {
+        "skin": "next.js\nstars: 100000\n...",
+        "metrics": { "applied": true, "raw_chars": 6144, "skin_chars": 256, "savings_ratio": "95.83%" }
+      }
+    }
+  ]
+}

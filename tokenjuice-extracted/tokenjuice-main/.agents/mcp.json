@@ -1,0 +1,25 @@
+{
+  "description": "MCP servers for AgentSkin and Tokenjuice integration with MOA agents. Both servers expose token optimization tools that can be called by any MOA agent with MCP support. Paths are auto-resolved by wrapper scripts in .agents/mcp/ — no manual path editing needed.",
+  "mcpServers": {
+    "agentskin-mcp": {
+      "command": "bash",
+      "args": [".agents/mcp/agentskin-mcp.sh"],
+      "env": {},
+      "description": "AgentSkin SSS v2.0 — exposes fetch_optimized_data (URL→optimized skin, up to 88% token reduction with auto-classification for GitHub, npm, HackerNews, weather, etc.) and skin_reasoning (LLM-to-LLM text noise removal)."
+    },
+    "tokenjuice-mcp": {
+      "command": "bash",
+      "args": [".agents/mcp/tokenjuice-mcp.sh"],
+      "env": {},
+      "description": "Tokenjuice v0.8.0 — exposes 5 tools: apply_json_semantic (JSON pruning), classify_url (URL rule matching), strip_ansi (5-pattern ANSI stripping), estimate_tokens (grapheme-aware token estimation), reduce (full pipeline on command output)."
+    }
+  },
+  "rateLimits": {
+    "agentskin-mcp": "30 requests per 60-second sliding window (server-enforced)",
+    "tokenjuice-mcp": "60 requests per 60-second sliding window (server-enforced)"
+  },
+  "buildInstructions": {
+    "agentskin-mcp": "cd agentskin && npm install",
+    "tokenjuice-mcp": "cd tokenjuice-extracted/tokenjuice-main && npx tsc"
+  }
+}

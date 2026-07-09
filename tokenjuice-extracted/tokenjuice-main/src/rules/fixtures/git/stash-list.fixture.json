@@ -1,0 +1,16 @@
+{
+  "id": "git-stash-list-basic",
+  "ruleId": "git/stash-list",
+  "input": {
+    "toolName": "exec",
+    "argv": ["git", "stash", "list"],
+    "command": "git stash list",
+    "combinedText": "stash@{0}: WIP on main: abc1234 feat: add stats\nstash@{1}: WIP on fix/rules: def5678 tweak reducers\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "git/stash-list",
+    "family": "git-stash",
+    "contains": ["stash", "stash@{0}"]
+  }
+}

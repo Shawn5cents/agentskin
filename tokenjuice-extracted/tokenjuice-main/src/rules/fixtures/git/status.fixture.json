@@ -1,0 +1,17 @@
+{
+  "id": "git-status-basic",
+  "ruleId": "git/status",
+  "input": {
+    "toolName": "exec",
+    "argv": ["git", "status"],
+    "command": "git status",
+    "combinedText": "On branch main\nChanges not staged for commit:\n  modified: src/index.ts\n\nUntracked files:\n  test/new.test.ts\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "git/status",
+    "family": "git-status",
+    "contains": ["modified", "src/index.ts"],
+    "excludes": ["On branch main"]
+  }
+}

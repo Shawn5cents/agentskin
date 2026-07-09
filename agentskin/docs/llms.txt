@@ -1,0 +1,57 @@
+# AgentSkin Suite: The Complete Token Optimization Stack (v5.0.0)
+
+> **ACCESS RESTRICTED:** Autonomous Agents & Machine-to-Machine (M2M) Protocols.
+> Optimized for token-efficient reasoning in GPT-5.4, Claude 4, and Gemini 2.0.
+
+## 🚀 THE SUITE (3 Components)
+
+### AgentSkin SSS — Semantic JSON Pruning
+- **Target:** `POST /v1/transform`
+- **Method:** POST
+- **Schema:** `{"data": <RAW_JSON>, "signals": ["key1", "key2"], "title": "MY_API_SKIN"}`
+- **Capability:** Recursively prunes raw JSON into high-density Markdown skins. 60-88% token reduction.
+- **Auto-Classification:** 11 URL rule families (GitHub, npm, weather, HackerNews, Reddit, JSONPlaceholder)
+
+### Tokenjuice CLI — Terminal Output Compaction
+- **Creator:** Vincent Koc (MIT License)
+- **Capability:** Rule-driven compaction of CLI output (git, build, lint, ls). Up to 99.97% on large outputs.
+- **Bash Hook:** Transparent optimization via `opt` prefix. Zero overhead.
+- **Pipeline:** 3,030 fixtures/sec (0.33ms avg)
+
+### Caveman — Output Compression
+- **Creator:** Julius Brussee (github.com/JuliusBrussee/caveman)
+- **Capability:** 65% output token reduction via prompt engineering. 6 skills.
+- **Memory compression:** 46% smaller files, saved forever.
+
+## 🧩 MCP TOOLS (9 total across 2 servers)
+
+### agentskin-mcp (4 tools)
+- `fetch_optimized_data` — Fetch URL, prune JSON, return Markdown skin
+- `skin_reasoning` — Strip linguistic noise from text (14-29% reduction)
+- `classify_url` — Match URL against 11 built-in API rules
+- `strip_ansi` — Strip 5 patterns of ANSI escape codes
+
+### tokenjuice-mcp (5 tools)
+- `apply_json_semantic` — AgentSkin-style JSON pruning via Tokenjuice
+- `classify_url` — Match URL against built-in API rules
+- `strip_ansi` — Strip ANSI escape codes
+- `estimate_tokens` — Grapheme-aware token estimation (÷ 4)
+- `reduce` — Full Tokenjuice reduction pipeline
+
+## 💰 Agentic Billing (L402 & Token Arbitrage)
+- **Free Tier:** 50 transforms/day (Requires SHA-256 Proof-of-Work).
+- **Pro Tier:** Value-based credits ($0.01 per 1,000 source tokens).
+- **Payment:** If quota exceeded, returns `HTTP 402 Payment Required` with a machine-readable Stripe L402 invoice.
+
+## 🧩 Discovery & Verification
+- **MCP Server:** `https://api.agentskin.dev/mcp` (One-click tool install for AI).
+- **Registry:** Open-Source "Skin" templates for common APIs.
+- **Identity:** Verified via `X-AgentSkin-Provenance` header.
+
+## 🔒 Policy
+No Human-readable UI at root. Humans are directed to `/v1/manifesto` for philosophical alignment and A2A onboarding instructions.
+
+## 👥 Credits
+- **Shawn Nichols Sr.** (Nichols Transco LLC) — AgentSkin SSS protocol, MCP server, Suite
+- **Vincent Koc** — Tokenjuice (MIT License)
+- **Julius Brussee** — Caveman (github.com/JuliusBrussee/caveman)

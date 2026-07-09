@@ -1,0 +1,16 @@
+{
+  "id": "search-git-grep-basic",
+  "ruleId": "search/git-grep",
+  "input": {
+    "toolName": "exec",
+    "argv": ["git", "grep", "TODO"],
+    "command": "git grep TODO",
+    "combinedText": "src/index.ts:TODO later\nsrc/cli/main.ts:TODO cleanup\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "search/git-grep",
+    "family": "search",
+    "contains": ["match", "src/index.ts"]
+  }
+}

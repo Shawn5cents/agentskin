@@ -1,0 +1,16 @@
+{
+  "id": "package-brew-upgrade-basic",
+  "ruleId": "package/brew-upgrade",
+  "input": {
+    "toolName": "exec",
+    "argv": ["brew", "upgrade"],
+    "command": "brew upgrade",
+    "combinedText": "==> Upgrading 2 outdated packages:\nnode 22.15.0 -> 22.16.0\npnpm 10.7.0 -> 10.8.0\n🍺  /opt/homebrew/Cellar/node/22.16.0: 2,184 files, 57.3MB\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "package/brew-upgrade",
+    "family": "system-package-upgrade",
+    "contains": ["Upgrading 2 outdated packages", "pnpm 10.7.0 -> 10.8.0"]
+  }
+}

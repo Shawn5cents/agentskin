@@ -1,0 +1,16 @@
+{
+  "id": "tests-bun-basic",
+  "ruleId": "tests/bun-test",
+  "input": {
+    "toolName": "exec",
+    "argv": ["bun", "test"],
+    "command": "bun test",
+    "combinedText": "bun test v1.1.0\nfail test/example.test.ts\n1 fail\n",
+    "exitCode": 1
+  },
+  "expect": {
+    "matchedReducer": "tests/bun-test",
+    "family": "test-results",
+    "contains": ["failed", "fail test/example.test.ts"]
+  }
+}

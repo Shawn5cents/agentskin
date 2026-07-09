@@ -1,0 +1,16 @@
+{
+  "id": "git-show-basic",
+  "ruleId": "git/show",
+  "input": {
+    "toolName": "exec",
+    "argv": ["git", "show", "--stat"],
+    "command": "git show --stat",
+    "combinedText": "commit abc1234\nAuthor: Vincent\n\n    feat: add stats\n\n src/index.ts | 4 ++--\n 1 file changed, 2 insertions(+), 2 deletions(-)\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "git/show",
+    "family": "git-show",
+    "contains": ["commit", "feat: add stats"]
+  }
+}

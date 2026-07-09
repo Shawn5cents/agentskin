@@ -1,0 +1,16 @@
+{
+  "id": "service-service-basic",
+  "ruleId": "service/service",
+  "input": {
+    "toolName": "exec",
+    "argv": ["service", "nginx", "status"],
+    "command": "service nginx status",
+    "combinedText": "nginx is stopped\n",
+    "exitCode": 3
+  },
+  "expect": {
+    "matchedReducer": "service/service",
+    "family": "service-state",
+    "contains": ["error", "nginx is stopped"]
+  }
+}

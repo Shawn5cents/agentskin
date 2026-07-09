@@ -1,0 +1,16 @@
+{
+  "id": "service-systemctl-status-basic",
+  "ruleId": "service/systemctl-status",
+  "input": {
+    "toolName": "exec",
+    "argv": ["systemctl", "status", "api.service"],
+    "command": "systemctl status api.service",
+    "combinedText": "● api.service - API service\n   Active: failed (Result: exit-code)\n   Process: 123 ExecStart=/usr/bin/api (code=exited, status=1/FAILURE)\n",
+    "exitCode": 3
+  },
+  "expect": {
+    "matchedReducer": "service/systemctl-status",
+    "family": "service-state",
+    "contains": ["error", "Active: failed"]
+  }
+}

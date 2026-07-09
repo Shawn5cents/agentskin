@@ -1,0 +1,19 @@
+{
+  "id": "install-bun-up-to-date",
+  "ruleId": "install/bun-install",
+  "input": {
+    "toolName": "exec",
+    "argv": ["bun", "install"],
+    "command": "bun install",
+    "combinedText": "bun install v1.1.0\nChecked 43 installs across 71 packages (no changes)\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "install/bun-install",
+    "family": "dependency-install",
+    "inlineText": "bun install: up to date",
+    "previewText": "bun install: up to date",
+    "contains": ["bun install: up to date"],
+    "excludes": ["Checked 43 installs across 71 packages (no changes)"]
+  }
+}

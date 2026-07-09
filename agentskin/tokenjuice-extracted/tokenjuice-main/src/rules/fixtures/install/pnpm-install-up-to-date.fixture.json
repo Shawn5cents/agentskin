@@ -1,0 +1,19 @@
+{
+  "id": "install-pnpm-up-to-date",
+  "ruleId": "install/pnpm-install",
+  "input": {
+    "toolName": "exec",
+    "argv": ["pnpm", "install"],
+    "command": "pnpm install",
+    "combinedText": "Lockfile is up to date, resolution step is skipped\nAlready up to date\nDone in 612ms\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "install/pnpm-install",
+    "family": "dependency-install",
+    "inlineText": "pnpm install: up to date",
+    "previewText": "pnpm install: up to date",
+    "contains": ["pnpm install: up to date"],
+    "excludes": ["Already up to date"]
+  }
+}

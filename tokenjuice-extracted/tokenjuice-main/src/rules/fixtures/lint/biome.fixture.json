@@ -1,0 +1,15 @@
+{
+  "id": "lint-biome-basic",
+  "ruleId": "lint/biome",
+  "input": {
+    "toolName": "exec",
+    "command": "pnpm biome check src",
+    "combinedText": "src/index.ts:3:1 lint/suspicious/noDebugger ━━━━━━━━━━\n  × This debug statement is not allowed.\n",
+    "exitCode": 1
+  },
+  "expect": {
+    "matchedReducer": "lint/biome",
+    "family": "lint-results",
+    "contains": ["debug statement is not allowed"]
+  }
+}

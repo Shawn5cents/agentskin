@@ -1,0 +1,16 @@
+{
+  "id": "search-rg-basic",
+  "ruleId": "search/rg",
+  "input": {
+    "toolName": "exec",
+    "argv": ["rg", "TODO", "src"],
+    "command": "rg TODO src",
+    "combinedText": "src/index.ts: TODO later\nsrc/cli/main.ts: TODO cleanup\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "search/rg",
+    "family": "search",
+    "contains": ["match", "src/index.ts"]
+  }
+}

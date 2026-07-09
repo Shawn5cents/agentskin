@@ -1,0 +1,16 @@
+{
+  "id": "devops-docker-compose-basic",
+  "ruleId": "devops/docker-compose",
+  "input": {
+    "toolName": "exec",
+    "argv": ["docker", "compose", "ps"],
+    "command": "docker compose ps",
+    "combinedText": "NAME          IMAGE        COMMAND         SERVICE   STATUS           PORTS\napi-1         api:latest   \"node server\"   api       running(healthy) 0.0.0.0:3000->3000/tcp\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "devops/docker-compose",
+    "family": "container-compose",
+    "contains": ["service", "api-1"]
+  }
+}

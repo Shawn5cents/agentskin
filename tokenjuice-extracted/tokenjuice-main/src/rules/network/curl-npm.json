@@ -1,0 +1,25 @@
+{
+  "id": "network/curl-npm",
+  "family": "network-http",
+  "description": "Compact npm registry API responses from curl with JSON semantic pruning.",
+  "match": {
+    "toolNames": ["exec"],
+    "argv0": ["curl"],
+    "urlIncludes": ["registry.npmjs.org"]
+  },
+  "priority": 10,
+  "jsonSemantic": {
+    "urlMatches": "registry.npmjs.org",
+    "stripAnsi": true
+  },
+  "transforms": {
+    "stripAnsi": true
+  },
+  "counters": [
+    {
+      "name": "error",
+      "pattern": "error|failed|timed out",
+      "flags": "i"
+    }
+  ]
+}

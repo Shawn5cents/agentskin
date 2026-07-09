@@ -1,0 +1,16 @@
+{
+  "id": "tests-npm-basic",
+  "ruleId": "tests/npm-test",
+  "input": {
+    "toolName": "exec",
+    "argv": ["npm", "test"],
+    "command": "npm test",
+    "combinedText": "FAIL test/example.test.ts\nAssertionError: expected 1 to be 2\n",
+    "exitCode": 1
+  },
+  "expect": {
+    "matchedReducer": "tests/npm-test",
+    "family": "test-results",
+    "contains": ["FAIL test/example.test.ts"]
+  }
+}

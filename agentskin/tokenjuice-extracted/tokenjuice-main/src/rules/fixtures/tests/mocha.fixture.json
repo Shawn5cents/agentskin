@@ -1,0 +1,15 @@
+{
+  "id": "tests-mocha-basic",
+  "ruleId": "tests/mocha",
+  "input": {
+    "toolName": "exec",
+    "command": "pnpm mocha",
+    "combinedText": "  1 passing (12ms)\n  1 failing\n  1) saves config\n",
+    "exitCode": 1
+  },
+  "expect": {
+    "matchedReducer": "tests/mocha",
+    "family": "test-results",
+    "contains": ["failing", "saves config"]
+  }
+}

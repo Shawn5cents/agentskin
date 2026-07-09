@@ -1,0 +1,15 @@
+{
+  "id": "build-esbuild-basic",
+  "ruleId": "build/esbuild",
+  "input": {
+    "toolName": "exec",
+    "command": "pnpm esbuild src/index.ts",
+    "combinedText": "✘ [ERROR] Could not resolve \"left-pad\"\n1 error\n",
+    "exitCode": 1
+  },
+  "expect": {
+    "matchedReducer": "build/esbuild",
+    "family": "build-bundler",
+    "contains": ["error", "Could not resolve"]
+  }
+}

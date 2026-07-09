@@ -1,0 +1,16 @@
+{
+  "id": "service-lsof-basic",
+  "ruleId": "service/lsof",
+  "input": {
+    "toolName": "exec",
+    "argv": ["lsof", "-i", ":3000"],
+    "command": "lsof -i :3000",
+    "combinedText": "COMMAND   PID USER   FD   TYPE DEVICE NODE NAME\nnode      123 vincent 22u IPv6 0x01  TCP *:3000 (LISTEN)\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "service/lsof",
+    "family": "service-open-files",
+    "contains": ["entry", "*:3000"]
+  }
+}

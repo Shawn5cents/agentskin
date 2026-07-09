@@ -1,0 +1,1168 @@
+import { existsSync, readFileSync } from "node:fs";
+import { mkdir, mkdtemp, readFile, rm, symlink, utimes, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { dirname, join, resolve } from "node:path";
+
+import { afterEach, describe, expect, it } from "vitest";
+
+import { doctorCodexHook, installCodexHook, listArtifactMetadata, runCodexPostToolUseHook, uninstallCodexHook } from "../../src/index.js";
+
+const tempDirs: string[] = [];
+const PACKAGE_VERSION = JSON.parse(readFileSync(new URL("../../package.json", import.meta.url), "utf8")).version as string;
+const originalHome = process.env.HOME;
+const originalPath = process.env.PATH;
+
+afterEach(async () => {
+  delete process.env.CODEX_HOME;
+  process.env.HOME = originalHome;
+  process.env.PATH = originalPath;
+  await Promise.all(tempDirs.splice(0).map((dir) => rm(dir, { recursive: true, force: true })));
+});
+
+async function createTempDir(): Promise<string> {
+  const dir = await mkdtemp(join(tmpdir(), "tokenjuice-codex-test-"));
+  tempDirs.push(dir);
+  return dir;
+}
+
+async function captureStdout(run: () => Promise<number>): Promise<{ code: number; output: string }> {
+  let output = "";
+  const originalWrite = process.stdout.write.bind(process.stdout);
+  process.stdout.write = ((chunk: string | Uint8Array) => {
+    output += typeof chunk === "string" ? chunk : Buffer.from(chunk).toString("utf8");
+    return true;
+  }) as typeof process.stdout.write;
+
+  try {
+    const code = await run();
+    return { code, output };
+  } finally {
+    process.stdout.write = originalWrite;
+  }
+}
+
+async function captureStdio(run: () => Promise<number>): Promise<{ code: number; stdout: string; stderr: string }> {
+  let stdout = "";
+  let stderr = "";
+  const originalStdoutWrite = process.stdout.write.bind(process.stdout);
+  const originalStderrWrite = process.stderr.write.bind(process.stderr);
+  process.stdout.write = ((chunk: string | Uint8Array) => {
+    stdout += typeof chunk === "string" ? chunk : Buffer.from(chunk).toString("utf8");
+    return true;
+  }) as typeof process.stdout.write;
+  process.stderr.write = ((chunk: string | Uint8Array) => {
+    stderr += typeof chunk === "string" ? chunk : Buffer.from(chunk).toString("utf8");
+    return true;
+  }) as typeof process.stderr.write;
+
+  try {
+    const code = await run();
+    return { code, stdout, stderr };
+  } finally {
+    process.stdout.write = originalStdoutWrite;
+    process.stderr.write = originalStderrWrite;
+  }
+}
+
+function parseCodexReplacementOutput(stdout: string): {
+  hookSpecificOutput?: {
+    hookEventName?: string;
+    additionalContext?: string;
+  };
+} {
+  return JSON.parse(stdout) as {
+    hookSpecificOutput?: {
+      hookEventName?: string;
+      additionalContext?: string;
+    };
+  };
+}
+
+describe("installCodexHook", () => {
+  it("installs a single tokenjuice PostToolUse hook and preserves unrelated hooks", async () => {
+    const home = await createTempDir();
+    const hooksPath = join(home, "hooks.json");
+    process.env.PATH = "";
+    await writeFile(
+      hooksPath,
+      `${JSON.stringify({
+        hooks: {
+          PermissionRequest: [
+            {
+              matcher: "^Bash$",
+              hooks: [
+                {
+                  type: "command",
+                  command: "python3 /tmp/permission.py",
+                  commandWindows: "powershell -File C:\\tmp\\permission.ps1",
+                  async: true,
+                },
+                { type: "agent" },
+              ],
+            },
+          ],
+          SessionStart: [
+            {
+              hooks: [{ type: "command", command: "echo session" }],
+            },
+          ],
+          PostToolUse: [
+            {
+              matcher: "^Bash$",
+              hooks: [{ type: "command", command: "python3 /tmp/post_tool_use_tokenjuice.py" }],
+            },
+            {
+              matcher: "^Bash$",
+              hooks: [{ type: "command", command: "echo keep-me", statusMessage: "keep me" }],
+            },
+          ],
+        },
+      }, null, 2)}\n`,
+      "utf8",
+    );
+
+    const result = await installCodexHook(hooksPath);
+    const parsed = JSON.parse(await readFile(hooksPath, "utf8")) as {
+      hooks: Record<string, Array<{ matcher?: string; hooks: Array<Record<string, unknown>> }>>;
+    };
+
+    expect(result.hooksPath).toBe(hooksPath);
+    expect(result.backupPath).toBe(`${hooksPath}.bak`);
+    expect(parsed.hooks.PermissionRequest?.[0]?.hooks).toEqual([
+      {
+        type: "command",
+        command: "python3 /tmp/permission.py",
+        commandWindows: "powershell -File C:\\tmp\\permission.ps1",
+        async: true,
+      },
+      { type: "agent" },
+    ]);
+    expect(parsed.hooks.SessionStart).toHaveLength(1);
+    expect(parsed.hooks.PostToolUse).toHaveLength(2);
+    expect(parsed.hooks.PostToolUse[0]?.hooks[0]?.command).toBe("echo keep-me");
+    expect(parsed.hooks.PostToolUse[1]?.matcher).toBe("^Bash$");
+    expect(parsed.hooks.PostToolUse[1]?.hooks[0]?.command).toContain("codex-post-tool-use");
+    expect(parsed.hooks.PostToolUse[1]?.hooks[0]?.statusMessage).toBe("compacting bash output with tokenjuice");
+    expect(parsed.hooks.PostToolUse[1]?.hooks[0]?.timeout).toBe(10);
+  });
+
+  it("prefers a stable tokenjuice launcher from PATH when installing the hook", async () => {
+    const home = await createTempDir();
+    const hooksPath = join(home, "hooks.json");
+    const binDir = join(home, "bin");
+    const launcherPath = join(binDir, "tokenjuice");
+
+    process.env.PATH = binDir;
+    await mkdir(binDir, { recursive: true });
+    await writeFile(
+      launcherPath,
+      "#!/usr/bin/env bash\nexit 0\n",
+      { encoding: "utf8", mode: 0o755 },
+    );
+
+    const result = await installCodexHook(hooksPath);
+    const parsed = JSON.parse(await readFile(hooksPath, "utf8")) as {
+      hooks: Record<string, Array<{ hooks: Array<{ command: string }> }>>;
+    };
+
+    expect(result.command).toBe(`${launcherPath} codex-post-tool-use`);
+    expect(parsed.hooks.PostToolUse?.[0]?.hooks[0]?.command).toBe(`${launcherPath} codex-post-tool-use`);
+  });
+
+  it("can install a local codex hook without preferring PATH", async () => {
+    const home = await createTempDir();
+    const hooksPath = join(home, "hooks.json");
+    const binDir = join(home, "bin");
+    const launcherPath = join(binDir, "tokenjuice");
+    const localNodePath = join(home, "node");
+    const localCliPath = join(home, "dist", "cli", "main.js");
+
+    process.env.PATH = binDir;
+    await mkdir(binDir, { recursive: true });
+    await mkdir(join(home, "dist", "cli"), { recursive: true });
+    await writeFile(launcherPath, "#!/usr/bin/env bash\nexit 0\n", { encoding: "utf8", mode: 0o755 });
+    await writeFile(localNodePath, "#!/usr/bin/env bash\nexit 0\n", { encoding: "utf8", mode: 0o755 });
+    await writeFile(localCliPath, "console.log('tokenjuice');\n", "utf8");
+
+    const result = await installCodexHook(hooksPath, {
+      local: true,
+      binaryPath: localCliPath,
+      nodePath: localNodePath,
+    });
+    const parsed = JSON.parse(await readFile(hooksPath, "utf8")) as {
+      hooks: Record<string, Array<{ hooks: Array<{ command: string }> }>>;
+    };
+
+    expect(result.command).toBe(`${localNodePath} ${localCliPath} codex-post-tool-use`);
+    expect(parsed.hooks.PostToolUse?.[0]?.hooks[0]?.command).toBe(`${localNodePath} ${localCliPath} codex-post-tool-use`);
+  });
+
+  it("can uninstall the tokenjuice Codex hook without touching unrelated hooks", async () => {
+    const home = await createTempDir();
+    const hooksPath = join(home, "hooks.json");
+    process.env.PATH = "";
+    await writeFile(
+      hooksPath,
+      `${JSON.stringify({
+        hooks: {
+          SessionStart: [
+            {
+              hooks: [{ type: "command", command: "echo session" }],
+            },
+          ],
+          PostToolUse: [
+            {
+              matcher: "^Bash$",
+              hooks: [{ type: "command", command: "echo keep-me", statusMessage: "keep me" }],
+            },
+            {
+              matcher: "^Bash$",
+              hooks: [{ type: "command", command: "python3 /tmp/post_tool_use_tokenjuice.py", statusMessage: "compacting bash output with tokenjuice" }],
+            },
+          ],
+        },
+      }, null, 2)}\n`,
+      "utf8",
+    );
+
+    const result = await uninstallCodexHook(hooksPath);
+    const parsed = JSON.parse(await readFile(hooksPath, "utf8")) as {
+      hooks: Record<string, Array<{ matcher?: string; hooks: Array<{ command: string; statusMessage?: string }> }>>;
+    };
+
+    expect(result.hooksPath).toBe(hooksPath);
+    expect(result.backupPath).toBe(`${hooksPath}.bak`);
+    expect(result.removed).toBe(1);
+    expect(parsed.hooks.SessionStart).toHaveLength(1);
+    expect(parsed.hooks.PostToolUse).toHaveLength(1);
+    expect(parsed.hooks.PostToolUse?.[0]?.hooks[0]?.command).toBe("echo keep-me");
+  });
+});
+
+describe("doctorCodexHook", () => {
+  it("reports a healthy installed launcher hook", async () => {
+    const home = await createTempDir();
+    const hooksPath = join(home, "hooks.json");
+    const binDir = join(home, "bin");
+    const launcherPath = join(binDir, "tokenjuice");
+
+    process.env.PATH = binDir;
+    await mkdir(binDir, { recursive: true });
+    await writeFile(launcherPath, "#!/usr/bin/env bash\nexit 0\n", { encoding: "utf8", mode: 0o755 });
+    const featureFlagConfigPath = join(home, "config.toml");
+    await writeFile(featureFlagConfigPath, "[features]\ncodex_hooks = true\n", "utf8");
+    await installCodexHook(hooksPath, { featureFlagConfigPath });
+
+    const report = await doctorCodexHook(hooksPath, { featureFlagConfigPath });
+
+    expect(report.status).toBe("ok");
+    expect(report.detectedCommand).toBe(`${launcherPath} codex-post-tool-use`);
+    expect(report.issues).toEqual([]);
+    expect(report.featureFlag.enabled).toBe(true);
+  });
+
+  it("warns when the stable launcher resolves to an older Homebrew tokenjuice version", async () => {
+    const home = await createTempDir();
+    const hooksPath = join(home, "hooks.json");
+    const binDir = join(home, "opt", "homebrew", "bin");
+    const cellarBinDir = join(home, "opt", "homebrew", "Cellar", "tokenjuice", "0.0.1", "bin");
+    const launcherPath = join(binDir, "tokenjuice");
+    const resolvedLauncherPath = join(cellarBinDir, "tokenjuice");
+    const featureFlagConfigPath = join(home, "config.toml");
+
+    process.env.PATH = binDir;
+    await mkdir(binDir, { recursive: true });
+    await mkdir(cellarBinDir, { recursive: true });
+    await writeFile(resolvedLauncherPath, "#!/usr/bin/env bash\nexit 0\n", { encoding: "utf8", mode: 0o755 });
+    await symlink(resolvedLauncherPath, launcherPath);
+    await writeFile(featureFlagConfigPath, "[features]\ncodex_hooks = true\n", "utf8");
+    await installCodexHook(hooksPath, { featureFlagConfigPath });
+
+    const report = await doctorCodexHook(hooksPath, { featureFlagConfigPath });
+
+    expect(report.status).toBe("warn");
+    expect(report.detectedCommand).toBe(`${launcherPath} codex-post-tool-use`);
+    expect(report.fixCommand).toBe("brew upgrade tokenjuice");
+    expect(report.issues).toContain(
+      `configured Codex hook launcher resolves to Homebrew tokenjuice 0.0.1, but this tokenjuice is ${PACKAGE_VERSION}`,
+    );
+    expect(report.issues).not.toContain("configured Codex hook command does not match the current recommended command");
+  });
+
+  it("treats absent hooks feature flag as enabled for current Codex", async () => {
+    const home = await createTempDir();
+    const hooksPath = join(home, "hooks.json");
+    const binDir = join(home, "bin");
+    const launcherPath = join(binDir, "tokenjuice");
+    const featureFlagConfigPath = join(home, "config.toml");
+
+    process.env.PATH = binDir;
+    await mkdir(binDir, { recursive: true });
+    await writeFile(launcherPath, "#!/usr/bin/env bash\nexit 0\n", { encoding: "utf8", mode: 0o755 });
+    await installCodexHook(hooksPath, { featureFlagConfigPath });
+
+    const report = await doctorCodexHook(hooksPath, { featureFlagConfigPath });
+
+    expect(report.status).toBe("ok");
+    expect(report.featureFlag.enabled).toBe(true);
+    expect(report.featureFlag.keyPresent).toBe(false);
+    expect(report.featureFlag.defaultEnabled).toBe(true);
+    expect(report.issues).toEqual([]);
+  });
+
+  it("warns when the modern hooks feature flag is explicitly disabled", async () => {
+    const home = await createTempDir();
+    const hooksPath = join(home, "hooks.json");
+    const binDir = join(home, "bin");
+    const launcherPath = join(binDir, "tokenjuice");
+    const featureFlagConfigPath = join(home, "config.toml");
+
+    process.env.PATH = binDir;
+    await mkdir(binDir, { recursive: true });
+    await writeFile(launcherPath, "#!/usr/bin/env bash\nexit 0\n", { encoding: "utf8", mode: 0o755 });
+    await writeFile(featureFlagConfigPath, "[features]\nhooks = false\n", "utf8");
+    await installCodexHook(hooksPath, { featureFlagConfigPath });
+
+    const report = await doctorCodexHook(hooksPath, { featureFlagConfigPath });
+
+    expect(report.status).toBe("warn");
+    expect(report.featureFlag.enabled).toBe(false);
+    expect(report.featureFlag.key).toBe("hooks");
+    expect(report.issues).toContain(
+      "Codex feature flag `hooks` is disabled — the configured hook will not fire",
+    );
+  });
+
+  it("reports Codex approval and sandbox posture from config.toml", async () => {
+    const home = await createTempDir();
+    const hooksPath = join(home, "hooks.json");
+    const binDir = join(home, "bin");
+    const launcherPath = join(binDir, "tokenjuice");
+    const featureFlagConfigPath = join(home, "config.toml");
+
+    process.env.PATH = binDir;
+    await mkdir(binDir, { recursive: true });
+    await writeFile(launcherPath, "#!/usr/bin/env bash\nexit 0\n", { encoding: "utf8", mode: 0o755 });
+    await writeFile(
+      featureFlagConfigPath,
+      'approval_policy = "on-request"\nsandbox_mode = "workspace-write"\napprovals_reviewer = "auto_review"\n\n[features]\nhooks = true\n',
+      "utf8",
+    );
+    await installCodexHook(hooksPath, { featureFlagConfigPath });
+
+    const report = await doctorCodexHook(hooksPath, { featureFlagConfigPath });
+
+    expect(report.status).toBe("ok");
+    expect(report.featureFlag.key).toBe("hooks");
+    expect(report.runtimeConfig).toMatchObject({
+      configPath: featureFlagConfigPath,
+      configExists: true,
+      approvalPolicy: "on-request",
+      sandboxMode: "workspace-write",
+      approvalsReviewer: "auto_review",
+    });
+  });
+
+  it("reports disabled when the tokenjuice Codex hook is not installed", async () => {
+    const home = await createTempDir();
+    const hooksPath = join(home, "hooks.json");
+    process.env.PATH = "";
+    await writeFile(
+      hooksPath,
+      `${JSON.stringify({
+        hooks: {
+          SessionStart: [
+            {
+              hooks: [{ type: "command", command: "echo session" }],
+            },
+          ],
+        },
+      }, null, 2)}\n`,
+      "utf8",
+    );
+
+    const report = await doctorCodexHook(hooksPath);
+
+    expect(report.status).toBe("disabled");
+    expect(report.detectedCommand).toBeUndefined();
+    expect(report.issues).toEqual([]);
+    expect(report.fixCommand).toBe("tokenjuice install codex");
+  });
+
+  it("flags stale Homebrew Cellar hook commands as broken", async () => {
+    const home = await createTempDir();
+    const hooksPath = join(home, "hooks.json");
+    const binDir = join(home, "bin");
+    const launcherPath = join(binDir, "tokenjuice");
+    const staleCommand = `${process.execPath} /opt/homebrew/Cellar/tokenjuice/0.2.0/libexec/dist/cli/main.js codex-post-tool-use`;
+
+    process.env.PATH = binDir;
+    await mkdir(binDir, { recursive: true });
+    await writeFile(launcherPath, "#!/usr/bin/env bash\nexit 0\n", { encoding: "utf8", mode: 0o755 });
+    await writeFile(
+      hooksPath,
+      `${JSON.stringify({
+        hooks: {
+          PostToolUse: [
+            {
+              matcher: "^Bash$",
+              hooks: [{ type: "command", command: staleCommand, statusMessage: "compacting bash output with tokenjuice" }],
+            },
+          ],
+        },
+      }, null, 2)}\n`,
+      "utf8",
+    );
+
+    const report = await doctorCodexHook(hooksPath);
+
+    expect(report.status).toBe("broken");
+    expect(report.detectedCommand).toBe(staleCommand);
+    expect(report.issues).toContain("configured Codex hook is pinned to a versioned Homebrew Cellar path");
+    expect(report.missingPaths).toContain("/opt/homebrew/Cellar/tokenjuice/0.2.0/libexec/dist/cli/main.js");
+    expect(report.fixCommand).toBe("tokenjuice install codex");
+  });
+
+  it("warns about low timeouts on non-tokenjuice Codex hooks", async () => {
+    const home = await createTempDir();
+    const hooksPath = join(home, "hooks.json");
+    const binDir = join(home, "bin");
+    const launcherPath = join(binDir, "tokenjuice");
+    const featureFlagConfigPath = join(home, "config.toml");
+
+    process.env.PATH = binDir;
+    await mkdir(binDir, { recursive: true });
+    await writeFile(launcherPath, "#!/usr/bin/env bash\nexit 0\n", { encoding: "utf8", mode: 0o755 });
+    await writeFile(featureFlagConfigPath, "[features]\ncodex_hooks = true\n", "utf8");
+    await writeFile(
+      hooksPath,
+      `${JSON.stringify({
+        hooks: {
+          SessionStart: [
+            {
+              hooks: [{ type: "command", command: "$HOME/bin/agent-attn-set reset codex", timeout: 2 }],
+            },
+          ],
+          UserPromptSubmit: [
+            {
+              hooks: [{ type: "command", command: "$HOME/bin/agent-attn-set reset codex", timeout: 2 }],
+            },
+          ],
+          Stop: [
+            {
+              hooks: [{ type: "command", command: "$HOME/bin/agent-attn-set waiting codex", timeout: 2 }],
+            },
+          ],
+          PostToolUse: [
+            {
+              matcher: "^Bash$",
+              hooks: [{ type: "command", command: `${launcherPath} codex-post-tool-use`, statusMessage: "compacting bash output with tokenjuice", timeout: 10 }],
+            },
+          ],
+        },
+      }, null, 2)}\n`,
+      "utf8",
+    );
+
+    const report = await doctorCodexHook(hooksPath, { featureFlagConfigPath });
+
+    expect(report.status).toBe("warn");
+    expect(report.issues).toContain(
+      'non-tokenjuice Codex hook SessionStart[0].hooks[0] uses a low 2s timeout for "$HOME/bin/agent-attn-set reset codex" — consider 6s or higher',
+    );
+    expect(report.issues).toContain(
+      'non-tokenjuice Codex hook UserPromptSubmit[0].hooks[0] uses a low 2s timeout for "$HOME/bin/agent-attn-set reset codex" — consider 6s or higher',
+    );
+    expect(report.issues).toContain(
+      'non-tokenjuice Codex hook Stop[0].hooks[0] uses a low 2s timeout for "$HOME/bin/agent-attn-set waiting codex" — consider 6s or higher',
+    );
+  });
+
+  it("warns when the tokenjuice Codex hook is missing the timeout safety cap", async () => {
+    const home = await createTempDir();
+    const hooksPath = join(home, "hooks.json");
+    const binDir = join(home, "bin");
+    const launcherPath = join(binDir, "tokenjuice");
+    const featureFlagConfigPath = join(home, "config.toml");
+
+    process.env.PATH = binDir;
+    await mkdir(binDir, { recursive: true });
+    await writeFile(launcherPath, "#!/usr/bin/env bash\nexit 0\n", { encoding: "utf8", mode: 0o755 });
+    await writeFile(featureFlagConfigPath, "[features]\nhooks = true\n", "utf8");
+    await writeFile(
+      hooksPath,
+      `${JSON.stringify({
+        hooks: {
+          PostToolUse: [
+            {
+              matcher: "^Bash$",
+              hooks: [{ type: "command", command: `${launcherPath} codex-post-tool-use`, statusMessage: "compacting bash output with tokenjuice" }],
+            },
+          ],
+        },
+      }, null, 2)}\n`,
+      "utf8",
+    );
+
+    const report = await doctorCodexHook(hooksPath, { featureFlagConfigPath });
+
+    expect(report.status).toBe("warn");
+    expect(report.issues).toContain(
+      "configured Codex tokenjuice hook timeout is missing or stale; run tokenjuice install codex to add the 10s safety cap",
+    );
+  });
+
+  it("reports a healthy local codex hook when asked to check local mode", async () => {
+    const home = await createTempDir();
+    const hooksPath = join(home, "hooks.json");
+    const binDir = join(home, "bin");
+    const launcherPath = join(binDir, "tokenjuice");
+    const localNodePath = join(home, "node");
+    const localCliPath = join(home, "dist", "cli", "main.js");
+
+    process.env.PATH = binDir;
+    await mkdir(binDir, { recursive: true });
+    await mkdir(join(home, "dist", "cli"), { recursive: true });
+    await writeFile(launcherPath, "#!/usr/bin/env bash\nexit 0\n", { encoding: "utf8", mode: 0o755 });
+    await writeFile(localNodePath, "#!/usr/bin/env bash\nexit 0\n", { encoding: "utf8", mode: 0o755 });
+    await writeFile(localCliPath, "console.log('tokenjuice');\n", "utf8");
+
+    const featureFlagConfigPath = join(home, "config.toml");
+    await writeFile(featureFlagConfigPath, "[features]\ncodex_hooks = true\n", "utf8");
+    await installCodexHook(hooksPath, {
+      local: true,
+      binaryPath: localCliPath,
+      nodePath: localNodePath,
+      featureFlagConfigPath,
+    });
+
+    const report = await doctorCodexHook(hooksPath, {
+      local: true,
+      binaryPath: localCliPath,
+      nodePath: localNodePath,
+      featureFlagConfigPath,
+    });
+
+    expect(report.status).toBe("ok");
+    expect(report.detectedCommand).toBe(`${localNodePath} ${localCliPath} codex-post-tool-use`);
+    expect(report.fixCommand).toBe("tokenjuice install codex --local");
+    expect(report.issues).toEqual([]);
+  });
+
+  it("flags stale local codex builds when source is newer than dist", async () => {
+    const home = await createTempDir();
+    const hooksPath = join(home, "hooks.json");
+    const localNodePath = join(home, "node");
+    const localCliPath = join(home, "dist", "cli", "main.js");
+    const sourcePath = join(home, "src", "core", "codex.ts");
+    const oldTime = new Date("2026-04-15T00:00:00.000Z");
+    const newTime = new Date("2026-04-16T00:00:00.000Z");
+
+    await mkdir(join(home, "dist", "cli"), { recursive: true });
+    await mkdir(join(home, "src", "core"), { recursive: true });
+    await writeFile(localNodePath, "#!/usr/bin/env bash\nexit 0\n", { encoding: "utf8", mode: 0o755 });
+    await writeFile(localCliPath, "console.log('tokenjuice');\n", "utf8");
+    await writeFile(sourcePath, "export const changed = true;\n", "utf8");
+    await utimes(localCliPath, oldTime, oldTime);
+    await utimes(sourcePath, newTime, newTime);
+
+    await installCodexHook(hooksPath, {
+      local: true,
+      binaryPath: localCliPath,
+      nodePath: localNodePath,
+    });
+
+    const report = await doctorCodexHook(hooksPath, {
+      local: true,
+      binaryPath: localCliPath,
+      nodePath: localNodePath,
+    });
+
+    expect(report.status).toBe("warn");
+    expect(report.issues).toContain("local Codex hook target is older than the source tree");
+    expect(report.fixCommand).toBe("pnpm build && tokenjuice install codex --local");
+  });
+});
+
+describe("runCodexPostToolUseHook", () => {
+  it("returns post-tool feedback without a block decision when tokenjuice compacts output", async () => {
+    const home = await createTempDir();
+    process.env.CODEX_HOME = home;
+
+    const payload = JSON.stringify({
+      hook_event_name: "PostToolUse",
+      tool_name: "Bash",
+      tool_input: {
+        command: "git status",
+      },
+      tool_response: [
+        "On branch pr-65478-security-fix",
+        "Your branch and 'origin/pr-65478-security-fix' have diverged,",
+        "and have 8 and 642 different commits each, respectively.",
+        "",
+        "Changes not staged for commit:",
+        "\tmodified:   src/agents/pi-embedded-runner/run/attempt.prompt-helpers.ts",
+        "\tmodified:   src/agents/pi-embedded-runner/run/attempt.test.ts",
+        "",
+        "no changes added to commit",
+      ].join("\n"),
+    });
+
+    const { code, stdout, stderr } = await captureStdio(() => runCodexPostToolUseHook(payload));
+    const debug = JSON.parse(await readFile(join(home, "tokenjuice-hook.last.json"), "utf8")) as {
+      rewrote: boolean;
+      matchedReducer?: string;
+    };
+
+    const response = parseCodexReplacementOutput(stdout);
+
+    expect(code).toBe(0);
+    expect(stderr).toBe("");
+    expect(response.hookSpecificOutput?.hookEventName).toBe("PostToolUse");
+    expect(response.hookSpecificOutput?.additionalContext).toContain("Changes not staged:");
+    expect(response.hookSpecificOutput?.additionalContext).toContain("M: src/agents/pi-embedded-runner/run/attempt.prompt-helpers.ts");
+    expect(response.hookSpecificOutput?.additionalContext).not.toContain("and have 8 and 642");
+    expect(response.hookSpecificOutput?.additionalContext).toContain("tokenjuice wrap --raw -- <command>");
+    expect(response.hookSpecificOutput?.additionalContext).not.toContain("tokenjuice wrap --full -- <command>");
+    expect(debug.rewrote).toBe(true);
+    expect(debug.matchedReducer).toBe("git/status");
+  });
+
+  it("skips rewriting generic fallback output for compound shell diagnostics", async () => {
+    const home = await createTempDir();
+    process.env.CODEX_HOME = home;
+
+    const payload = JSON.stringify({
+      hook_event_name: "PostToolUse",
+      tool_name: "Bash",
+      tool_input: {
+        command: "printf 'cwd: '; pwd; printf 'repo: '; git rev-parse --show-toplevel; git status --short --branch",
+      },
+      tool_response: Array.from({ length: 18 }, (_, index) => {
+        if (index === 0) {
+          return "cwd: /workspace/openclaw";
+        }
+        if (index === 1) {
+          return "repo: /workspace/openclaw";
+        }
+        return `worktree /workspace/openclaw/.worktrees/pr-${66200 + index}`;
+      }).join("\n"),
+    });
+
+    const { code, stdout, stderr } = await captureStdio(() => runCodexPostToolUseHook(payload));
+    const debug = JSON.parse(await readFile(join(home, "tokenjuice-hook.last.json"), "utf8")) as {
+      rewrote: boolean;
+      skipped?: string;
+      matchedReducer?: string;
+    };
+
+    expect(code).toBe(0);
+    expect(stdout).toBe("");
+    expect(stderr).toBe("");
+    expect(debug.rewrote).toBe(false);
+    expect(debug.skipped).toBe("generic-compound-command");
+    expect(debug.matchedReducer).toBe("generic/fallback");
+  });
+
+  it("skips rewriting weak generic fallback compaction", async () => {
+    const home = await createTempDir();
+    process.env.CODEX_HOME = home;
+
+    const payload = JSON.stringify({
+      hook_event_name: "PostToolUse",
+      tool_name: "Bash",
+      tool_input: {
+        command: "custom-tool --emit-lines",
+      },
+      tool_response: Array.from({ length: 18 }, (_, index) => `line ${index + 1} ${"x".repeat(24)}`).join("\n"),
+    });
+
+    const { code, stdout, stderr } = await captureStdio(() => runCodexPostToolUseHook(payload));
+    const debug = JSON.parse(await readFile(join(home, "tokenjuice-hook.last.json"), "utf8")) as {
+      rewrote: boolean;
+      skipped?: string;
+      matchedReducer?: string;
+    };
+
+    expect(code).toBe(0);
+    expect(stdout).toBe("");
+    expect(stderr).toBe("");
+    expect(debug.rewrote).toBe(false);
+    expect(debug.skipped).toBe("generic-weak-compaction");
+    expect(debug.matchedReducer).toBe("generic/fallback");
+  });
+
+  it("skips rewriting low-savings compaction even for non-generic reducers", async () => {
+    const home = await createTempDir();
+    process.env.CODEX_HOME = home;
+
+    const payload = JSON.stringify({
+      hook_event_name: "PostToolUse",
+      tool_name: "Bash",
+      tool_input: {
+        command: "git status --short",
+      },
+      tool_response: " M src/hosts/codex/index.ts\n",
+    });
+
+    const { code, stdout, stderr } = await captureStdio(() => runCodexPostToolUseHook(payload));
+    const debug = JSON.parse(await readFile(join(home, "tokenjuice-hook.last.json"), "utf8")) as {
+      rewrote: boolean;
+      skipped?: string;
+      matchedReducer?: string;
+      rawChars?: number;
+      reducedChars?: number;
+      savedChars?: number;
+      ratio?: number;
+    };
+
+    expect(code).toBe(0);
+    expect(stdout).toBe("");
+    expect(stderr).toBe("");
+    expect(debug.rewrote).toBe(false);
+    expect(debug.skipped).toBe("no-compaction");
+    expect(debug.matchedReducer).toBe("git/status");
+    expect(debug.rawChars).toBe(28);
+    expect(debug.reducedChars).toBe(27);
+    expect(debug.savedChars).toBe(1);
+    expect(debug.ratio).toBeCloseTo(27 / 28, 5);
+  });
+
+  it("auto-rewrites large repository inventory commands", async () => {
+    const home = await createTempDir();
+    process.env.CODEX_HOME = home;
+
+    const payload = JSON.stringify({
+      hook_event_name: "PostToolUse",
+      tool_name: "Bash",
+      tool_input: {
+        command: "find src/rules -maxdepth 2 -type f | head -n 40",
+      },
+      tool_response: Array.from({ length: 40 }, (_, index) => `src/rules/example-${index + 1}.json`).join("\n"),
+    });
+
+    const { code, stdout, stderr } = await captureStdio(() => runCodexPostToolUseHook(payload));
+    const debug = JSON.parse(await readFile(join(home, "tokenjuice-hook.last.json"), "utf8")) as {
+      rewrote: boolean;
+      skipped?: string;
+      matchedReducer?: string;
+      rawChars?: number;
+      reducedChars?: number;
+      savedChars?: number;
+      ratio?: number;
+    };
+
+    const response = parseCodexReplacementOutput(stdout);
+
+    expect(code).toBe(0);
+    expect(stderr).toBe("");
+    expect(response.hookSpecificOutput?.hookEventName).toBe("PostToolUse");
+    expect(response.hookSpecificOutput?.additionalContext).toContain("40 matches");
+    expect(response.hookSpecificOutput?.additionalContext).toContain("src/rules/example-1.json");
+    expect(debug.rewrote).toBe(true);
+    expect(debug.skipped).toBeUndefined();
+    expect(debug.matchedReducer).toBe("filesystem/find");
+    expect(debug.rawChars).toBeGreaterThan(0);
+    expect(debug.reducedChars).toBeLessThan(debug.rawChars!);
+    expect(debug.savedChars).toBeGreaterThan(0);
+    expect(debug.ratio).toBeLessThan(1);
+  });
+
+  it("skips auto-rewrite for file-content inspection commands", async () => {
+    const home = await createTempDir();
+    process.env.CODEX_HOME = home;
+
+    const payload = JSON.stringify({
+      hook_event_name: "PostToolUse",
+      tool_name: "Bash",
+      tool_input: {
+        command: "cat src/core/reduce.ts",
+      },
+      tool_response: [
+        "import { loadRules } from \"./rules.js\";",
+        "throw new AssertionError();",
+        "export function reduceExecution() {}",
+      ].join("\n"),
+    });
+
+    const { code, output } = await captureStdout(() => runCodexPostToolUseHook(payload));
+    const debug = JSON.parse(await readFile(join(home, "tokenjuice-hook.last.json"), "utf8")) as {
+      rewrote: boolean;
+      skipped?: string;
+      matchedReducer?: string;
+      rawChars?: number;
+      reducedChars?: number;
+    };
+
+    expect(code).toBe(0);
+    expect(output).toBe("");
+    expect(debug.rewrote).toBe(false);
+    expect(debug.skipped).toBe("file-content-inspection-command");
+    expect(debug.matchedReducer).toBeUndefined();
+    expect(debug.rawChars).toBeGreaterThan(0);
+    expect(debug.reducedChars).toBe(debug.rawChars);
+    expect(debug.savedChars).toBe(0);
+    expect(debug.ratio).toBe(1);
+  });
+
+  it("skips auto-rewrite for git blob inspections piped through line filters", async () => {
+    const home = await createTempDir();
+    process.env.CODEX_HOME = home;
+
+    const payload = JSON.stringify({
+      hook_event_name: "PostToolUse",
+      tool_name: "Bash",
+      tool_input: {
+        command: "git show HEAD:src/core/reduce.ts | sed -n '1,40p'",
+      },
+      tool_response: [
+        "import { loadRules } from \"./rules.js\";",
+        "throw new AssertionError();",
+        "export function reduceExecution() {}",
+      ].join("\n"),
+    });
+
+    const { code, output } = await captureStdout(() => runCodexPostToolUseHook(payload));
+    const debug = JSON.parse(await readFile(join(home, "tokenjuice-hook.last.json"), "utf8")) as {
+      rewrote: boolean;
+      skipped?: string;
+      matchedReducer?: string;
+      rawChars?: number;
+      reducedChars?: number;
+    };
+
+    expect(code).toBe(0);
+    expect(output).toBe("");
+    expect(debug.rewrote).toBe(false);
+    expect(debug.skipped).toBe("file-content-inspection-command");
+    expect(debug.matchedReducer).toBeUndefined();
+    expect(debug.rawChars).toBeGreaterThan(0);
+    expect(debug.reducedChars).toBe(debug.rawChars);
+    expect(debug.savedChars).toBe(0);
+    expect(debug.ratio).toBe(1);
+  });
+
+  it("keeps unsafe inventory pipelines unmodified", async () => {
+    const home = await createTempDir();
+    process.env.CODEX_HOME = home;
+
+    const payload = JSON.stringify({
+      hook_event_name: "PostToolUse",
+      tool_name: "Bash",
+      tool_input: {
+        command: "find src -type f | xargs wc -l",
+      },
+      tool_response: [
+        "  120 src/hosts/codex/index.ts",
+        "   42 src/core/command.ts",
+        "  162 total",
+      ].join("\n"),
+    });
+
+    const { code, output } = await captureStdout(() => runCodexPostToolUseHook(payload));
+    const debug = JSON.parse(await readFile(join(home, "tokenjuice-hook.last.json"), "utf8")) as {
+      rewrote: boolean;
+      skipped?: string;
+      matchedReducer?: string;
+      rawChars?: number;
+      reducedChars?: number;
+    };
+
+    expect(code).toBe(0);
+    expect(output).toBe("");
+    expect(debug.rewrote).toBe(false);
+    expect(debug.skipped).toBe("unsafe-inventory-pipeline");
+    expect(debug.matchedReducer).toBeUndefined();
+    expect(debug.rawChars).toBeGreaterThan(0);
+    expect(debug.reducedChars).toBe(debug.rawChars);
+  });
+
+  it("routes Codex exit codes into reducers", async () => {
+    const home = await createTempDir();
+    process.env.CODEX_HOME = home;
+
+    const payload = JSON.stringify({
+      hook_event_name: "PostToolUse",
+      tool_name: "Bash",
+      tool_input: {
+        command: "rg --files missing-dir",
+      },
+      tool_response: {
+        output: Array.from({ length: 40 }, (_, index) => `rg: missing-dir/file-${index + 1}: No such file`).join("\n"),
+        exit_code: 2,
+      },
+    });
+
+    const { code, stdout, stderr } = await captureStdio(() => runCodexPostToolUseHook(payload));
+
+    const response = parseCodexReplacementOutput(stdout);
+
+    expect(code).toBe(0);
+    expect(stderr).toBe("");
+    expect(response.hookSpecificOutput?.hookEventName).toBe("PostToolUse");
+    expect(response.hookSpecificOutput?.additionalContext).toContain("exit 2");
+  });
+
+  it("honors tokenjuice raw bypass commands without re-compacting them", async () => {
+    const home = await createTempDir();
+    process.env.CODEX_HOME = home;
+
+    const payload = JSON.stringify({
+      hook_event_name: "PostToolUse",
+      tool_name: "Bash",
+      tool_input: {
+        command: "tokenjuice wrap --raw -- bash -lc 'git show HEAD --stat'",
+      },
+      tool_response: [
+        "commit abcdef",
+        "Author: Example",
+        "",
+        " README.md | 10 +++++-----",
+        " src/hosts/codex/index.ts | 12 +++++++-----",
+      ].join("\n"),
+    });
+
+    const { code, output } = await captureStdout(() => runCodexPostToolUseHook(payload));
+    const debug = JSON.parse(await readFile(join(home, "tokenjuice-hook.last.json"), "utf8")) as {
+      rewrote: boolean;
+      skipped?: string;
+      matchedReducer?: string;
+      rawChars?: number;
+      reducedChars?: number;
+      savedChars?: number;
+      ratio?: number;
+    };
+
+    expect(code).toBe(0);
+    expect(output).toBe("");
+    expect(debug.rewrote).toBe(false);
+    expect(debug.skipped).toBe("explicit-raw-bypass");
+    expect(debug.matchedReducer).toBeUndefined();
+    expect(debug.rawChars).toBeGreaterThan(0);
+    expect(debug.reducedChars).toBe(debug.rawChars);
+    expect(debug.savedChars).toBe(0);
+    expect(debug.ratio).toBe(1);
+  });
+
+  it("honors absolute tokenjuice raw bypass commands without re-compacting them", async () => {
+    const home = await createTempDir();
+    process.env.CODEX_HOME = home;
+
+    const payload = JSON.stringify({
+      hook_event_name: "PostToolUse",
+      tool_name: "Bash",
+      tool_input: {
+        command: "/opt/homebrew/bin/tokenjuice wrap --raw -- bash -lc 'git show HEAD --stat'",
+      },
+      tool_response: [
+        "commit abcdef",
+        "Author: Example",
+        "",
+        " README.md | 10 +++++-----",
+        " src/hosts/codex/index.ts | 12 +++++++-----",
+      ].join("\n"),
+    });
+
+    const { code, output } = await captureStdout(() => runCodexPostToolUseHook(payload));
+    const debug = JSON.parse(await readFile(join(home, "tokenjuice-hook.last.json"), "utf8")) as {
+      rewrote: boolean;
+      skipped?: string;
+      matchedReducer?: string;
+      rawChars?: number;
+      reducedChars?: number;
+      savedChars?: number;
+      ratio?: number;
+    };
+
+    expect(code).toBe(0);
+    expect(output).toBe("");
+    expect(debug.rewrote).toBe(false);
+    expect(debug.skipped).toBe("explicit-raw-bypass");
+    expect(debug.matchedReducer).toBeUndefined();
+    expect(debug.rawChars).toBeGreaterThan(0);
+    expect(debug.reducedChars).toBe(debug.rawChars);
+    expect(debug.savedChars).toBe(0);
+    expect(debug.ratio).toBe(1);
+  });
+
+  it("honors tokenjuice raw bypass commands with leading cd prefixes", async () => {
+    const home = await createTempDir();
+    process.env.CODEX_HOME = home;
+
+    const payload = JSON.stringify({
+      hook_event_name: "PostToolUse",
+      tool_name: "Bash",
+      tool_input: {
+        command: "cd /data/code/lighthouse/helper && tokenjuice wrap --raw -- python scripts/query_cls_log.py --limit 500",
+      },
+      tool_response: Array.from({ length: 40 }, (_, i) => `line ${i + 1}`).join("\n"),
+    });
+
+    const { code, output } = await captureStdout(() => runCodexPostToolUseHook(payload));
+    const debug = JSON.parse(await readFile(join(home, "tokenjuice-hook.last.json"), "utf8")) as {
+      rewrote: boolean;
+      skipped?: string;
+    };
+
+    expect(code).toBe(0);
+    expect(output).toBe("");
+    expect(debug.rewrote).toBe(false);
+    expect(debug.skipped).toBe("explicit-raw-bypass");
+  });
+
+  it("records metadata-only stats for immediate skip paths", async () => {
+    const home = await createTempDir();
+    const artifactDir = process.env.TOKENJUICE_ARTIFACT_DIR;
+    process.env.CODEX_HOME = home;
+    process.env.HOME = home;
+
+    expect(artifactDir).toBeTruthy();
+    const command = "tokenjuice wrap --raw -- printf 'ok\\n'";
+    const metadataBefore = await listArtifactMetadata();
+    const matchingBefore = metadataBefore.filter((entry) => entry.metadata.command === command);
+
+    const payload = JSON.stringify({
+      hook_event_name: "PostToolUse",
+      tool_name: "Bash",
+      tool_input: {
+        command,
+      },
+      tool_response: "ok\n",
+    });
+
+    const { code, output } = await captureStdout(() => runCodexPostToolUseHook(payload));
+    const debug = JSON.parse(await readFile(join(home, "tokenjuice-hook.last.json"), "utf8")) as {
+      rewrote: boolean;
+      skipped?: string;
+    };
+    const metadata = await listArtifactMetadata();
+    const matchingMetadata = metadata.filter((entry) => entry.metadata.command === command);
+    const newMetadata = matchingMetadata.find((entry) => !matchingBefore.some((before) => before.id === entry.id));
+
+    expect(code).toBe(0);
+    expect(output).toBe("");
+    expect(debug.rewrote).toBe(false);
+    expect(debug.skipped).toBe("explicit-raw-bypass");
+    expect(matchingMetadata).toHaveLength(matchingBefore.length + 1);
+    expect(newMetadata?.metadata.command).toBe(command);
+    expect(newMetadata?.metadata.rawChars).toBeGreaterThan(0);
+    expect(newMetadata?.metadata.reducedChars).toBe(newMetadata?.metadata.rawChars);
+    expect(newMetadata?.metadata.ratio).toBe(1);
+    expect(newMetadata?.path).toBeUndefined();
+    expect(resolve(dirname(newMetadata!.metadataPath))).toBe(resolve(artifactDir!));
+    expect(existsSync(join(home, ".tokenjuice", "artifacts"))).toBe(false);
+  });
+
+  it("writes rolling hook history entries alongside the last snapshot", async () => {
+    const home = await createTempDir();
+    process.env.CODEX_HOME = home;
+
+    const firstPayload = JSON.stringify({
+      hook_event_name: "PostToolUse",
+      tool_name: "Bash",
+      tool_input: {
+        command: "sed -n '1,40p' src/hosts/codex/index.ts",
+      },
+      tool_response: [
+        "function example() {",
+        "  throw new AssertionError();",
+        "}",
+      ].join("\n"),
+    });
+    const secondPayload = JSON.stringify({
+      hook_event_name: "PostToolUse",
+      tool_name: "Bash",
+      tool_input: {
+        command: "git status --short",
+      },
+      tool_response: " M src/hosts/codex/index.ts\n",
+    });
+
+    await captureStdout(() => runCodexPostToolUseHook(firstPayload));
+    await captureStdout(() => runCodexPostToolUseHook(secondPayload));
+
+    const last = JSON.parse(await readFile(join(home, "tokenjuice-hook.last.json"), "utf8")) as {
+      timestamp?: string;
+      command?: string;
+      tokenjuiceVersion?: string;
+      hookCommandPath?: string;
+    };
+    const historyLines = (await readFile(join(home, "tokenjuice-hook.history.jsonl"), "utf8"))
+      .trim()
+      .split("\n");
+    const history = historyLines.map((line) => JSON.parse(line) as {
+      timestamp?: string;
+      command?: string;
+      skipped?: string;
+      rewrote?: boolean;
+      tokenjuiceVersion?: string;
+      hookCommandPath?: string;
+      savedChars?: number;
+      ratio?: number;
+    });
+
+    expect(last.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    expect(last.command).toBe("git status --short");
+    expect(last.tokenjuiceVersion).toBe(PACKAGE_VERSION);
+    expect(typeof last.hookCommandPath).toBe("string");
+    expect(last.hookCommandPath).not.toBe("");
+    expect(history).toHaveLength(2);
+    expect(history.map((entry) => entry.command)).toEqual([
+      "sed -n '1,40p' src/hosts/codex/index.ts",
+      "git status --short",
+    ]);
+    expect(history[0]?.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    expect(history[0]?.skipped).toBe("file-content-inspection-command");
+    expect(history[0]?.tokenjuiceVersion).toBe(PACKAGE_VERSION);
+    expect(history[0]?.savedChars).toBe(0);
+    expect(history[0]?.ratio).toBe(1);
+    expect(history[0]?.matchedReducer).toBeUndefined();
+    expect(history[1]?.rewrote).toBe(false);
+    expect(history[1]?.skipped).toBe("no-compaction");
+    expect(history[1]?.savedChars).toBe(1);
+  });
+
+  it("repairs malformed hook history lines before appending a new entry", async () => {
+    const home = await createTempDir();
+    process.env.CODEX_HOME = home;
+
+    const validHistoryLine = JSON.stringify({
+      timestamp: "2026-04-23T00:00:00.000Z",
+      command: "git status --short",
+      rewrote: false,
+    });
+    await writeFile(
+      join(home, "tokenjuice-hook.history.jsonl"),
+      `${validHistoryLine}\nnot-json\n{"truncated":true\n`,
+      "utf8",
+    );
+
+    const payload = JSON.stringify({
+      hook_event_name: "PostToolUse",
+      tool_name: "Bash",
+      tool_input: {
+        command: "sed -n '1,40p' src/hosts/codex/index.ts",
+      },
+      tool_response: [
+        "function example() {",
+        "  throw new AssertionError();",
+        "}",
+      ].join("\n"),
+    });
+
+    await captureStdout(() => runCodexPostToolUseHook(payload));
+
+    const historyLines = (await readFile(join(home, "tokenjuice-hook.history.jsonl"), "utf8"))
+      .trim()
+      .split("\n");
+    const history = historyLines.map((line) => JSON.parse(line) as {
+      command?: string;
+      skipped?: string;
+    });
+
+    expect(history).toHaveLength(2);
+    expect(history[0]?.command).toBe("git status --short");
+    expect(history[1]?.command).toBe("sed -n '1,40p' src/hosts/codex/index.ts");
+    expect(history[1]?.skipped).toBe("file-content-inspection-command");
+  });
+});

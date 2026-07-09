@@ -1,0 +1,16 @@
+{
+  "id": "devops-docker-images-basic",
+  "ruleId": "devops/docker-images",
+  "input": {
+    "toolName": "exec",
+    "argv": ["docker", "images"],
+    "command": "docker images",
+    "combinedText": "REPOSITORY   TAG       IMAGE ID       CREATED       SIZE\nnode         22        abc123         2 days ago    1.1GB\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "devops/docker-images",
+    "family": "container-images",
+    "contains": ["image", "node"]
+  }
+}

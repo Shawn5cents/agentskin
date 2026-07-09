@@ -1,0 +1,16 @@
+{
+  "id": "tests-cargo-basic",
+  "ruleId": "tests/cargo-test",
+  "input": {
+    "toolName": "exec",
+    "argv": ["cargo", "test"],
+    "command": "cargo test",
+    "combinedText": "running 2 tests\ntest a ... ok\ntest b ... FAILED\nfailures:\n    b\n",
+    "exitCode": 101
+  },
+  "expect": {
+    "matchedReducer": "tests/cargo-test",
+    "family": "test-results",
+    "contains": ["failed test", "FAILED"]
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "name": "tokenjuice",
+  "version": "0.8.0",
+  "description": "Lean output compaction for terminal-heavy agent workflows",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@10.11.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./mcp": {
+      "types": "./dist/hosts/mcp/index.d.ts",
+      "default": "./dist/hosts/mcp/index.js"
+    },
+    "./openclaw": {
+      "types": "./dist/hosts/openclaw/index.d.ts",
+      "default": "./dist/hosts/openclaw/index.js"
+    }
+  },
+  "bin": {
+    "tokenjuice": "dist/cli/main.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "SECURITY.md"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.10.0",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.0",
+    "esbuild": "^0.25.11",
+    "madge": "^8.0.0",
+    "oxlint": "^1.61.0",
+    "publint": "^0.3.18",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
+  },
+  "scripts": {
+    "build": "node scripts/build.js",
+    "test": "node scripts/generate-builtin-rules.js && vitest run",
+    "test:hook": "bash scripts/test-bash-hook.sh",
+    "lint": "oxlint --deny-warnings src test scripts",
+    "lint:circular": "madge --circular --no-color --no-spinner --extensions ts --ts-config tsconfig.json src/",
+    "typecheck": "node scripts/generate-builtin-rules.js && tsc --noEmit",
+    "verify": "npm run lint && npm run lint:circular && npm run typecheck && npm run test",
+    "verify:package": "npm run build && publint run && node scripts/release-artifacts.js && node scripts/checksum.js && node scripts/homebrew-formula.js",
+    "bench:fixtures": "node scripts/benchmark-fixtures.js",
+    "bench:verify": "node scripts/benchmark-verify.js",
+    "e2e:local": "cd e2e && node harness.mjs",
+    "start": "echo 'Run: tokenjuice <command>' && exit 1"
+  }
+}

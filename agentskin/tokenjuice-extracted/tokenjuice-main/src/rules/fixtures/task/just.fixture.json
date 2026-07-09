@@ -1,0 +1,16 @@
+{
+  "id": "task-just-basic",
+  "ruleId": "task/just",
+  "input": {
+    "toolName": "exec",
+    "argv": ["just", "check"],
+    "command": "just check",
+    "combinedText": "just check\nerror: Recipe `check` failed on line 12\n",
+    "exitCode": 1
+  },
+  "expect": {
+    "matchedReducer": "task/just",
+    "family": "task-runner",
+    "contains": ["error", "Recipe `check` failed"]
+  }
+}

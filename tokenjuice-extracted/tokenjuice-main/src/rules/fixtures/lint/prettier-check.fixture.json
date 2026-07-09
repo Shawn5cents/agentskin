@@ -1,0 +1,15 @@
+{
+  "id": "lint-prettier-basic",
+  "ruleId": "lint/prettier-check",
+  "input": {
+    "toolName": "exec",
+    "command": "pnpm prettier --check .",
+    "combinedText": "Checking formatting...\n[warn] src/index.ts\n[warn] Code style issues found in the above file.\n",
+    "exitCode": 1
+  },
+  "expect": {
+    "matchedReducer": "lint/prettier-check",
+    "family": "lint-results",
+    "contains": ["warning", "src/index.ts"]
+  }
+}

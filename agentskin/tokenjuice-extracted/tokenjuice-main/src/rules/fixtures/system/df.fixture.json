@@ -1,0 +1,16 @@
+{
+  "id": "system-df-basic",
+  "ruleId": "system/df",
+  "input": {
+    "toolName": "exec",
+    "argv": ["df", "-h"],
+    "command": "df -h",
+    "combinedText": "Filesystem      Size   Used  Avail Capacity\n/dev/disk3s1    926Gi  500Gi  400Gi   56%\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "system/df",
+    "family": "system-disk",
+    "contains": ["filesystem", "/dev/disk3s1"]
+  }
+}

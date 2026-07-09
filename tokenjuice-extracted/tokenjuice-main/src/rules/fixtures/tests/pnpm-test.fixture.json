@@ -1,0 +1,16 @@
+{
+  "id": "tests-pnpm-basic",
+  "ruleId": "tests/pnpm-test",
+  "input": {
+    "toolName": "exec",
+    "argv": ["pnpm", "test"],
+    "command": "pnpm test",
+    "combinedText": "RUN  v3.2.4\nFAIL test/example.test.ts\nAssertionError: expected 1 to be 2\n",
+    "exitCode": 1
+  },
+  "expect": {
+    "matchedReducer": "tests/pnpm-test",
+    "family": "test-results",
+    "contains": ["exit 1", "FAIL test/example.test.ts"]
+  }
+}

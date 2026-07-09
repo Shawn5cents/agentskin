@@ -1,0 +1,16 @@
+{
+  "id": "package-yum-install-basic",
+  "ruleId": "package/yum-install",
+  "input": {
+    "toolName": "exec",
+    "argv": ["yum", "install", "-y", "git"],
+    "command": "yum install -y git",
+    "combinedText": "Loaded plugins: fastestmirror\nResolving Dependencies\n--> Running transaction check\n---> Package git.x86_64 0:2.43.5-1.el9 will be installed\nTransaction Summary\nInstall  1 Package\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "package/yum-install",
+    "family": "system-package-install",
+    "contains": ["Resolving Dependencies", "Install  1 Package"]
+  }
+}

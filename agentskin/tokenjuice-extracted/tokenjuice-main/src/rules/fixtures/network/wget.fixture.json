@@ -1,0 +1,16 @@
+{
+  "id": "network-wget-basic",
+  "ruleId": "network/wget",
+  "input": {
+    "toolName": "exec",
+    "argv": ["wget", "https://example.com/file.tgz"],
+    "command": "wget https://example.com/file.tgz",
+    "combinedText": "--2026-04-14-- https://example.com/file.tgz\nSaving to: ‘file.tgz’\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "network/wget",
+    "family": "network-http",
+    "contains": ["Saving to"]
+  }
+}

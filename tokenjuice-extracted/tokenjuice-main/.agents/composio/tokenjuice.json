@@ -1,0 +1,79 @@
+{
+  "name": "tokenjuice_reduce",
+  "description": "Run a terminal command and return its output reduced by Tokenjuice. Applies rule-based classification (e.g., git status, npm test, ls, curl) to compact noisy terminal output before it enters the LLM context. Up to 80% token reduction on verbose commands.",
+  "publisher": "tokenjuice",
+  "version": "0.8.0",
+  "parameters": {
+    "type": "object",
+    "required": ["command"],
+    "properties": {
+      "command": {
+        "type": "string",
+        "description": "Shell command to execute. Output is captured and reduced."
+      },
+      "cwd": {
+        "type": "string",
+        "description": "Working directory for the command."
+      },
+      "maxInlineChars": {
+        "type": "number",
+        "default": 1200,
+        "description": "Maximum chars to include in the inline result. Larger outputs are truncated with head/tail."
+      },
+      "noOmit": {
+        "type": "boolean",
+        "default": false,
+        "description": "If true, don't omit lines — show full output."
+      },
+      "trace": {
+        "type": "boolean",
+        "default": false,
+        "description": "If true, include classification trace (which rule matched, normalized command, etc.)."
+      }
+    }
+  },
+  "returns": {
+    "type": "object",
+    "properties": {
+      "inlineText": { "type": "string", "description": "Reduced command output suitable for LLM context." },
+      "previewText": { "type": "string", "description": "Full untruncated summary if available." },
+      "facts": { "type": "object", "description": "Pattern counts (e.g., {\"error\": 2, \"warning\": 5})." },
+      "compaction": { "type": "object", "description": "CompactionMetadata describing the reduction strategy used." },
+      "stats": {
+        "type": "object",
+        "properties": {
+          "rawChars": { "type": "number" },
+          "reducedChars": { "type": "number" },
+          "ratio": { "type": "number", "description": "reducedChars / rawChars (lower = more savings)." }
+        }
+      },
+      "classification": {
+        "type": "object",
+        "properties": {
+          "family": { "type": "string", "description": "Rule family that matched (e.g., 'git-status', 'network-http')." },
+          "confidence": { "type": "number" },
+          "matchedReducer": { "type": "string" }
+        }
+      }
+    }
+  },
+  "handler": "import { runReduceJsonCli } from '../../tokenjuice-extracted/tokenjuice-main/dist/index.js'; const result = await runReduceJsonCli({ command: [args.command], cwd: args.cwd }); return result;",
+  "examples": [
+    {
+      "description": "Reduce git status output",
+      "input": { "command": "git status" },
+      "output": {
+        "inlineText": "M  src/foo.ts\nA  src/bar.ts\n2 modifications",
+        "stats": { "rawChars": 4500, "reducedChars": 32, "ratio": 0.007 }
+      }
+    },
+    {
+      "description": "Reduce npm test output",
+      "input": { "command": "npm test" },
+      "output": {
+        "inlineText": "Tests: 42 passed, 42 total\n...",
+        "facts": { "passed": 42, "failed": 0 }
+      }
+    }
+  ]
+}

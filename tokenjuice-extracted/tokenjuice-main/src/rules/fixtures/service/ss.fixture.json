@@ -1,0 +1,16 @@
+{
+  "id": "service-ss-basic",
+  "ruleId": "service/ss",
+  "input": {
+    "toolName": "exec",
+    "argv": ["ss", "-ltn"],
+    "command": "ss -ltn",
+    "combinedText": "State  Recv-Q Send-Q Local Address:Port Peer Address:Port\nLISTEN 0      128    0.0.0.0:3000      0.0.0.0:*\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "service/ss",
+    "family": "service-network-state",
+    "contains": ["socket", "0.0.0.0:3000"]
+  }
+}

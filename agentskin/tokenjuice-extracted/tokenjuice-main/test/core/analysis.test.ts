@@ -1,0 +1,386 @@
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+
+import { afterEach, describe, expect, it } from "vitest";
+
+import { buildAnalysisEntry, discoverCandidates, doctorArtifacts, listArtifactMetadata, normalizeCommandSignature, reduceExecution, statsArtifacts } from "../../src/index.js";
+
+const tempDirs: string[] = [];
+
+afterEach(async () => {
+  await Promise.all(tempDirs.splice(0).map((dir) => rm(dir, { recursive: true, force: true })));
+});
+
+async function createTempDir(): Promise<string> {
+  const dir = await mkdtemp(join(tmpdir(), "tokenjuice-analysis-"));
+  tempDirs.push(dir);
+  return dir;
+}
+
+describe("analysis", () => {
+  it("discovers missing rule candidates from generic artifacts", async () => {
+    const storeDir = await createTempDir();
+    await reduceExecution(
+      {
+        toolName: "exec",
+        command: "custom-tool check",
+        argv: ["custom-tool", "check"],
+        combinedText: Array.from({ length: 40 }, (_, index) => `problem ${index + 1}`).join("\n"),
+        exitCode: 1,
+      },
+      {
+        store: true,
+        storeDir,
+      },
+    );
+
+    const metadata = await listArtifactMetadata(storeDir);
+    const candidates = discoverCandidates(metadata);
+    expect(candidates[0]?.kind).toBe("missing-rule");
+    expect(candidates[0]?.signature).toBe("custom-tool");
+  });
+
+  it("reports weak matched reducers in doctor output", async () => {
+    const storeDir = await createTempDir();
+    await reduceExecution(
+      {
+        toolName: "exec",
+        command: "grep TODO src",
+        argv: ["grep", "TODO", "src"],
+        combinedText: Array.from(
+          { length: 8 },
+          (_, index) => `src/file-${index + 1}.ts:${" very long todo".repeat(20)}`,
+        ).join("\n"),
+        exitCode: 0,
+      },
+      {
+        store: true,
+        storeDir,
+        maxInlineChars: 5000,
+      },
+    );
+
+    const metadata = await listArtifactMetadata(storeDir);
+    const report = doctorArtifacts(metadata);
+    expect(report.totals.entries).toBe(1);
+    expect(report.health).toBe("poor");
+    expect(report.topWeakReducers[0]?.matchedReducer).toBe("search/grep");
+  });
+
+  it("builds analysis entries from a direct reduction result", async () => {
+    const result = await reduceExecution({
+      toolName: "exec",
+      command: "pnpm vitest",
+      argv: ["pnpm", "vitest"],
+      combinedText: "RUN  v3.2.4\nFAIL test/example.test.ts\n",
+      exitCode: 1,
+    });
+
+    const entry = buildAnalysisEntry(
+      {
+        toolName: "exec",
+        command: "pnpm vitest",
+        exitCode: 1,
+      },
+      result,
+    );
+
+    expect(entry.metadata.classification.matchedReducer).toBe("tests/vitest");
+    expect(entry.metadata.rawChars).toBeGreaterThan(0);
+    expect(entry.metadata.source).toBe("cli");
+  });
+
+  it("aggregates stats across stored artifacts", async () => {
+    const storeDir = await createTempDir();
+    await reduceExecution(
+      {
+        toolName: "exec",
+        command: "pnpm tsc --noEmit",
+        argv: ["pnpm", "tsc", "--noEmit"],
+        combinedText: "src/index.ts(1,1): error TS2322: bad\nFound 1 error.\n",
+        exitCode: 2,
+      },
+      {
+        store: true,
+        storeDir,
+      },
+    );
+    await reduceExecution(
+      {
+        toolName: "exec",
+        command: "grep TODO src",
+        argv: ["grep", "TODO", "src"],
+        combinedText: Array.from(
+          { length: 20 },
+          (_, index) => `src/file-${index + 1}.ts:${" TODO".repeat(20)}`,
+        ).join("\n"),
+        exitCode: 0,
+      },
+      {
+        store: true,
+        storeDir,
+      },
+    );
+
+    const metadata = await listArtifactMetadata(storeDir);
+    const report = statsArtifacts(metadata);
+    expect(report.totals.entries).toBe(2);
+    expect(report.totals.rawChars).toBeGreaterThan(report.totals.reducedChars);
+    expect(report.reducers.length).toBeGreaterThan(0);
+    expect(report.commands.length).toBeGreaterThan(0);
+    expect(report.daily.length).toBe(1);
+  });
+
+  it("excludes capture-truncated entries from compaction totals", () => {
+    const report = statsArtifacts([
+      {
+        metadata: {
+          createdAt: "2026-04-23T00:00:00.000Z",
+          source: "codex",
+          command: "python query_cls_log.py",
+          classification: {
+            family: "generic",
+            confidence: 1,
+            matchedReducer: "generic/fallback",
+          },
+          rawChars: 1000,
+          reducedChars: 100,
+          ratio: 0.1,
+          captureTruncated: true,
+        },
+      },
+      {
+        metadata: {
+          createdAt: "2026-04-23T00:01:00.000Z",
+          source: "cursor",
+          command: "rg TODO src",
+          classification: {
+            family: "search",
+            confidence: 1,
+            matchedReducer: "search/rg",
+          },
+          rawChars: 200,
+          reducedChars: 50,
+          ratio: 0.25,
+        },
+      },
+    ]);
+
+    expect(report.totals.observedEntries).toBe(2);
+    expect(report.totals.captureTruncatedEntries).toBe(1);
+    expect(report.totals.entries).toBe(1);
+    expect(report.totals.rawChars).toBe(200);
+    expect(report.totals.reducedChars).toBe(50);
+    expect(report.totals.savedChars).toBe(150);
+    expect(report.commands[0]?.signature).toBe("rg");
+    expect(report.reducers.some((entry) => entry.reducer === "generic/fallback")).toBe(false);
+  });
+
+  it("segments stats by normalized artifact source", () => {
+    const entries = [
+      {
+        metadata: {
+          createdAt: "2026-04-20T00:00:00.000Z",
+          source: "codex",
+          command: "pnpm test",
+          classification: {
+            family: "tests",
+            confidence: 1,
+            matchedReducer: "tests/pnpm-test",
+          },
+          rawChars: 100,
+          reducedChars: 40,
+          ratio: 0.4,
+        },
+      },
+      {
+        metadata: {
+          createdAt: "2026-04-20T01:00:00.000Z",
+          source: "cursor",
+          command: "grep TODO src",
+          classification: {
+            family: "search",
+            confidence: 1,
+            matchedReducer: "search/grep",
+          },
+          rawChars: 200,
+          reducedChars: 100,
+          ratio: 0.5,
+        },
+      },
+      {
+        metadata: {
+          createdAt: "2026-04-20T02:00:00.000Z",
+          command: "custom-tool check",
+          classification: {
+            family: "generic",
+            confidence: 1,
+            matchedReducer: "generic/fallback",
+          },
+          rawChars: 50,
+          reducedChars: 50,
+          ratio: 1,
+        },
+      },
+    ];
+
+    const grouped = statsArtifacts(entries, { bySource: true });
+    expect(grouped.totals.entries).toBe(3);
+    expect(grouped.sources?.map((source) => source.source)).toEqual(["codex", "cursor", "unknown"]);
+    expect(grouped.sources?.find((source) => source.source === "cursor")?.commands[0]?.signature).toBe("grep");
+
+    const cursorOnly = statsArtifacts(entries, { source: "cursor" });
+    expect(cursorOnly.source).toBe("cursor");
+    expect(cursorOnly.totals.entries).toBe(1);
+    expect(cursorOnly.commands[0]?.signature).toBe("grep");
+  });
+
+  it("can segment and filter discover candidates by source", () => {
+    const entries = [
+      {
+        metadata: {
+          createdAt: "2026-04-20T00:00:00.000Z",
+          source: "codex",
+          command: "custom-tool check",
+          classification: {
+            family: "generic",
+            confidence: 1,
+            matchedReducer: "generic/fallback",
+          },
+          rawChars: 300,
+          reducedChars: 300,
+          ratio: 1,
+        },
+      },
+      {
+        metadata: {
+          createdAt: "2026-04-20T01:00:00.000Z",
+          source: "cursor",
+          command: "custom-tool check",
+          classification: {
+            family: "generic",
+            confidence: 1,
+            matchedReducer: "generic/fallback",
+          },
+          rawChars: 400,
+          reducedChars: 400,
+          ratio: 1,
+        },
+      },
+    ];
+
+    const defaultCandidates = discoverCandidates(entries);
+    expect(defaultCandidates).toHaveLength(1);
+    expect(defaultCandidates[0]?.count).toBe(2);
+    expect(defaultCandidates[0]?.source).toBeUndefined();
+
+    const grouped = discoverCandidates(entries, { bySource: true });
+    expect(grouped.map((candidate) => candidate.source).sort()).toEqual(["codex", "cursor"]);
+
+    const codexOnly = discoverCandidates(entries, { source: "codex", bySource: true });
+    expect(codexOnly).toHaveLength(1);
+    expect(codexOnly[0]?.source).toBe("codex");
+    expect(codexOnly[0]?.count).toBe(1);
+
+    const filtered = discoverCandidates(entries, { source: "cursor" });
+    expect(filtered[0]?.source).toBe("cursor");
+  });
+
+  it("buckets daily stats by the requested timezone", () => {
+    const entries = [
+      {
+        metadata: {
+          createdAt: "2026-04-20T03:30:00.000Z",
+          command: "pnpm test",
+          classification: {
+            family: "tests",
+            confidence: 1,
+            matchedReducer: "tests/pnpm-test",
+          },
+          rawChars: 100,
+          reducedChars: 25,
+          ratio: 0.25,
+        },
+      },
+    ];
+
+    expect(statsArtifacts(entries, { timeZone: "America/New_York" }).daily[0]?.day).toBe("2026-04-19");
+    expect(statsArtifacts(entries, { timeZone: "utc" }).daily[0]?.day).toBe("2026-04-20");
+    expect(statsArtifacts(entries).daily[0]?.day).toBe("2026-04-20");
+  });
+
+  it("clamps expanded artifact ratios in stats and doctor output", () => {
+    const entries = [
+      {
+        metadata: {
+          createdAt: "2026-04-15T00:00:00.000Z",
+          command: "node -e console.log('x')",
+          classification: {
+            family: "generic",
+            confidence: 1,
+            matchedReducer: "generic/fallback",
+          },
+          rawChars: 100,
+          reducedChars: 250,
+          ratio: 2.5,
+        },
+      },
+      {
+        metadata: {
+          createdAt: "2026-04-15T00:01:00.000Z",
+          command: "pnpm test",
+          classification: {
+            family: "tests",
+            confidence: 1,
+            matchedReducer: "tests/pnpm-test",
+          },
+          rawChars: 200,
+          reducedChars: 50,
+          ratio: 0.25,
+        },
+      },
+    ];
+
+    const stats = statsArtifacts(entries);
+    const doctor = doctorArtifacts(entries);
+
+    expect(stats.totals.rawChars).toBe(300);
+    expect(stats.totals.reducedChars).toBe(150);
+    expect(stats.totals.savedChars).toBe(150);
+    expect(stats.totals.avgRatio).toBe(0.625);
+    expect(stats.totals.savingsPercent).toBe(0.5);
+    expect(stats.reducers.find((entry) => entry.reducer === "generic/fallback")?.savedChars).toBe(0);
+    expect(doctor.totals.avgRatio).toBe(0.625);
+  });
+
+  it("normalizes command signatures to the initial binary only", () => {
+    expect(normalizeCommandSignature("pnpm --help")).toBe("pnpm");
+    expect(normalizeCommandSignature("node dist/cli/main.js stats")).toBe("node");
+    expect(normalizeCommandSignature("/opt/homebrew/bin/git status --short")).toBe("git");
+    expect(normalizeCommandSignature("stdin")).toBeNull();
+  });
+
+  it("derives ratios from reduced chars instead of trusting stale stored ratio fields", () => {
+    const report = statsArtifacts([
+      {
+        metadata: {
+          createdAt: "2026-04-15T00:00:00.000Z",
+          command: "pnpm --help",
+          classification: {
+            family: "generic",
+            confidence: 1,
+            matchedReducer: "generic/fallback",
+          },
+          rawChars: 100,
+          reducedChars: 25,
+          ratio: 9.9,
+        },
+      },
+    ]);
+
+    expect(report.totals.avgRatio).toBe(0.25);
+    expect(report.totals.savingsPercent).toBe(0.75);
+    expect(report.commands[0]?.signature).toBe("pnpm");
+  });
+});

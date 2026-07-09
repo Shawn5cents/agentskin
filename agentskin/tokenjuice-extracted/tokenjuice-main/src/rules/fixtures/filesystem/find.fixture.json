@@ -1,0 +1,16 @@
+{
+  "id": "filesystem-find-basic",
+  "ruleId": "filesystem/find",
+  "input": {
+    "toolName": "exec",
+    "argv": ["find", "src", "-name", "*.ts"],
+    "command": "find src -name '*.ts'",
+    "combinedText": "src/index.ts\nsrc/cli/main.ts\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "filesystem/find",
+    "family": "filesystem-find",
+    "contains": ["match", "src/index.ts"]
+  }
+}

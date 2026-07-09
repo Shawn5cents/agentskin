@@ -1,0 +1,16 @@
+{
+  "id": "network-nslookup-basic",
+  "ruleId": "network/nslookup",
+  "input": {
+    "toolName": "exec",
+    "argv": ["nslookup", "example.com"],
+    "command": "nslookup example.com",
+    "combinedText": "Server:\t\t1.1.1.1\nName:\texample.com\nAddress: 93.184.216.34\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "network/nslookup",
+    "family": "network-dns",
+    "contains": ["server", "example.com"]
+  }
+}

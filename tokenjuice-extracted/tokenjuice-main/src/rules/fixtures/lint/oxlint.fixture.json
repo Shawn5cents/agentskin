@@ -1,0 +1,15 @@
+{
+  "id": "lint-oxlint-basic",
+  "ruleId": "lint/oxlint",
+  "input": {
+    "toolName": "exec",
+    "command": "pnpm oxlint src",
+    "combinedText": "error: Unexpected debugger statement\nwarning: console statement is not allowed\n",
+    "exitCode": 1
+  },
+  "expect": {
+    "matchedReducer": "lint/oxlint",
+    "family": "lint-results",
+    "contains": ["error", "Unexpected debugger statement"]
+  }
+}

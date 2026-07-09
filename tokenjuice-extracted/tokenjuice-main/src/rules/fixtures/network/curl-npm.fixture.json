@@ -1,0 +1,16 @@
+{
+  "id": "network-curl-npm",
+  "ruleId": "network/curl-npm",
+  "input": {
+    "toolName": "exec",
+    "argv": ["curl", "https://registry.npmjs.org/react"],
+    "command": "curl https://registry.npmjs.org/react",
+    "combinedText": "{\n  \"name\": \"react\",\n  \"description\": \"React is a JavaScript library\",\n  \"version\": \"18.0.0\",\n  \"license\": \"MIT\"\n}",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "network/curl-npm",
+    "family": "network-http",
+    "contains": ["react", "description"]
+  }
+}

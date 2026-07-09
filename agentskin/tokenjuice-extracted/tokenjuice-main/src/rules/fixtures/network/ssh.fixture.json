@@ -1,0 +1,16 @@
+{
+  "id": "network-ssh-basic",
+  "ruleId": "network/ssh",
+  "input": {
+    "toolName": "exec",
+    "argv": ["ssh", "host"],
+    "command": "ssh host",
+    "combinedText": "ssh: connect to host host port 22: Connection refused\n",
+    "exitCode": 255
+  },
+  "expect": {
+    "matchedReducer": "network/ssh",
+    "family": "network-remote-shell",
+    "contains": ["error", "Connection refused"]
+  }
+}

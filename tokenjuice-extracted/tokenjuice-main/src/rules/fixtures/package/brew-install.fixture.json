@@ -1,0 +1,16 @@
+{
+  "id": "package-brew-install-basic",
+  "ruleId": "package/brew-install",
+  "input": {
+    "toolName": "exec",
+    "argv": ["brew", "install", "wget"],
+    "command": "brew install wget",
+    "combinedText": "==> Fetching downloads for: wget\n==> Installing dependencies for wget: pcre2\n==> Installing wget\n🍺  /opt/homebrew/Cellar/wget/1.25.0: 52 files, 4.5MB\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "package/brew-install",
+    "family": "system-package-install",
+    "contains": ["Installing wget", "Cellar/wget/1.25.0"]
+  }
+}

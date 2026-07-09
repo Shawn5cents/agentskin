@@ -1,0 +1,19 @@
+{
+  "id": "install-yarn-up-to-date",
+  "ruleId": "install/yarn-install",
+  "input": {
+    "toolName": "exec",
+    "argv": ["yarn", "install"],
+    "command": "yarn install",
+    "combinedText": "[1/4] Resolving packages...\nsuccess Already up-to-date.\nDone in 0.42s.\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "install/yarn-install",
+    "family": "dependency-install",
+    "inlineText": "yarn install: up to date",
+    "previewText": "yarn install: up to date",
+    "contains": ["yarn install: up to date"],
+    "excludes": ["Already up-to-date."]
+  }
+}

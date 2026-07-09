@@ -1,0 +1,15 @@
+{
+  "id": "tests-vitest-basic",
+  "ruleId": "tests/vitest",
+  "input": {
+    "toolName": "exec",
+    "command": "pnpm vitest",
+    "combinedText": "RUN  v3.2.4\n❯ test/example.test.ts (2 tests | 1 failed)\nAssertionError: expected 1 to be 2\n",
+    "exitCode": 1
+  },
+  "expect": {
+    "matchedReducer": "tests/vitest",
+    "family": "test-results",
+    "contains": ["failed suite", "test/example.test.ts"]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "package-dnf-install-basic",
+  "ruleId": "package/dnf-install",
+  "input": {
+    "toolName": "exec",
+    "argv": ["dnf", "install", "-y", "jq"],
+    "command": "dnf install -y jq",
+    "combinedText": "Dependencies resolved.\n================================================================================\n Package        Arch   Version          Repository                           Size\n================================================================================\nInstalling:\n jq             x86_64 1.7.1-1.fc40     updates                              188 k\nTransaction Summary\nInstall  1 Package\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "package/dnf-install",
+    "family": "system-package-install",
+    "contains": ["Dependencies resolved", "Install  1 Package"]
+  }
+}

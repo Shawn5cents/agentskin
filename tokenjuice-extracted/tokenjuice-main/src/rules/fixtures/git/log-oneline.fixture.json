@@ -1,0 +1,16 @@
+{
+  "id": "git-log-oneline-basic",
+  "ruleId": "git/log-oneline",
+  "input": {
+    "toolName": "exec",
+    "argv": ["git", "log", "--oneline"],
+    "command": "git log --oneline",
+    "combinedText": "abc1234 feat: add stats\nbcd2345 fix: rule matcher\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "git/log-oneline",
+    "family": "git-history",
+    "contains": ["commit", "feat: add stats"]
+  }
+}

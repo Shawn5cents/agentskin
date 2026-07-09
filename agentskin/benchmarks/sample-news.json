@@ -1,0 +1,21 @@
+{
+  \"articles\": [
+    {
+      \"title\": \"Breaking News: AI Breakthrough\",
+      \"description\": \"Researchers announce new model with 10x efficiency.\",
+      \"url\": \"https://example.com/ai-news\",
+      \"publishedAt\": \"2026-04-28T10:00:00Z\",
+      \"source\": {\"name\": \"TechCrunch\"},
+      \"junk\": \"lots of metadata\"
+    },
+    {
+      \"title\": \"Weather Update\",
+      \"description\": \"Sunny with chance of agents.\",
+      \"url\": \"https://example.com/weather\",
+      \"publishedAt\": \"2026-04-28T11:00:00Z\"
+    }
+  ],
+  \"totalResults\": 2,
+  \"status\": \"ok\",
+  \"metadata\": {\"page\": 1, \"api_version\": \"v1\"}
+}

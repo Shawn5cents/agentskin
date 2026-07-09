@@ -1,0 +1,19 @@
+{
+  "id": "tests-pytest-basic",
+  "ruleId": "tests/pytest",
+  "input": {
+    "toolName": "exec",
+    "command": "pytest",
+    "combinedText": "test_api.py::test_health PASSED\ntest_api.py::test_save FAILED\n================ 1 failed, 1 passed in 0.12s ================\n",
+    "exitCode": 1
+  },
+  "expect": {
+    "matchedReducer": "tests/pytest",
+    "family": "test-results",
+    "facts": {
+      "failed test": 1,
+      "passed test": 1
+    },
+    "contains": ["failed test", "FAILED"]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "task-make-basic",
+  "ruleId": "task/make",
+  "input": {
+    "toolName": "exec",
+    "argv": ["make", "build"],
+    "command": "make build",
+    "combinedText": "cc main.c -o main\nmake: *** [build] Error 2\n",
+    "exitCode": 2
+  },
+  "expect": {
+    "matchedReducer": "task/make",
+    "family": "task-runner",
+    "contains": ["error", "Error 2"]
+  }
+}

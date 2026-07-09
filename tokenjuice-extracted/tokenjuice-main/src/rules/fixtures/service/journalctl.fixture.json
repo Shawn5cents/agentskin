@@ -1,0 +1,16 @@
+{
+  "id": "service-journalctl-basic",
+  "ruleId": "service/journalctl",
+  "input": {
+    "toolName": "exec",
+    "argv": ["journalctl", "-u", "api.service"],
+    "command": "journalctl -u api.service",
+    "combinedText": "Apr 14 api[123]: service started\nApr 14 api[123]: error: failed to bind port\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "service/journalctl",
+    "family": "service-logs",
+    "contains": ["error", "failed to bind port"]
+  }
+}

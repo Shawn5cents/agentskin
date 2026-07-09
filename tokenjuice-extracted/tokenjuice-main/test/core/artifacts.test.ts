@@ -1,0 +1,207 @@
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { homedir, tmpdir } from "node:os";
+import { join } from "node:path";
+
+import { afterEach, describe, expect, it } from "vitest";
+
+import { ARTIFACT_DIR_ENV, getArtifact, listArtifactMetadata, listArtifacts, normalizeArtifactSource, resolveArtifactBaseDir, storeArtifact, storeArtifactMetadata } from "../../src/index.js";
+
+const tempDirs: string[] = [];
+
+async function createTempDir(): Promise<string> {
+  const dir = await mkdtemp(join(tmpdir(), "tokenjuice-artifacts-"));
+  tempDirs.push(dir);
+  return dir;
+}
+
+afterEach(async () => {
+  await Promise.all(tempDirs.splice(0).map((dir) => rm(dir, { recursive: true, force: true })));
+});
+
+describe("artifacts", () => {
+  it("falls back to ~/.tokenjuice/artifacts when no env override is configured", () => {
+    const original = process.env[ARTIFACT_DIR_ENV];
+
+    try {
+      delete process.env[ARTIFACT_DIR_ENV];
+      expect(resolveArtifactBaseDir()).toBe(join(homedir(), ".tokenjuice", "artifacts"));
+    } finally {
+      if (original === undefined) {
+        delete process.env[ARTIFACT_DIR_ENV];
+      } else {
+        process.env[ARTIFACT_DIR_ENV] = original;
+      }
+    }
+  });
+
+  it("trims the env-configured artifact directory before use", async () => {
+    const storeDir = await createTempDir();
+    const original = process.env[ARTIFACT_DIR_ENV];
+
+    try {
+      process.env[ARTIFACT_DIR_ENV] = `  ${storeDir}  `;
+      expect(resolveArtifactBaseDir()).toBe(storeDir);
+    } finally {
+      if (original === undefined) {
+        delete process.env[ARTIFACT_DIR_ENV];
+      } else {
+        process.env[ARTIFACT_DIR_ENV] = original;
+      }
+    }
+  });
+
+  it("writes artifacts to the env-configured directory by default", async () => {
+    const ref = await storeArtifactMetadata(
+      {
+        input: { toolName: "exec", command: "env-dir-test", exitCode: 0 },
+        rawText: "env dir output",
+        classification: { family: "test-results", confidence: 1, matchedReducer: "tests/env-dir" },
+        stats: { rawChars: 14, reducedChars: 7, ratio: 0.5 },
+      },
+    );
+
+    const metadata = await listArtifactMetadata();
+    const found = metadata.find((entry) => entry.id === ref.id);
+
+    expect(found).toBeDefined();
+    expect(found?.metadataPath).not.toContain(process.env.HOME ?? "~");
+  });
+
+  it("prefers explicit storeDir over the env-configured directory", async () => {
+    const storeDir = await createTempDir();
+    const ref = await storeArtifactMetadata(
+      {
+        input: { toolName: "exec", command: "explicit-dir-test", exitCode: 0 },
+        rawText: "explicit dir output",
+        classification: { family: "test-results", confidence: 1, matchedReducer: "tests/explicit-dir" },
+        stats: { rawChars: 20, reducedChars: 10, ratio: 0.5 },
+      },
+      storeDir,
+    );
+
+    expect(ref.metadataPath.startsWith(storeDir)).toBe(true);
+  });
+
+  it("rejects invalid artifact ids instead of reading arbitrary files", async () => {
+    const storeDir = await createTempDir();
+
+    expect(await getArtifact("../package", storeDir)).toBeNull();
+    expect(await getArtifact("../../../etc/passwd", storeDir)).toBeNull();
+  });
+
+  it("ignores malformed artifact metadata filenames", async () => {
+    const storeDir = await createTempDir();
+    await writeFile(join(storeDir, "tj_invalid-xyz.json"), "{}", "utf8");
+    await writeFile(join(storeDir, "not-an-artifact.json"), "{}", "utf8");
+    await writeFile(join(storeDir, "tj_12345678-e29.json"), "{}", "utf8");
+
+    const refs = await listArtifacts(storeDir);
+
+    expect(refs.map((ref) => ref.id)).toEqual(["tj_12345678-e29"]);
+  });
+
+  it("stores raw artifacts under private file modes on unix-like systems", async () => {
+    const storeDir = await createTempDir();
+    const ref = await storeArtifact(
+      {
+        input: { toolName: "exec", command: "pnpm test", exitCode: 0 },
+        rawText: "secret output",
+        classification: { family: "test-results", confidence: 1, matchedReducer: "tests/pnpm-test" },
+        stats: { rawChars: 13, reducedChars: 6, ratio: 0.46 },
+      },
+      storeDir,
+    );
+
+    expect(ref.id).toMatch(/^tj_/u);
+    if (process.platform === "win32") {
+      return;
+    }
+
+    const { stat } = await import("node:fs/promises");
+    const rawMode = (await stat(ref.path)).mode & 0o777;
+    const metadataMode = (await stat(ref.metadataPath)).mode & 0o777;
+
+    expect(rawMode).toBe(0o600);
+    expect(metadataMode).toBe(0o600);
+  });
+
+  it("ignores corrupted metadata files when loading artifact metadata", async () => {
+    const storeDir = await createTempDir();
+    await writeFile(join(storeDir, "tj_1234567-abcd.json"), JSON.stringify(["bad"]), "utf8");
+    await writeFile(join(storeDir, "tj_1234567-abcd.txt"), "raw", "utf8");
+
+    const refs = await listArtifacts(storeDir);
+    expect(refs).toHaveLength(1);
+
+    const metadata = await listArtifactMetadata(storeDir);
+    expect(metadata).toEqual([]);
+
+    const artifact = await getArtifact("tj_1234567-abcd", storeDir);
+    expect(artifact).toBeNull();
+  });
+
+  it("tracks metadata-only entries without exposing them as raw artifacts", async () => {
+    const storeDir = await createTempDir();
+
+    const metadataRef = await storeArtifactMetadata(
+      {
+        input: { toolName: "exec", command: "pnpm test", exitCode: 0 },
+        rawText: "test output",
+        classification: { family: "test-results", confidence: 1, matchedReducer: "tests/pnpm-test" },
+        stats: { rawChars: 11, reducedChars: 5, ratio: 0.45 },
+      },
+      storeDir,
+    );
+
+    const artifacts = await listArtifacts(storeDir);
+    const metadata = await listArtifactMetadata(storeDir);
+
+    expect(artifacts).toEqual([]);
+    expect(metadata).toHaveLength(1);
+    expect(metadata[0]?.id).toBe(metadataRef.id);
+    expect(metadata[0]?.path).toBeUndefined();
+    expect(metadata[0]?.metadata.command).toBe("pnpm test");
+    expect(metadata[0]?.metadata.source).toBe("cli");
+  });
+
+  it("persists normalized source metadata when provided", async () => {
+    const storeDir = await createTempDir();
+
+    const metadataRef = await storeArtifactMetadata(
+      {
+        input: {
+          toolName: "exec",
+          command: "pnpm test",
+          exitCode: 0,
+          metadata: { source: "codex-post-tool-use" },
+        },
+        rawText: "test output",
+        classification: { family: "test-results", confidence: 1, matchedReducer: "tests/pnpm-test" },
+        stats: { rawChars: 11, reducedChars: 5, ratio: 0.45 },
+      },
+      storeDir,
+    );
+
+    const metadata = await listArtifactMetadata(storeDir);
+
+    expect(metadata[0]?.id).toBe(metadataRef.id);
+    expect(metadata[0]?.metadata.source).toBe("codex");
+  });
+
+  it("normalizes Grok Build separately from Grok CLI", () => {
+    expect(normalizeArtifactSource("amazon-q")).toBe("amazon-q");
+    expect(normalizeArtifactSource("Amazon Q")).toBe("amazon-q");
+    expect(normalizeArtifactSource("aws-q-cli")).toBe("amazon-q");
+    expect(normalizeArtifactSource("copilot-agent-post-tool-use")).toBe("copilot-agent");
+    expect(normalizeArtifactSource("copilot-cli-post-tool-use")).toBe("copilot-cli");
+    expect(normalizeArtifactSource("droid-post-tool-use")).toBe("droid");
+    expect(normalizeArtifactSource("grok-build")).toBe("grok-build");
+    expect(normalizeArtifactSource("Grok Build")).toBe("grok-build");
+    expect(normalizeArtifactSource("xai-grok-build")).toBe("grok-build");
+    expect(normalizeArtifactSource("grok-cli-post-tool-use")).toBe("grok-cli");
+    expect(normalizeArtifactSource("kimi-post-tool-use")).toBe("kimi");
+    expect(normalizeArtifactSource("mux-post-tool-use")).toBe("mux");
+    expect(normalizeArtifactSource("qoder")).toBe("qoder");
+    expect(normalizeArtifactSource("vscode-copilot-pre-tool-use")).toBe("vscode-copilot");
+  });
+});

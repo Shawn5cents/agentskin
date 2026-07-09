@@ -1,0 +1,16 @@
+{
+  "id": "service-netstat-basic",
+  "ruleId": "service/netstat",
+  "input": {
+    "toolName": "exec",
+    "argv": ["netstat", "-an"],
+    "command": "netstat -an",
+    "combinedText": "Proto Recv-Q Send-Q Local Address           Foreign Address         State\n tcp4       0      0  *.3000                *.*                     LISTEN\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "service/netstat",
+    "family": "service-network-state",
+    "contains": ["socket", "*.3000"]
+  }
+}

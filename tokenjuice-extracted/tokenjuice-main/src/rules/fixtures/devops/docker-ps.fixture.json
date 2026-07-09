@@ -1,0 +1,16 @@
+{
+  "id": "devops-docker-ps-basic",
+  "ruleId": "devops/docker-ps",
+  "input": {
+    "toolName": "exec",
+    "argv": ["docker", "ps"],
+    "command": "docker ps",
+    "combinedText": "CONTAINER ID   IMAGE   COMMAND   STATUS\nabc123         api     \"node\"    Up 2 hours\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "devops/docker-ps",
+    "family": "container-list",
+    "contains": ["container", "abc123"]
+  }
+}

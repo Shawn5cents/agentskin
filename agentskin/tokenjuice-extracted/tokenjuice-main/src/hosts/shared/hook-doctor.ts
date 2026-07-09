@@ -1,0 +1,505 @@
+import { doctorAdalInstructions } from "../adal/index.js";
+import { doctorAetherPrompt } from "../aether/index.js";
+import { doctorAiderConvention } from "../aider/index.js";
+import { doctorAictlInstructions } from "../aictl/index.js";
+import { doctorAiMemoryProtocolMemory } from "../ai-memory-protocol/index.js";
+import { doctorAgentLayerInstructions } from "../agent-layer/index.js";
+import { doctorAgentInitInstructions } from "../agentinit/index.js";
+import { doctorAgentlinkInstructions } from "../agentlink/index.js";
+import { doctorAgentloomRule } from "../agentloom/index.js";
+import { doctorAgentsCliMemory } from "../agents-cli/index.js";
+import { doctorAgentsMdInstructions } from "../agents-md/index.js";
+import { doctorAgentsGeRule } from "../agentsge/index.js";
+import { doctorAgentsMeshRule } from "../agentsmesh/index.js";
+import { doctorAmazonQRule } from "../amazon-q/index.js";
+import { doctorAmpInstructions } from "../amp/index.js";
+import { doctorAntigravityRule } from "../antigravity/index.js";
+import { doctorAnywhereAgentsInstructions } from "../anywhere-agents/index.js";
+import { doctorAugmentRule } from "../augment/index.js";
+import { doctorAvanteInstructions } from "../avante/index.js";
+import { doctorBazSkill } from "../baz/index.js";
+import { doctorBitoGuidelines } from "../bito/index.js";
+import { doctorBlackboxSkill } from "../blackbox/index.js";
+import { doctorBlocksSkill } from "../blocks/index.js";
+import { doctorClawdbotSkill } from "../clawdbot/index.js";
+import { doctorBobInstructions } from "../bob/index.js";
+import { doctorBuilderRule } from "../builder/index.js";
+import { doctorCharlieInstructions } from "../charlie/index.js";
+import { doctorClaudeCodeHook } from "../claude-code/index.js";
+import { doctorClineHook } from "../cline/index.js";
+import { doctorCodeAntInstructions } from "../codeant/index.js";
+import { doctorCodebuffInstructions } from "../codebuff/index.js";
+import { doctorCodegenInstructions } from "../codegen/index.js";
+import { doctorCoderAgentsSkill } from "../coder-agents/index.js";
+import { doctorCodeRabbitConfig } from "../coderabbit/index.js";
+import { doctorCodeBuddyHook } from "../codebuddy/index.js";
+import { doctorCommandCodeHook } from "../command-code/index.js";
+import { doctorContinueRule } from "../continue/index.js";
+import { doctorCodexHook } from "../codex/index.js";
+import { doctorCopilotAgentHook } from "../copilot-agent/index.js";
+import { doctorCopilotCliHook } from "../copilot-cli/index.js";
+import { doctorCrushSkill } from "../crush/index.js";
+import { doctorCursorHook } from "../cursor/index.js";
+import { doctorDeepAgentsInstructions } from "../deepagents/index.js";
+import { doctorDevinHook } from "../devin/index.js";
+import { doctorDotAgentsRule } from "../dot-agents/index.js";
+import { doctorDockerAgentPrompt } from "../docker-agent/index.js";
+import { doctorDroidHook } from "../droid/index.js";
+import { doctorEcaSkill } from "../eca/index.js";
+import { doctorElyraSkill } from "../elyra/index.js";
+import { doctorFirebaseStudioRule } from "../firebase-studio/index.js";
+import { doctorForgeCodeInstructions } from "../forgecode/index.js";
+import { doctorGeminiCliHook } from "../gemini-cli/index.js";
+import { doctorGitLabDuoRule } from "../gitlab-duo/index.js";
+import { doctorGooseHints } from "../goose/index.js";
+import { doctorGreptileRule } from "../greptile/index.js";
+import { doctorGrokBuildInstructions } from "../grok-build/index.js";
+import { doctorGrokCliHook } from "../grok-cli/index.js";
+import { doctorGptmeInstructions } from "../gptme/index.js";
+import { doctorJean2Instructions } from "../jean2/index.js";
+import { doctorJetBrainsAiRule } from "../jetbrains-ai/index.js";
+import { doctorJunieInstructions } from "../junie/index.js";
+import { doctorJulesInstructions } from "../jules/index.js";
+import { doctorLeanCtlInstructions } from "../leanctl/index.js";
+import { doctorKimiHook } from "../kimi/index.js";
+import { doctorKiroSteering } from "../kiro/index.js";
+import { doctorKiloRule } from "../kilo/index.js";
+import { doctorKnownsInstructions } from "../knowns/index.js";
+import { doctorLocalCodePlugin } from "../localcode/index.js";
+import { doctorMcpAgentDefinition } from "../mcp-agent/index.js";
+import { doctorMiniSweAgentConfig } from "../mini-swe-agent/index.js";
+import { doctorSweAgentConfig } from "../swe-agent/index.js";
+import { doctorStagewiseSkill } from "../stagewise/index.js";
+import { doctorMistralVibeInstructions } from "../mistral-vibe/index.js";
+import { doctorMuxHook } from "../mux/index.js";
+import { doctorNovaKitInstructions } from "../novakit/index.js";
+import { doctorOnaSkill } from "../ona/index.js";
+import { doctorOpenHandsHook } from "../openhands/index.js";
+import { doctorOpenInterpreterInstructions } from "../open-interpreter/index.js";
+import { doctorOpenWebUITool } from "../openwebui/index.js";
+import { doctorPiExtension } from "../pi/index.js";
+import { doctorPiGoSkill } from "../pi-go/index.js";
+import { doctorPlandexConvention } from "../plandex/index.js";
+import { doctorQodoReviewConfig } from "../qodo/index.js";
+import { doctorQoderInstructions } from "../qoder/index.js";
+import { doctorQwenCodeHook } from "../qwen-code/index.js";
+import { doctorReplitInstructions } from "../replit/index.js";
+import { doctorRooInstructions } from "../roo/index.js";
+import { doctorRovoInstructions } from "../rovo/index.js";
+import { doctorRulerRule } from "../ruler/index.js";
+import { doctorTabbySystemPrompt } from "../tabby/index.js";
+import { doctorTabnineInstructions } from "../tabnine/index.js";
+import { doctorTraeRule } from "../trae/index.js";
+import { doctorUiPathInstructions } from "../uipath/index.js";
+import { doctorVscodeCopilotHook } from "../vscode-copilot/index.js";
+import { doctorWarpInstructions } from "../warp/index.js";
+import { doctorWindsurfRule } from "../windsurf/index.js";
+import { doctorZedInstructions } from "../zed/index.js";
+import { doctorZencoderRule } from "../zencoder/index.js";
+
+import type { AdalDoctorReport, AdalInstructionsOptions } from "../adal/index.js";
+import type { AetherDoctorReport, AetherPromptOptions } from "../aether/index.js";
+import type { AiderDoctorReport } from "../aider/index.js";
+import type { AictlDoctorReport, AictlInstructionsOptions } from "../aictl/index.js";
+import type { AiMemoryProtocolDoctorReport, AiMemoryProtocolOptions } from "../ai-memory-protocol/index.js";
+import type { AgentLayerDoctorReport, AgentLayerInstructionsOptions } from "../agent-layer/index.js";
+import type { AgentInitDoctorReport, AgentInitInstructionsOptions } from "../agentinit/index.js";
+import type { AgentlinkDoctorReport, AgentlinkInstructionsOptions } from "../agentlink/index.js";
+import type { AgentloomDoctorReport, AgentloomRuleOptions } from "../agentloom/index.js";
+import type { AgentsCliDoctorReport, AgentsCliMemoryOptions } from "../agents-cli/index.js";
+import type { AgentsMdDoctorReport, AgentsMdInstructionsOptions } from "../agents-md/index.js";
+import type { AgentsGeDoctorReport, AgentsGeRuleOptions } from "../agentsge/index.js";
+import type { AgentsMeshDoctorReport, AgentsMeshRuleOptions } from "../agentsmesh/index.js";
+import type { AmazonQDoctorReport, AmazonQRuleOptions } from "../amazon-q/index.js";
+import type { AmpDoctorReport, AmpInstructionsOptions } from "../amp/index.js";
+import type { AntigravityDoctorReport, AntigravityRuleOptions } from "../antigravity/index.js";
+import type { AnywhereAgentsDoctorReport, AnywhereAgentsInstructionsOptions } from "../anywhere-agents/index.js";
+import type { AugmentDoctorReport, AugmentRuleOptions } from "../augment/index.js";
+import type { AvanteDoctorReport } from "../avante/index.js";
+import type { BazDoctorReport, BazSkillOptions } from "../baz/index.js";
+import type { BitoDoctorReport, BitoGuidelinesOptions } from "../bito/index.js";
+import type { BlackboxDoctorReport, BlackboxSkillOptions } from "../blackbox/index.js";
+import type { BlocksDoctorReport, BlocksSkillOptions } from "../blocks/index.js";
+import type { ClawdbotDoctorReport, ClawdbotSkillOptions } from "../clawdbot/index.js";
+import type { BobDoctorReport, BobInstructionsOptions } from "../bob/index.js";
+import type { BuilderDoctorReport, BuilderRuleOptions } from "../builder/index.js";
+import type { CharlieDoctorReport, CharlieInstructionsOptions } from "../charlie/index.js";
+import type { ClaudeCodeDoctorReport, ClaudeCodeHookCommandOptions } from "../claude-code/index.js";
+import type { ClineDoctorReport } from "../cline/index.js";
+import type { CodeAntDoctorReport, CodeAntInstructionsOptions } from "../codeant/index.js";
+import type { CodebuffDoctorReport, CodebuffInstructionsOptions } from "../codebuff/index.js";
+import type { CodegenDoctorReport, CodegenInstructionsOptions } from "../codegen/index.js";
+import type { CoderAgentsDoctorReport, CoderAgentsSkillOptions } from "../coder-agents/index.js";
+import type { CodeRabbitConfigOptions, CodeRabbitDoctorReport } from "../coderabbit/index.js";
+import type { CodeBuddyDoctorReport, CodeBuddyHookCommandOptions } from "../codebuddy/index.js";
+import type { CommandCodeDoctorReport, CommandCodeHookCommandOptions } from "../command-code/index.js";
+import type { ContinueDoctorReport } from "../continue/index.js";
+import type { CodexDoctorReport, CodexHookCommandOptions } from "../codex/index.js";
+import type { CopilotAgentDoctorReport, CopilotAgentHookCommandOptions } from "../copilot-agent/index.js";
+import type { CopilotCliDoctorReport } from "../copilot-cli/index.js";
+import type { CrushDoctorReport, CrushSkillOptions } from "../crush/index.js";
+import type { CursorDoctorReport } from "../cursor/index.js";
+import type { DeepAgentsDoctorReport, DeepAgentsInstructionsOptions } from "../deepagents/index.js";
+import type { DevinDoctorReport, DevinHookCommandOptions } from "../devin/index.js";
+import type { DotAgentsDoctorReport, DotAgentsRuleOptions } from "../dot-agents/index.js";
+import type { DockerAgentDoctorReport, DockerAgentPromptOptions } from "../docker-agent/index.js";
+import type { DroidDoctorReport, DroidHookCommandOptions } from "../droid/index.js";
+import type { EcaDoctorReport, EcaSkillOptions } from "../eca/index.js";
+import type { ElyraDoctorReport, ElyraSkillOptions } from "../elyra/index.js";
+import type { FirebaseStudioDoctorReport, FirebaseStudioRuleOptions } from "../firebase-studio/index.js";
+import type { ForgeCodeDoctorReport, ForgeCodeInstructionsOptions } from "../forgecode/index.js";
+import type { GeminiCliDoctorReport } from "../gemini-cli/index.js";
+import type { GitLabDuoDoctorReport, GitLabDuoRuleOptions } from "../gitlab-duo/index.js";
+import type { GooseDoctorReport, GooseHintsOptions } from "../goose/index.js";
+import type { GreptileDoctorReport, GreptileRuleOptions } from "../greptile/index.js";
+import type { GrokBuildDoctorReport, GrokBuildInstructionsOptions } from "../grok-build/index.js";
+import type { GrokCliDoctorReport, GrokCliHookCommandOptions } from "../grok-cli/index.js";
+import type { GptmeDoctorReport, GptmeInstructionsOptions } from "../gptme/index.js";
+import type { Jean2DoctorReport, Jean2InstructionsOptions } from "../jean2/index.js";
+import type { JetBrainsAiDoctorReport, JetBrainsAiRuleOptions } from "../jetbrains-ai/index.js";
+import type { JunieDoctorReport } from "../junie/index.js";
+import type { JulesDoctorReport, JulesInstructionsOptions } from "../jules/index.js";
+import type { LeanCtlDoctorReport, LeanCtlInstructionsOptions } from "../leanctl/index.js";
+import type { KimiDoctorReport, KimiHookCommandOptions } from "../kimi/index.js";
+import type { KiroDoctorReport } from "../kiro/index.js";
+import type { KiloDoctorReport } from "../kilo/index.js";
+import type { KnownsDoctorReport, KnownsInstructionsOptions } from "../knowns/index.js";
+import type { LocalCodeDoctorReport, LocalCodePluginOptions } from "../localcode/index.js";
+import type { McpAgentDefinitionOptions, McpAgentDoctorReport } from "../mcp-agent/index.js";
+import type { MiniSweAgentConfigOptions, MiniSweAgentDoctorReport } from "../mini-swe-agent/index.js";
+import type { SweAgentConfigOptions, SweAgentDoctorReport } from "../swe-agent/index.js";
+import type { StagewiseDoctorReport, StagewiseSkillOptions } from "../stagewise/index.js";
+import type { MistralVibeDoctorReport, MistralVibeInstructionsOptions } from "../mistral-vibe/index.js";
+import type { MuxDoctorReport, MuxHookCommandOptions } from "../mux/index.js";
+import type { NovaKitDoctorReport, NovaKitInstructionsOptions } from "../novakit/index.js";
+import type { OnaDoctorReport, OnaSkillOptions } from "../ona/index.js";
+import type { OpenInterpreterDoctorReport, OpenInterpreterInstructionsOptions } from "../open-interpreter/index.js";
+import type { OpenHandsDoctorReport } from "../openhands/index.js";
+import type { OpenWebUIDoctorReport, OpenWebUIToolOptions } from "../openwebui/index.js";
+import type { PiDoctorReport } from "../pi/index.js";
+import type { PiGoDoctorReport, PiGoSkillOptions } from "../pi-go/index.js";
+import type { PlandexConventionOptions, PlandexDoctorReport } from "../plandex/index.js";
+import type { QodoDoctorReport, QodoReviewConfigOptions } from "../qodo/index.js";
+import type { QoderDoctorReport, QoderInstructionsOptions } from "../qoder/index.js";
+import type { QwenCodeDoctorReport, QwenCodeHookCommandOptions } from "../qwen-code/index.js";
+import type { ReplitDoctorReport, ReplitInstructionsOptions } from "../replit/index.js";
+import type { RooDoctorReport } from "../roo/index.js";
+import type { RovoDoctorReport, RovoInstructionsOptions } from "../rovo/index.js";
+import type { TabbyDoctorReport, TabbySystemPromptOptions } from "../tabby/index.js";
+import type { TabnineDoctorReport, TabnineInstructionsOptions } from "../tabnine/index.js";
+import type { RulerDoctorReport, RulerRuleOptions } from "../ruler/index.js";
+import type { TraeDoctorReport, TraeRuleOptions } from "../trae/index.js";
+import type { UiPathDoctorReport, UiPathInstructionsOptions } from "../uipath/index.js";
+import type { VscodeCopilotDoctorReport } from "../vscode-copilot/index.js";
+import type { WarpDoctorReport, WarpInstructionsOptions } from "../warp/index.js";
+import type { WindsurfDoctorReport } from "../windsurf/index.js";
+import type { ZedDoctorReport } from "../zed/index.js";
+import type { ZencoderDoctorReport, ZencoderRuleOptions } from "../zencoder/index.js";
+
+export type HookHealthStatus = "ok" | "warn" | "broken" | "disabled";
+
+export type HookIntegrationDoctorReport = {
+  adal: AdalDoctorReport;
+  aether: AetherDoctorReport;
+  aictl: AictlDoctorReport;
+  "ai-memory-protocol": AiMemoryProtocolDoctorReport;
+  aider: AiderDoctorReport;
+  "agent-layer": AgentLayerDoctorReport;
+  agentinit: AgentInitDoctorReport;
+  agentlink: AgentlinkDoctorReport;
+  agentloom: AgentloomDoctorReport;
+  "agents-cli": AgentsCliDoctorReport;
+  "agents-md": AgentsMdDoctorReport;
+  agentsge: AgentsGeDoctorReport;
+  agentsmesh: AgentsMeshDoctorReport;
+  "amazon-q": AmazonQDoctorReport;
+  amp: AmpDoctorReport;
+  antigravity: AntigravityDoctorReport;
+  "anywhere-agents": AnywhereAgentsDoctorReport;
+  augment: AugmentDoctorReport;
+  avante: AvanteDoctorReport;
+  baz: BazDoctorReport;
+  bito: BitoDoctorReport;
+  blackbox: BlackboxDoctorReport;
+  blocks: BlocksDoctorReport;
+  clawdbot: ClawdbotDoctorReport;
+  bob: BobDoctorReport;
+  builder: BuilderDoctorReport;
+  charlie: CharlieDoctorReport;
+  codex: CodexDoctorReport;
+  "copilot-agent": CopilotAgentDoctorReport;
+  "claude-code": ClaudeCodeDoctorReport;
+  cline: ClineDoctorReport;
+  codeant: CodeAntDoctorReport;
+  codebuff: CodebuffDoctorReport;
+  codegen: CodegenDoctorReport;
+  "coder-agents": CoderAgentsDoctorReport;
+  coderabbit: CodeRabbitDoctorReport;
+  codebuddy: CodeBuddyDoctorReport;
+  "command-code": CommandCodeDoctorReport;
+  continue: ContinueDoctorReport;
+  crush: CrushDoctorReport;
+  cursor: CursorDoctorReport;
+  deepagents: DeepAgentsDoctorReport;
+  devin: DevinDoctorReport;
+  "dot-agents": DotAgentsDoctorReport;
+  "docker-agent": DockerAgentDoctorReport;
+  droid: DroidDoctorReport;
+  eca: EcaDoctorReport;
+  elyra: ElyraDoctorReport;
+  "firebase-studio": FirebaseStudioDoctorReport;
+  forgecode: ForgeCodeDoctorReport;
+  "gemini-cli": GeminiCliDoctorReport;
+  "gitlab-duo": GitLabDuoDoctorReport;
+  goose: GooseDoctorReport;
+  greptile: GreptileDoctorReport;
+  "grok-build": GrokBuildDoctorReport;
+  "grok-cli": GrokCliDoctorReport;
+  gptme: GptmeDoctorReport;
+  jean2: Jean2DoctorReport;
+  "jetbrains-ai": JetBrainsAiDoctorReport;
+  junie: JunieDoctorReport;
+  jules: JulesDoctorReport;
+  leanctl: LeanCtlDoctorReport;
+  kimi: KimiDoctorReport;
+  kiro: KiroDoctorReport;
+  kilo: KiloDoctorReport;
+  knowns: KnownsDoctorReport;
+  localcode: LocalCodeDoctorReport;
+  "mcp-agent": McpAgentDoctorReport;
+  "mini-swe-agent": MiniSweAgentDoctorReport;
+  "swe-agent": SweAgentDoctorReport;
+  stagewise: StagewiseDoctorReport;
+  "mistral-vibe": MistralVibeDoctorReport;
+  mux: MuxDoctorReport;
+  novakit: NovaKitDoctorReport;
+  ona: OnaDoctorReport;
+  openhands: OpenHandsDoctorReport;
+  "open-interpreter": OpenInterpreterDoctorReport;
+  openwebui: OpenWebUIDoctorReport;
+  pi: PiDoctorReport;
+  "pi-go": PiGoDoctorReport;
+  plandex: PlandexDoctorReport;
+  qodo: QodoDoctorReport;
+  qoder: QoderDoctorReport;
+  "qwen-code": QwenCodeDoctorReport;
+  replit: ReplitDoctorReport;
+  roo: RooDoctorReport;
+  rovo: RovoDoctorReport;
+  ruler: RulerDoctorReport;
+  tabby: TabbyDoctorReport;
+  tabnine: TabnineDoctorReport;
+  trae: TraeDoctorReport;
+  uipath: UiPathDoctorReport;
+  "vscode-copilot": VscodeCopilotDoctorReport;
+  warp: WarpDoctorReport;
+  windsurf: WindsurfDoctorReport;
+  zed: ZedDoctorReport;
+  zencoder: ZencoderDoctorReport;
+  "copilot-cli": CopilotCliDoctorReport;
+};
+
+export type HookDoctorReport = {
+  status: HookHealthStatus;
+  integrations: HookIntegrationDoctorReport;
+};
+
+export type HookDoctorCommandOptions = AdalInstructionsOptions & AetherPromptOptions & AictlInstructionsOptions & AiMemoryProtocolOptions & AgentLayerInstructionsOptions & AgentInitInstructionsOptions & AgentlinkInstructionsOptions & AgentloomRuleOptions & AgentsCliMemoryOptions & AgentsMdInstructionsOptions & AgentsGeRuleOptions & AgentsMeshRuleOptions & AmazonQRuleOptions & AmpInstructionsOptions & AntigravityRuleOptions & AnywhereAgentsInstructionsOptions & AugmentRuleOptions & BazSkillOptions & BitoGuidelinesOptions & BlackboxSkillOptions & BlocksSkillOptions & ClawdbotSkillOptions & BobInstructionsOptions & BuilderRuleOptions & CharlieInstructionsOptions & CodeAntInstructionsOptions & CodebuffInstructionsOptions & CodegenInstructionsOptions & CommandCodeHookCommandOptions & CoderAgentsSkillOptions & CodeRabbitConfigOptions & DeepAgentsInstructionsOptions & DockerAgentPromptOptions & DotAgentsRuleOptions & EcaSkillOptions & ElyraSkillOptions & LocalCodePluginOptions & MiniSweAgentConfigOptions & SweAgentConfigOptions & StagewiseSkillOptions & PiGoSkillOptions & CodexHookCommandOptions & ClaudeCodeHookCommandOptions & CodeBuddyHookCommandOptions & CopilotAgentHookCommandOptions & CrushSkillOptions & DevinHookCommandOptions & DroidHookCommandOptions & FirebaseStudioRuleOptions & ForgeCodeInstructionsOptions & GitLabDuoRuleOptions & GooseHintsOptions & GreptileRuleOptions & GrokBuildInstructionsOptions & GrokCliHookCommandOptions & GptmeInstructionsOptions & Jean2InstructionsOptions & JetBrainsAiRuleOptions & JulesInstructionsOptions & KimiHookCommandOptions & KnownsInstructionsOptions & LeanCtlInstructionsOptions & McpAgentDefinitionOptions & MistralVibeInstructionsOptions & MuxHookCommandOptions & NovaKitInstructionsOptions & OnaSkillOptions & OpenInterpreterInstructionsOptions & OpenWebUIToolOptions & PlandexConventionOptions & QodoReviewConfigOptions & QoderInstructionsOptions & QwenCodeHookCommandOptions & ReplitInstructionsOptions & RovoInstructionsOptions & RulerRuleOptions & TabbySystemPromptOptions & TabnineInstructionsOptions & TraeRuleOptions & UiPathInstructionsOptions & WarpInstructionsOptions & ZencoderRuleOptions;
+export type HookIntegrationDoctorEntry = [
+  keyof HookIntegrationDoctorReport,
+  HookIntegrationDoctorReport[keyof HookIntegrationDoctorReport],
+];
+type HookDoctorIntegrationDoctors = {
+  [Name in keyof HookIntegrationDoctorReport]: (
+    options: HookDoctorCommandOptions,
+  ) => Promise<HookIntegrationDoctorReport[Name]>;
+};
+
+const hookDoctorIntegrationDoctors = {
+  adal: (options) => doctorAdalInstructions(undefined, getHookCommandOptions(options)),
+  aether: (options) => doctorAetherPrompt(undefined, getHookCommandOptions(options)),
+  aictl: (options) => doctorAictlInstructions(undefined, getHookCommandOptions(options)),
+  "ai-memory-protocol": (options) => doctorAiMemoryProtocolMemory(undefined, getHookCommandOptions(options)),
+  aider: () => doctorAiderConvention(),
+  "agent-layer": (options) => doctorAgentLayerInstructions(undefined, getHookCommandOptions(options)),
+  agentinit: (options) => doctorAgentInitInstructions(undefined, getHookCommandOptions(options)),
+  agentlink: (options) => doctorAgentlinkInstructions(undefined, getHookCommandOptions(options)),
+  agentloom: (options) => doctorAgentloomRule(undefined, getHookCommandOptions(options)),
+  "agents-cli": (options) => doctorAgentsCliMemory(undefined, getHookCommandOptions(options)),
+  "agents-md": (options) => doctorAgentsMdInstructions(undefined, getHookCommandOptions(options)),
+  agentsge: (options) => doctorAgentsGeRule(undefined, getHookCommandOptions(options)),
+  agentsmesh: (options) => doctorAgentsMeshRule(undefined, getHookCommandOptions(options)),
+  "amazon-q": (options) => doctorAmazonQRule(undefined, getHookCommandOptions(options)),
+  amp: (options) => doctorAmpInstructions(undefined, { ...getHookCommandOptions(options), scanProjectTree: false }),
+  antigravity: (options) => doctorAntigravityRule(undefined, getHookCommandOptions(options)),
+  "anywhere-agents": (options) => doctorAnywhereAgentsInstructions(undefined, getHookCommandOptions(options)),
+  augment: (options) => doctorAugmentRule(undefined, getHookCommandOptions(options)),
+  avante: () => doctorAvanteInstructions(),
+  baz: (options) => doctorBazSkill(undefined, getHookCommandOptions(options)),
+  bito: (options) => doctorBitoGuidelines(getHookCommandOptions(options)),
+  blackbox: (options) => doctorBlackboxSkill(undefined, getHookCommandOptions(options)),
+  blocks: (options) => doctorBlocksSkill(undefined, getHookCommandOptions(options)),
+  clawdbot: (options) => doctorClawdbotSkill(undefined, getHookCommandOptions(options)),
+  bob: (options) => doctorBobInstructions(undefined, getHookCommandOptions(options)),
+  builder: (options) => doctorBuilderRule(undefined, getHookCommandOptions(options)),
+  charlie: (options) => doctorCharlieInstructions(undefined, getHookCommandOptions(options)),
+  codex: (options) => doctorCodexHook(undefined, options),
+  "claude-code": (options) => doctorClaudeCodeHook(undefined, getHookCommandOptions(options)),
+  cline: (options) => doctorClineHook(undefined, getHookCommandOptions(options)),
+  codeant: (options) => doctorCodeAntInstructions(undefined, getHookCommandOptions(options)),
+  codebuff: (options) => doctorCodebuffInstructions(undefined, getHookCommandOptions(options)),
+  codegen: (options) => doctorCodegenInstructions(undefined, getHookCommandOptions(options)),
+  "coder-agents": (options) => doctorCoderAgentsSkill(undefined, getHookCommandOptions(options)),
+  coderabbit: (options) => doctorCodeRabbitConfig(undefined, getHookCommandOptions(options)),
+  codebuddy: (options) => doctorCodeBuddyHook(undefined, getHookCommandOptions(options)),
+  "command-code": (options) => doctorCommandCodeHook(undefined, getHookCommandOptions(options)),
+  continue: () => doctorContinueRule(),
+  "copilot-agent": (options) => doctorCopilotAgentHook(undefined, getHookCommandOptions(options)),
+  crush: (options) => doctorCrushSkill(undefined, getHookCommandOptions(options)),
+  cursor: (options) => doctorCursorHook(undefined, getHookCommandOptions(options)),
+  deepagents: (options) => doctorDeepAgentsInstructions(undefined, getHookCommandOptions(options)),
+  devin: (options) => doctorDevinHook(undefined, getHookCommandOptions(options)),
+  "dot-agents": (options) => doctorDotAgentsRule(undefined, getHookCommandOptions(options)),
+  "docker-agent": (options) => doctorDockerAgentPrompt(undefined, getHookCommandOptions(options)),
+  droid: (options) => doctorDroidHook(undefined, getHookCommandOptions(options)),
+  eca: (options) => doctorEcaSkill(undefined, getHookCommandOptions(options)),
+  elyra: (options) => doctorElyraSkill(undefined, getHookCommandOptions(options)),
+  "firebase-studio": (options) => doctorFirebaseStudioRule(undefined, getHookCommandOptions(options)),
+  forgecode: (options) => doctorForgeCodeInstructions(undefined, getHookCommandOptions(options)),
+  "gemini-cli": (options) => doctorGeminiCliHook(undefined, getHookCommandOptions(options)),
+  "gitlab-duo": (options) => doctorGitLabDuoRule(undefined, getHookCommandOptions(options)),
+  goose: (options) => doctorGooseHints(undefined, { ...getHookCommandOptions(options), scanProjectTree: false }),
+  greptile: (options) => doctorGreptileRule(undefined, getHookCommandOptions(options)),
+  "grok-build": (options) => doctorGrokBuildInstructions(undefined, getHookCommandOptions(options)),
+  "grok-cli": (options) => doctorGrokCliHook(undefined, getHookCommandOptions(options)),
+  gptme: (options) => doctorGptmeInstructions(undefined, getHookCommandOptions(options)),
+  jean2: (options) => doctorJean2Instructions(undefined, getHookCommandOptions(options)),
+  "jetbrains-ai": (options) => doctorJetBrainsAiRule(undefined, getHookCommandOptions(options)),
+  junie: () => doctorJunieInstructions(),
+  jules: (options) => doctorJulesInstructions(undefined, getHookCommandOptions(options)),
+  leanctl: (options) => doctorLeanCtlInstructions(undefined, getHookCommandOptions(options)),
+  kimi: (options) => doctorKimiHook(undefined, getHookCommandOptions(options)),
+  kiro: () => doctorKiroSteering(),
+  kilo: () => doctorKiloRule(),
+  knowns: (options) => doctorKnownsInstructions(undefined, getHookCommandOptions(options)),
+  localcode: (options) => doctorLocalCodePlugin(getHookCommandOptions(options)),
+  "mcp-agent": (options) => doctorMcpAgentDefinition(undefined, getHookCommandOptions(options)),
+  "mini-swe-agent": (options) => doctorMiniSweAgentConfig(undefined, getHookCommandOptions(options)),
+  "swe-agent": (options) => doctorSweAgentConfig(undefined, getHookCommandOptions(options)),
+  stagewise: (options) => doctorStagewiseSkill(undefined, getHookCommandOptions(options)),
+  "mistral-vibe": (options) => doctorMistralVibeInstructions(undefined, getHookCommandOptions(options)),
+  mux: (options) => doctorMuxHook(undefined, getHookCommandOptions(options)),
+  novakit: (options) => doctorNovaKitInstructions(undefined, getHookCommandOptions(options)),
+  ona: (options) => doctorOnaSkill(undefined, getHookCommandOptions(options)),
+  openhands: (options) => doctorOpenHandsHook(undefined, getHookCommandOptions(options)),
+  "open-interpreter": (options) => doctorOpenInterpreterInstructions(undefined, { ...getHookCommandOptions(options), scanProjectTree: false }),
+  openwebui: (options) => doctorOpenWebUITool(undefined, getHookCommandOptions(options)),
+  pi: () => doctorPiExtension(),
+  "pi-go": (options) => doctorPiGoSkill(undefined, getHookCommandOptions(options)),
+  plandex: (options) => doctorPlandexConvention(undefined, getHookCommandOptions(options)),
+  qodo: (options) => doctorQodoReviewConfig(undefined, getHookCommandOptions(options)),
+  qoder: (options) => doctorQoderInstructions(undefined, getHookCommandOptions(options)),
+  "qwen-code": (options) => doctorQwenCodeHook(undefined, options),
+  replit: (options) => doctorReplitInstructions(undefined, getHookCommandOptions(options)),
+  roo: () => doctorRooInstructions(),
+  rovo: (options) => doctorRovoInstructions(undefined, getHookCommandOptions(options)),
+  ruler: (options) => doctorRulerRule(undefined, getHookCommandOptions(options)),
+  tabby: (options) => doctorTabbySystemPrompt(undefined, getHookCommandOptions(options)),
+  tabnine: (options) => doctorTabnineInstructions(undefined, getHookCommandOptions(options)),
+  trae: (options) => doctorTraeRule(undefined, getHookCommandOptions(options)),
+  uipath: (options) => doctorUiPathInstructions(undefined, getHookCommandOptions(options)),
+  "vscode-copilot": (options) => doctorVscodeCopilotHook(undefined, getHookCommandOptions(options)),
+  warp: (options) => doctorWarpInstructions(undefined, getHookCommandOptions(options)),
+  windsurf: () => doctorWindsurfRule(),
+  zed: () => doctorZedInstructions(),
+  zencoder: (options) => doctorZencoderRule(undefined, getHookCommandOptions(options)),
+  "copilot-cli": (options) => doctorCopilotCliHook(undefined, getHookCommandOptions(options)),
+} satisfies HookDoctorIntegrationDoctors;
+
+export function getAvailableHookIntegrationNames(): Array<keyof HookIntegrationDoctorReport> {
+  return Object.keys(hookDoctorIntegrationDoctors) as Array<keyof HookIntegrationDoctorReport>;
+}
+
+function mergeStatus(left: HookHealthStatus, right: HookHealthStatus): HookHealthStatus {
+  if (left === "broken" || right === "broken") {
+    return "broken";
+  }
+  if (left === "warn" || right === "warn") {
+    return "warn";
+  }
+  if (left === "ok" || right === "ok") {
+    return "ok";
+  }
+  if (left === "disabled" || right === "disabled") {
+    return "disabled";
+  }
+  return "ok";
+}
+
+function mergeStatuses(statuses: readonly HookHealthStatus[]): HookHealthStatus {
+  return statuses.reduce(mergeStatus, "disabled");
+}
+
+function getHookCommandOptions(options: HookDoctorCommandOptions): HookDoctorCommandOptions {
+  return {
+    ...(typeof options.local === "boolean" ? { local: options.local } : {}),
+    ...(typeof options.binaryPath === "string" ? { binaryPath: options.binaryPath } : {}),
+    ...(typeof options.nodePath === "string" ? { nodePath: options.nodePath } : {}),
+    ...(typeof options.memoryDir === "string" ? { memoryDir: options.memoryDir } : {}),
+    ...(typeof options.projectDir === "string" ? { projectDir: options.projectDir } : {}),
+    ...(typeof options.scanProjectTree === "boolean" ? { scanProjectTree: options.scanProjectTree } : {}),
+    ...(typeof options.configDir === "string" ? { configDir: options.configDir } : {}),
+    ...(typeof options.homeDir === "string" ? { homeDir: options.homeDir } : {}),
+  };
+}
+
+function hasDetectedCommand(report: HookIntegrationDoctorReport[keyof HookIntegrationDoctorReport]): boolean {
+  return "detectedCommand" in report && typeof report.detectedCommand === "string" && report.detectedCommand.length > 0;
+}
+
+export function isInstalledHookIntegration(
+  report: HookIntegrationDoctorReport[keyof HookIntegrationDoctorReport],
+): boolean {
+  if (hasDetectedCommand(report)) {
+    return true;
+  }
+  if ("hasUnsafePathIssue" in report && report.hasUnsafePathIssue === true && report.status === "broken") {
+    return true;
+  }
+  if ("hasTokenjuiceMarker" in report) {
+    // Marker-aware instruction hosts may share paths with user-owned files.
+    // Without the marker, aggregate doctor should not treat the file as a tokenjuice install.
+    return report.hasTokenjuiceMarker === true;
+  }
+  // Command-backed hosts can warn about missing config even when tokenjuice is
+  // not installed. Instruction/extension hosts have no expected command, so a
+  // non-disabled status means their tokenjuice artifact exists.
+  return report.status !== "disabled" && !("expectedCommand" in report);
+}
+
+export function getInstalledHookIntegrations(report: HookDoctorReport): HookIntegrationDoctorEntry[] {
+  return (Object.entries(report.integrations) as HookIntegrationDoctorEntry[])
+    .filter(([name, integrationReport]) => {
+      if (name === "charlie" && "hasTokenjuiceMarker" in integrationReport && integrationReport.hasTokenjuiceMarker === false) {
+        // Charlie shares AGENTS.md with other tools, so unsafe unmarked files are not tokenjuice installs.
+        return false;
+      }
+      return isInstalledHookIntegration(integrationReport);
+    });
+}
+
+export async function doctorInstalledHooks(options: HookDoctorCommandOptions = {}): Promise<HookDoctorReport> {
+  const integrationEntries = await Promise.all(
+    (Object.entries(hookDoctorIntegrationDoctors) as Array<[
+      keyof HookIntegrationDoctorReport,
+      HookDoctorIntegrationDoctors[keyof HookIntegrationDoctorReport],
+    ]>).map(async ([name, doctor]) => [name, await doctor(options)] as const),
+  );
+  const integrations = Object.fromEntries(integrationEntries) as HookIntegrationDoctorReport;
+  const installedIntegrations = getInstalledHookIntegrations({ status: "disabled", integrations });
+
+  return {
+    status: mergeStatuses(installedIntegrations.map(([, integrationReport]) => integrationReport.status)),
+    integrations,
+  };
+}

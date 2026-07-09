@@ -1,0 +1,16 @@
+{
+  "id": "package-apt-upgrade-basic",
+  "ruleId": "package/apt-upgrade",
+  "input": {
+    "toolName": "exec",
+    "argv": ["apt", "upgrade", "-y"],
+    "command": "apt upgrade -y",
+    "combinedText": "Reading package lists...\nBuilding dependency tree...\nCalculating upgrade...\nThe following packages will be upgraded:\n  openssl systemd\n2 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.\nNeed to get 5,024 kB of archives.\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "package/apt-upgrade",
+    "family": "system-package-upgrade",
+    "contains": ["packages will be upgraded", "2 upgraded"]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "network/curl-hackernews",
+  "family": "network-http",
+  "description": "Compact HackerNews API responses from curl with JSON semantic pruning.",
+  "match": {
+    "toolNames": ["exec"],
+    "argv0": ["curl"],
+    "urlIncludes": ["hacker-news.firebaseio.com"]
+  },
+  "priority": 10,
+  "jsonSemantic": {
+    "urlMatches": "hacker-news.firebaseio.com",
+    "stripAnsi": true
+  },
+  "transforms": {
+    "stripAnsi": true
+  },
+  "counters": [
+    {
+      "name": "error",
+      "pattern": "error|failed|timed out",
+      "flags": "i"
+    }
+  ]
+}

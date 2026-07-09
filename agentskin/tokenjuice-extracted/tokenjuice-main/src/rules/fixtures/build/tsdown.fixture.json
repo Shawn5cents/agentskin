@@ -1,0 +1,15 @@
+{
+  "id": "build-tsdown-basic",
+  "ruleId": "build/tsdown",
+  "input": {
+    "toolName": "exec",
+    "command": "pnpm tsdown",
+    "combinedText": "error: Failed to resolve entry ./src/index.ts\nBuild failed\n",
+    "exitCode": 1
+  },
+  "expect": {
+    "matchedReducer": "build/tsdown",
+    "family": "build-bundler",
+    "contains": ["error", "Failed to resolve"]
+  }
+}

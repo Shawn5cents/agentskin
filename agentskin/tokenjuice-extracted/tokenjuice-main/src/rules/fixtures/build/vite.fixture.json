@@ -1,0 +1,15 @@
+{
+  "id": "build-vite-basic",
+  "ruleId": "build/vite",
+  "input": {
+    "toolName": "exec",
+    "command": "pnpm vite build",
+    "combinedText": "vite v5.4.0 building for production...\n✓ 120 modules transformed.\nerror during build:\nCould not resolve entry module\n",
+    "exitCode": 1
+  },
+  "expect": {
+    "matchedReducer": "build/vite",
+    "family": "build-bundler",
+    "contains": ["error", "Could not resolve entry module"]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "network-curl-hackernews",
+  "ruleId": "network/curl-hackernews",
+  "input": {
+    "toolName": "exec",
+    "argv": ["curl", "https://hacker-news.firebaseio.com/v0/item/8863.json"],
+    "command": "curl https://hacker-news.firebaseio.com/v0/item/8863.json",
+    "combinedText": "{\n  \"id\": 8863,\n  \"title\": \"My YC app\",\n  \"url\": \"http://example.com\",\n  \"score\": 100,\n  \"by\": \"pg\"\n}",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "network/curl-hackernews",
+    "family": "network-http",
+    "contains": ["YC app"]
+  }
+}

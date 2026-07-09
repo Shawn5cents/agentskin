@@ -1,0 +1,16 @@
+{
+  "id": "git-branch-basic",
+  "ruleId": "git/branch",
+  "input": {
+    "toolName": "exec",
+    "argv": ["git", "branch"],
+    "command": "git branch",
+    "combinedText": "* main\n  feature/tokenjuice\n  fix/rules\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "git/branch",
+    "family": "git-branches",
+    "contains": ["branch", "feature/tokenjuice"]
+  }
+}

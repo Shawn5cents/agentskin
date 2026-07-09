@@ -1,0 +1,15 @@
+{
+  "id": "lint-eslint-basic",
+  "ruleId": "lint/eslint",
+  "input": {
+    "toolName": "exec",
+    "command": "pnpm eslint src",
+    "combinedText": "src/index.ts\n  4:10  error  Unexpected any  @typescript-eslint/no-explicit-any\n  8:1   warning  Unexpected console statement  no-console\n\n✖ 2 problems (1 error, 1 warning)\n",
+    "exitCode": 1
+  },
+  "expect": {
+    "matchedReducer": "lint/eslint",
+    "family": "lint-results",
+    "contains": ["warning", "Unexpected any"]
+  }
+}

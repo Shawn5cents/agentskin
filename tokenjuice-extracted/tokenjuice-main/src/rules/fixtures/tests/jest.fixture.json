@@ -1,0 +1,15 @@
+{
+  "id": "tests-jest-basic",
+  "ruleId": "tests/jest",
+  "input": {
+    "toolName": "exec",
+    "command": "pnpm jest",
+    "combinedText": "FAIL test/example.test.ts\n  expected 1 to be 2\nTest Suites: 1 failed, 1 total\n",
+    "exitCode": 1
+  },
+  "expect": {
+    "matchedReducer": "tests/jest",
+    "family": "test-results",
+    "contains": ["failed test", "FAIL test/example.test.ts"]
+  }
+}

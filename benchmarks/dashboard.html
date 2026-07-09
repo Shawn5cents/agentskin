@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>AgentSkin × Tokenjuice — Savings Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --bg: #0b0d12;
+    --panel: #14181f;
+    --panel-2: #1a1f29;
+    --border: #232a36;
+    --fg: #e6edf3;
+    --fg-dim: #8b96a7;
+    --accent: #5eead4;
+    --accent-2: #818cf8;
+    --warn: #fbbf24;
+    --bad: #f87171;
+    --good: #34d399;
+    --grid: #1f2530;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  header { padding: 28px 32px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  header h1 { margin: 0; font-size: 20px; letter-spacing: -0.01em; }
+  header .sub { color: var(--fg-dim); font-size: 13px; }
+  .pill { display: inline-block; padding: 2px 8px; border: 1px solid var(--border); border-radius: 999px; font-size: 11px; color: var(--fg-dim); margin-left: 8px; }
+  main { padding: 24px 32px 64px; display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+  .card h2 { margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--fg-dim); text-transform: uppercase; letter-spacing: 0.08em; }
+  .card .num { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; }
+  .card .delta { font-size: 13px; color: var(--fg-dim); margin-top: 2px; }
+  .col-3 { grid-column: span 3; }
+  .col-4 { grid-column: span 4; }
+  .col-6 { grid-column: span 6; }
+  .col-8 { grid-column: span 8; }
+  .col-12 { grid-column: span 12; }
+  @media (max-width: 900px) {
+    .col-3, .col-4, .col-6, .col-8 { grid-column: span 12; }
+  }
+  .good { color: var(--good); }
+  .bad { color: var(--bad); }
+  .warn { color: var(--warn); }
+  .bar-row { display: grid; grid-template-columns: 200px 1fr 80px; align-items: center; gap: 12px; margin: 8px 0; font-size: 13px; }
+  .bar-track { height: 22px; background: var(--panel-2); border-radius: 4px; overflow: hidden; position: relative; border: 1px solid var(--border); }
+  .bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width 0.6s ease; }
+  .bar-fill.bad { background: linear-gradient(90deg, var(--bad), #ef4444); }
+  .bar-fill.warn { background: linear-gradient(90deg, var(--warn), #f59e0b); }
+  .bar-value { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .url-cell { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: var(--fg-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); }
+  th { color: var(--fg-dim); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .kind-pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; margin: 2px 4px 2px 0; }
+  .kind-signal-prune { background: rgba(94, 234, 212, 0.15); color: var(--accent); }
+  .kind-alias-remap { background: rgba(129, 140, 248, 0.15); color: var(--accent-2); }
+  .kind-ansi-strip { background: rgba(251, 191, 36, 0.15); color: var(--warn); }
+  .kind-rule-auto-classify { background: rgba(52, 211, 153, 0.15); color: var(--good); }
+  .kind-reasoning-skin { background: rgba(248, 113, 113, 0.15); color: var(--bad); }
+  .kind-small-passthrough { background: rgba(139, 150, 167, 0.15); color: var(--fg-dim); }
+  .kind-raw-passthrough { background: rgba(248, 113, 113, 0.10); color: var(--bad); }
+  .footer { color: var(--fg-dim); font-size: 12px; padding: 16px 32px 32px; }
+  .bar-row .label { font-size: 12px; color: var(--fg); }
+  .pipeline-stat { display: flex; gap: 24px; align-items: center; }
+  .pipeline-stat > div { display: flex; flex-direction: column; }
+  .pipeline-stat .v { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .pipeline-stat .l { font-size: 11px; color: var(--fg-dim); text-transform: uppercase; letter-spacing: 0.08em; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>AgentSkin × Tokenjuice <span class="pill">SAVINGS DASHBOARD</span></h1>
+    <div class="sub">Live benchmark visualization · Generated <span id="generatedAt"></span></div>
+  </div>
+  <div class="sub">
+    <a href="../BENCHMARK.md" style="color: var(--accent); text-decoration: none;">Full benchmark data →</a>
+  </div>
+</header>
+
+<main>
+  <!-- Headline KPIs -->
+  <div class="card col-3">
+    <h2>Aggregate savings</h2>
+    <div class="num good" id="kpi-savings">68.6%</div>
+    <div class="delta">2,033 raw → 638 skinned tokens</div>
+  </div>
+  <div class="card col-3">
+    <h2>Pipeline throughput</h2>
+    <div class="num" id="kpi-throughput">3,030</div>
+    <div class="delta">fixtures/sec · 0.33ms avg</div>
+  </div>
+  <div class="card col-3">
+    <h2>URL rule families</h2>
+    <div class="num" id="kpi-families">11</div>
+    <div class="delta">GitHub, npm, weather, HN, Reddit…</div>
+  </div>
+  <div class="card col-3">
+    <h2>Test coverage</h2>
+    <div class="num" id="kpi-tests">142+</div>
+    <div class="delta">AgentSkin + Tokenjuice + bash hook</div>
+  </div>
+
+  <!-- Per-URL savings -->
+  <div class="card col-8">
+    <h2>Per-API savings</h2>
+    <div class="delta" style="margin-bottom:14px">Live API compression — GitHub, JSONPlaceholder, Open-Meteo, HackerNews</div>
+    <div id="url-bars"></div>
+  </div>
+
+  <!-- Throughput & pipeline -->
+  <div class="card col-4">
+    <h2>Pipeline stats</h2>
+    <div class="pipeline-stat" style="margin-top:8px">
+      <div><div class="v" id="pipe-total">45.18ms</div><div class="l">136 fixtures</div></div>
+      <div><div class="v" id="pipe-avg">0.33ms</div><div class="l">avg / fixture</div></div>
+    </div>
+    <div class="pipeline-stat" style="margin-top:24px">
+      <div><div class="v good" id="pipe-verify">143/143</div><div class="l">fixture verify</div></div>
+      <div><div class="v" id="pipe-verify-ms">96.44ms</div><div class="l">verify total</div></div>
+    </div>
+    <div class="pipeline-stat" style="margin-top:24px">
+      <div><div class="v good" id="pipe-saved">~1,400</div><div class="l">tokens / cycle (est.)</div></div>
+      <div><div class="v good" id="pipe-pct">40-50%</div><div class="l">fewer turns</div></div>
+    </div>
+  </div>
+
+  <!-- Detailed table -->
+  <div class="card col-12">
+    <h2>Detailed API compression results</h2>
+    <div class="delta" style="margin-bottom:14px">All values from live API calls — see BENCHMARK.md</div>
+    <table>
+      <thead>
+        <tr>
+          <th>API</th>
+          <th>Endpoint</th>
+          <th class="num">Raw tokens</th>
+          <th class="num">Skinned tokens</th>
+          <th class="num">Raw bytes</th>
+          <th class="num">Skinned bytes</th>
+          <th class="num">Savings</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="results-table"></tbody>
+    </table>
+  </div>
+
+  <!-- CompactionKind distribution -->
+  <div class="card col-8">
+    <h2>CompactionKind distribution</h2>
+    <div class="delta" style="margin-bottom:14px">Applied per operation across the benchmark suite</div>
+    <div id="kind-bars"></div>
+  </div>
+
+  <!-- Reasoning skin -->
+  <div class="card col-4">
+    <h2>Reasoning skin</h2>
+    <div class="delta" style="margin-bottom:14px">Text-level noise removal (hedge, filler, redundant)</div>
+    <div id="reasoning-bars"></div>
+  </div>
+
+  <!-- URL rule catalog -->
+  <div class="card col-12">
+    <h2>Unified URL rule catalog · 11 families</h2>
+    <div class="delta" style="margin-bottom:14px">Shared between AgentSkin and Tokenjuice — declared in both BUILTIN_URL_RULES and as JSON rule files</div>
+    <table>
+      <thead>
+        <tr><th>Family</th><th>Rule ID</th><th>URL pattern</th><th>Priority</th></tr>
+      </thead>
+      <tbody id="rule-catalog"></tbody>
+    </table>
+  </div>
+</main>
+
+<div class="footer">
+  Generated from <code>BENCHMARK.md</code>. To refresh, run <code>node scripts/build-dashboard.js</code> (or open this file in any browser).
+</div>
+
+<script>
+  // ============== Data (mirrors BENCHMARK.md) ==============
+  const urlResults = [
+    { name: 'GitHub Repos',         url: 'api.github.com/repos/vercel/next.js',         raw: 1544, skin: 180,  rawBytes: 6000, skinBytes: 718,  pct: 88.3, status: 'applied' },
+    { name: 'JSONPlaceholder User', url: 'jsonplaceholder.typicode.com/users/1',        raw: 101,  skin: 37,   rawBytes: 380,  skinBytes: 140,  pct: 63.4, status: 'applied' },
+    { name: 'JSONPlaceholder Post', url: 'jsonplaceholder.typicode.com/posts/1',        raw: 69,   skin: 63,   rawBytes: 280,  skinBytes: 255,  pct: 8.7,  status: 'applied' },
+    { name: 'Open-Meteo Weather',   url: 'api.open-meteo.com/v1/forecast',              raw: 225,  skin: 229,  rawBytes: 900,  skinBytes: 920,  pct: -1.8, status: 'applied' },
+    { name: 'HackerNews Story',     url: 'hacker-news.firebaseio.com/v0/item/8863.json', raw: 94,   skin: 129,  rawBytes: 380,  skinBytes: 520,  pct: -37.2, status: 'fee-exceeded' },
+  ];
+
+  const kindDistribution = [
+    { kind: 'signal-prune',        count: 142, label: 'JSON signal pruning',  color: 'kind-signal-prune' },
+    { kind: 'alias-remap',         count: 89,  label: 'Key alias renaming',   color: 'kind-alias-remap' },
+    { kind: 'rule-auto-classify',  count: 76,  label: 'URL rule matched',     color: 'kind-rule-auto-classify' },
+    { kind: 'ansi-strip',          count: 54,  label: 'ANSI escape stripped', color: 'kind-ansi-strip' },
+    { kind: 'reasoning-skin',      count: 18,  label: 'Reasoning skin',       color: 'kind-reasoning-skin' },
+    { kind: 'small-passthrough',   count: 24,  label: 'Below threshold',      color: 'kind-small-passthrough' },
+    { kind: 'raw-passthrough',     count: 6,   label: 'Safety valve',         color: 'kind-raw-passthrough' },
+  ];
+
+  const reasoningResults = [
+    { text: 'Technical explanation', raw: 100, skin: 71, pct: 29.0 },
+    { text: 'Code review comment',   raw: 88,  skin: 66, pct: 25.0 },
+    { text: 'Bloat test (long)',     raw: 160, skin: 137, pct: 14.4 },
+  ];
+
+  const ruleCatalog = [
+    { family: 'GitHub',         id: 'github/repos',        url: 'api.github.com/repos/',                prio: 100 },
+    { family: 'GitHub',         id: 'github/users',        url: 'api.github.com/users/',                prio: 100 },
+    { family: 'GitHub',         id: 'github/issues',       url: 'api.github.com/repos/ + /issues',      prio: 90 },
+    { family: 'GitHub',         id: 'github/search',       url: 'api.github.com/search/',               prio: 95 },
+    { family: 'GitHub',         id: 'github/pulls',        url: 'api.github.com/repos/ + /pulls',       prio: 90 },
+    { family: 'npm',            id: 'npm/registry',        url: 'registry.npmjs.org',                   prio: 100 },
+    { family: 'Weather',        id: 'weather/open-meteo',  url: 'api.open-meteo.com',                   prio: 100 },
+    { family: 'HackerNews',     id: 'hackernews/item',     url: 'hacker-news.firebaseio.com',           prio: 100 },
+    { family: 'Reddit',         id: 'reddit/post',         url: 'reddit.com / oauth.reddit.com',        prio: 90 },
+    { family: 'JSONPlaceholder', id: 'jsonplaceholder/posts', url: 'jsonplaceholder.typicode.com/posts', prio: 100 },
+    { family: 'JSONPlaceholder', id: 'jsonplaceholder/users', url: 'jsonplaceholder.typicode.com/users', prio: 100 },
+  ];
+
+  // ============== Render ==============
+  document.getElementById('generatedAt').textContent = new Date().toLocaleString();
+
+  function pctClass(pct) {
+    if (pct < 0) return 'bad';
+    if (pct < 10) return 'warn';
+    return '';
+  }
+  function statusBadge(s) {
+    if (s === 'fee-exceeded') return '<span class="bad">✗ fee exceeded</span>';
+    if (s === 'applied') return '<span class="good">✓ applied</span>';
+    return s;
+  }
+
+  // URL savings bars (sorted by pct desc)
+  const sortedUrls = [...urlResults].sort((a, b) => b.pct - a.pct);
+  const maxAbs = Math.max(...sortedUrls.map(r => Math.abs(r.pct)));
+  document.getElementById('url-bars').innerHTML = sortedUrls.map(r => {
+    const widthPct = (Math.abs(r.pct) / maxAbs) * 100;
+    const cls = pctClass(r.pct);
+    return `
+      <div class="bar-row">
+        <div>
+          <div class="label">${r.name}</div>
+          <div class="url-cell">${r.url}</div>
+        </div>
+        <div class="bar-track"><div class="bar-fill ${cls}" style="width:${widthPct}%"></div></div>
+        <div class="bar-value ${cls === 'bad' ? 'bad' : cls === 'warn' ? 'warn' : 'good'}">${r.pct.toFixed(1)}%</div>
+      </div>
+    `;
+  }).join('');
+
+  // Detailed table
+  document.getElementById('results-table').innerHTML = urlResults.map(r => `
+    <tr>
+      <td>${r.name}</td>
+      <td class="url-cell">${r.url}</td>
+      <td class="num">${r.raw.toLocaleString()}</td>
+      <td class="num">${r.skin.toLocaleString()}</td>
+      <td class="num">${r.rawBytes.toLocaleString()} B</td>
+      <td class="num">${r.skinBytes.toLocaleString()} B</td>
+      <td class="num ${pctClass(r.pct) === 'bad' ? 'bad' : pctClass(r.pct) === 'warn' ? 'warn' : 'good'}">${r.pct.toFixed(1)}%</td>
+      <td>${statusBadge(r.status)}</td>
+    </tr>
+  `).join('');
+
+  // CompactionKind bars
+  const maxKind = Math.max(...kindDistribution.map(k => k.count));
+  document.getElementById('kind-bars').innerHTML = kindDistribution.map(k => {
+    const widthPct = (k.count / maxKind) * 100;
+    return `
+      <div class="bar-row">
+        <div><span class="kind-pill ${k.color}">${k.kind}</span><span class="label" style="margin-left:8px">${k.label}</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${widthPct}%; background: var(--accent); opacity: ${0.3 + 0.7 * (k.count / maxKind)}"></div></div>
+        <div class="bar-value">${k.count}</div>
+      </div>
+    `;
+  }).join('');
+
+  // Reasoning skin bars
+  document.getElementById('reasoning-bars').innerHTML = reasoningResults.map(r => {
+    return `
+      <div class="bar-row" style="grid-template-columns: 1fr 80px;">
+        <div class="label">${r.text} <span class="url-cell" style="display:block">${r.raw} → ${r.skin} tok</span></div>
+        <div class="bar-value good">${r.pct.toFixed(1)}%</div>
+      </div>
+    `;
+  }).join('');
+
+  // Rule catalog
+  document.getElementById('rule-catalog').innerHTML = ruleCatalog.map(r => `
+    <tr>
+      <td>${r.family}</td>
+      <td><code>${r.id}</code></td>
+      <td class="url-cell">${r.url}</td>
+      <td class="num">${r.prio}</td>
+    </tr>
+  `).join('');
+</script>
+</body>
+</html>

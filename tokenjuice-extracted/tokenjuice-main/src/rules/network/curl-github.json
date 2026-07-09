@@ -1,0 +1,25 @@
+{
+  "id": "network/curl-github",
+  "family": "network-http",
+  "description": "Compact GitHub API responses from curl with JSON semantic pruning.",
+  "match": {
+    "toolNames": ["exec"],
+    "argv0": ["curl"],
+    "urlIncludes": ["api.github.com"]
+  },
+  "priority": 10,
+  "jsonSemantic": {
+    "urlMatches": "api.github.com",
+    "stripAnsi": true
+  },
+  "transforms": {
+    "stripAnsi": true
+  },
+  "counters": [
+    {
+      "name": "error",
+      "pattern": "error|failed|timed out",
+      "flags": "i"
+    }
+  ]
+}

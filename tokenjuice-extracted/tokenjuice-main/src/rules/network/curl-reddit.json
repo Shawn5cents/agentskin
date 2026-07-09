@@ -1,0 +1,25 @@
+{
+  "id": "network/curl-reddit",
+  "family": "network-http",
+  "description": "Compact Reddit API responses from curl with JSON semantic pruning.",
+  "match": {
+    "toolNames": ["exec"],
+    "argv0": ["curl"],
+    "urlIncludesAny": ["reddit.com", "oauth.reddit.com"]
+  },
+  "priority": 10,
+  "jsonSemantic": {
+    "urlMatches": "reddit.com",
+    "stripAnsi": true
+  },
+  "transforms": {
+    "stripAnsi": true
+  },
+  "counters": [
+    {
+      "name": "error",
+      "pattern": "error|failed|timed out",
+      "flags": "i"
+    }
+  ]
+}

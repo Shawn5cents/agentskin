@@ -1,0 +1,15 @@
+{
+  "id": "tests-playwright-basic",
+  "ruleId": "tests/playwright",
+  "input": {
+    "toolName": "exec",
+    "command": "pnpm playwright test",
+    "combinedText": "Running 3 tests using 1 worker\n  ✘  1 tests/example.spec.ts:3:1 › loads home page\n  1 failed\n  2 passed\n",
+    "exitCode": 1
+  },
+  "expect": {
+    "matchedReducer": "tests/playwright",
+    "family": "test-results",
+    "contains": ["failed", "tests/example.spec.ts"]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "network-curl-reddit",
+  "ruleId": "network/curl-reddit",
+  "input": {
+    "toolName": "exec",
+    "argv": ["curl", "https://www.reddit.com/r/programming/hot.json"],
+    "command": "curl https://www.reddit.com/r/programming/hot.json",
+    "combinedText": "{\n  \"kind\": \"Listing\",\n  \"data\": {\n    \"children\": []\n  }\n}",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "network/curl-reddit",
+    "family": "network-http",
+    "contains": ["Listing"]
+  }
+}

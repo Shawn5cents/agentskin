@@ -1,0 +1,16 @@
+{
+  "id": "network-curl-basic",
+  "ruleId": "network/curl",
+  "input": {
+    "toolName": "exec",
+    "argv": ["curl", "-I", "https://example.com"],
+    "command": "curl -I https://example.com",
+    "combinedText": "HTTP/2 200 \ncontent-type: text/html\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "network/curl",
+    "family": "network-http",
+    "contains": ["HTTP/2 200"]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "network/curl-weather",
+  "family": "network-http",
+  "description": "Compact Open-Meteo weather API responses from curl with JSON semantic pruning.",
+  "match": {
+    "toolNames": ["exec"],
+    "argv0": ["curl"],
+    "urlIncludes": ["api.open-meteo.com"]
+  },
+  "priority": 10,
+  "jsonSemantic": {
+    "urlMatches": "api.open-meteo.com",
+    "stripAnsi": true
+  },
+  "transforms": {
+    "stripAnsi": true
+  },
+  "counters": [
+    {
+      "name": "error",
+      "pattern": "error|failed|timed out",
+      "flags": "i"
+    }
+  ]
+}

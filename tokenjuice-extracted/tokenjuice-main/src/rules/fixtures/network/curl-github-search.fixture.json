@@ -1,0 +1,16 @@
+{
+  "id": "network-curl-github-search",
+  "ruleId": "network/curl-github-search",
+  "input": {
+    "toolName": "exec",
+    "argv": ["curl", "https://api.github.com/search/code?q=addClass+user:mozilla"],
+    "command": "curl https://api.github.com/search/code?q=addClass+user:mozilla",
+    "combinedText": "{\n  \"total_count\": 42,\n  \"incomplete_results\": false,\n  \"items\": []\n}",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "network/curl-github-search",
+    "family": "network-http",
+    "contains": ["total_count"]
+  }
+}

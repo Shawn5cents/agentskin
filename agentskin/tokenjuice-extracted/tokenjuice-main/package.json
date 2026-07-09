@@ -1,0 +1,80 @@
+{
+  "name": "tokenjuice",
+  "version": "0.8.0",
+  "description": "Lean output compaction for terminal-heavy agent workflows.",
+  "keywords": [
+    "cli",
+    "terminal",
+    "llm",
+    "tokens",
+    "context",
+    "developer-tools"
+  ],
+  "homepage": "https://github.com/vincentkoc/tokenjuice",
+  "bugs": {
+    "url": "https://github.com/vincentkoc/tokenjuice/issues"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/vincentkoc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vincentkoc/tokenjuice.git"
+  },
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@10.11.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "tokenjuice": "dist/cli/main.js"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./openclaw": {
+      "types": "./dist/hosts/openclaw/index.d.ts",
+      "default": "./dist/hosts/openclaw/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "SECURITY.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "analyze:codex-logs": "node scripts/analyze-codex-logs.mjs",
+    "bench:fixtures": "node scripts/bench.mjs fixtures",
+    "bench:verify": "node scripts/bench.mjs verify",
+    "contracts": "publint run --strict --pack pnpm",
+    "e2e:local": "pnpm build && node scripts/local-host-e2e.mjs",
+    "generate:builtin-rules": "node scripts/generate-builtin-rules.mjs",
+    "prepare": "pnpm repair:pnpm-bin-shims",
+    "repair:pnpm-bin-shims": "node scripts/repair-pnpm-bin-shims.mjs",
+    "build": "rm -rf dist && pnpm generate:builtin-rules && tsc -p tsconfig.json && node scripts/build-pi-runtime.mjs && node scripts/build-opencode-runtime.mjs && mkdir -p dist/rules && cp -R src/rules/. dist/rules/",
+    "lint": "oxlint --deny-warnings src test scripts",
+    "lint:circular": "madge --circular --extensions ts,mjs --ts-config tsconfig.json src",
+    "release:artifacts": "node scripts/build-release.mjs",
+    "release:checksums": "node scripts/write-checksums.mjs",
+    "release:formula": "node scripts/generate-homebrew-formula.mjs",
+    "release:local": "pnpm verify && pnpm verify:package",
+    "smoke:live": "node scripts/live-smoke.mjs",
+    "test": "pnpm generate:builtin-rules && vitest run",
+    "typecheck": "pnpm generate:builtin-rules && tsc -p tsconfig.json --noEmit",
+    "verify": "pnpm lint && pnpm lint:circular && pnpm typecheck && pnpm test",
+    "verify:package": "pnpm build && pnpm contracts && pnpm release:artifacts && pnpm release:checksums && pnpm release:formula"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.0",
+    "esbuild": "^0.25.11",
+    "madge": "^8.0.0",
+    "oxlint": "^1.61.0",
+    "publint": "^0.3.18",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
+  }
+}

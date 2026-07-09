@@ -1,0 +1,16 @@
+{
+  "id": "install-npm-basic",
+  "ruleId": "install/npm-install",
+  "input": {
+    "toolName": "exec",
+    "argv": ["npm", "install"],
+    "command": "npm install",
+    "combinedText": "added 42 packages, and audited 43 packages in 2s\nfound 0 vulnerabilities\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "install/npm-install",
+    "family": "dependency-install",
+    "contains": ["vulnerability", "audited 43 packages"]
+  }
+}

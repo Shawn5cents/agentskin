@@ -1,0 +1,16 @@
+{
+  "id": "network-curl-weather",
+  "ruleId": "network/curl-weather",
+  "input": {
+    "toolName": "exec",
+    "argv": ["curl", "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41"],
+    "command": "curl https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41",
+    "combinedText": "{\n  \"latitude\": 52.52,\n  \"longitude\": 13.41,\n  \"timezone\": \"Europe/Berlin\"\n}",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "network/curl-weather",
+    "family": "network-http",
+    "contains": ["Europe/Berlin"]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "devops-kubectl-describe-basic",
+  "ruleId": "devops/kubectl-describe",
+  "input": {
+    "toolName": "exec",
+    "argv": ["kubectl", "describe", "pod", "api-123"],
+    "command": "kubectl describe pod api-123",
+    "combinedText": "Name:         api-123\nNamespace:    default\nStatus:       Running\nEvents:\n  Type    Reason     Age   From     Message\n  Warning BackOff    1m    kubelet  Back-off restarting failed container\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "devops/kubectl-describe",
+    "family": "kubernetes-describe",
+    "contains": ["warning", "Back-off restarting failed container"]
+  }
+}

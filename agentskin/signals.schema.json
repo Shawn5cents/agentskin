@@ -1,0 +1,126 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://agentskin.dev/schemas/signals.schema.json",
+  "title": "AgentSkin signals.json",
+  "description": "3-layer rule config for AgentSkin's URL auto-classifier. Project overrides user overrides builtin. Same-id rules in a higher layer REPLACE the lower-layer rule (no deep-merge); \"disabled\": true in any layer REMOVES the matching lower-layer rule; new id values are APPENDED to the end of the merged set.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["rules"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Path or URL of this schema file. Adjust to point at wherever you place the schema on disk so editors can autocomplete rule fields.",
+      "format": "uri-reference"
+    },
+    "$comment": {
+      "type": "string",
+      "description": "Free-form note. Ignored by the resolver."
+    },
+    "rules": {
+      "type": "array",
+      "description": "Layer-local rules. Merged with the other two layers at load time per the 3-layer priority (project > user > builtin).",
+      "minItems": 0,
+      "items": { "$ref": "#/definitions/rule" }
+    }
+  },
+  "definitions": {
+    "rule": {
+      "type": "object",
+      "description": "A single API skin rule. A rule is either ACTIVE (has a `match` clause and a `signals` array) or a DISABLE DIRECTIVE (has `\"disabled\": true` and no other meaningful fields).",
+      "additionalProperties": false,
+      "required": ["id"],
+      "anyOf": [
+        { "required": ["match"] },
+        { "required": ["disabled"] }
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique rule identifier. When this id matches a rule in a lower layer, this rule REPLACES it. Convention: `<family>/<name>` (e.g. `github/repos`).",
+          "pattern": "^[a-z0-9][a-z0-9_-]*(/[a-z0-9][a-z0-9_-]*)+$",
+          "minLength": 3
+        },
+        "family": {
+          "type": "string",
+          "description": "API domain family. Used purely for grouping and introspection (see getFamilies()). Has no effect on matching.",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description shown in tooling output.",
+          "minLength": 1
+        },
+        "match": {
+          "type": "object",
+          "description": "URL match criteria. Required for ACTIVE rules; omit (along with `signals`) for DISABLE DIRECTIVES.",
+          "additionalProperties": false,
+          "properties": {
+            "urlIncludes": {
+              "type": "array",
+              "description": "URL must contain ALL of these substrings (case-insensitive). Use for specific paths like `api.github.com/repos/`.",
+              "items": { "type": "string", "minLength": 1 },
+              "uniqueItems": true,
+              "minItems": 1
+            },
+            "urlIncludesAny": {
+              "type": "array",
+              "description": "URL must contain AT LEAST ONE of these substrings (case-insensitive). Use for multi-domain families like Reddit (reddit.com OR oauth.reddit.com).",
+              "items": { "type": "string", "minLength": 1 },
+              "uniqueItems": true,
+              "minItems": 1
+            }
+          },
+          "anyOf": [
+            { "required": ["urlIncludes"] },
+            { "required": ["urlIncludesAny"] }
+          ]
+        },
+        "signals": {
+          "type": "array",
+          "description": "Signal keys to preserve from API responses. Order does not affect matching. Required for ACTIVE rules; omit for DISABLE DIRECTIVES.",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "aliases": {
+          "type": "object",
+          "description": "Key alias renames. snake_case API fields → readable names. Keys are original field names, values are display names.",
+          "additionalProperties": { "type": "string", "minLength": 1 }
+        },
+        "transforms": {
+          "type": "object",
+          "description": "Optional transformation flags consumed by the skinned output renderer.",
+          "additionalProperties": { "type": "boolean" }
+        },
+        "priority": {
+          "type": "number",
+          "description": "Match priority bonus. Higher scores win when multiple rules match a URL. Typical builtin values: 90-100.",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "If true, the matching lower-layer rule (same `id`) is removed from the merged set. A pure disable directive should be `{id: '<id>', disabled: true}` with no other fields. Disable wins over conflicting non-disabled overrides in any other layer (see THREE-LAYER-RULES.md).",
+          "const": true
+        }
+      },
+      "allOf": [
+        {
+          "description": "Conditional: if `match` is present, `signals` must also be present. Disable directives need neither.",
+          "if": { "required": ["match"] },
+          "then": { "required": ["signals"] }
+        },
+        {
+          "description": "Conditional: if `disabled` is present, neither `match` nor `signals` may also be present (a disable directive is pure).",
+          "if": { "required": ["disabled"] },
+          "then": {
+            "not": { "anyOf": [
+              { "required": ["match"] },
+              { "required": ["signals"] }
+            ] }
+          }
+        }
+      ]
+    }
+  }
+}

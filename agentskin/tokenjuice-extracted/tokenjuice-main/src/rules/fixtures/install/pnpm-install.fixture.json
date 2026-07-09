@@ -1,0 +1,16 @@
+{
+  "id": "install-pnpm-basic",
+  "ruleId": "install/pnpm-install",
+  "input": {
+    "toolName": "exec",
+    "argv": ["pnpm", "install"],
+    "command": "pnpm install",
+    "combinedText": "Packages: +12\nProgress: resolved 50, reused 40, downloaded 10, added 12, done\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "install/pnpm-install",
+    "family": "dependency-install",
+    "contains": ["package", "Packages: +12"]
+  }
+}

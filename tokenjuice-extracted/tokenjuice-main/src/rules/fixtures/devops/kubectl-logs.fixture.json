@@ -1,0 +1,16 @@
+{
+  "id": "devops-kubectl-logs-basic",
+  "ruleId": "devops/kubectl-logs",
+  "input": {
+    "toolName": "exec",
+    "argv": ["kubectl", "logs", "api-123"],
+    "command": "kubectl logs api-123",
+    "combinedText": "app booted\nwarn: slow query\nerror: timeout talking to redis\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "devops/kubectl-logs",
+    "family": "kubernetes-logs",
+    "contains": ["warning", "timeout talking to redis"]
+  }
+}

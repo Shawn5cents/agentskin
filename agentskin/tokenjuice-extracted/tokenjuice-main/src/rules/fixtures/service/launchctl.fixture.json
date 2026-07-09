@@ -1,0 +1,16 @@
+{
+  "id": "service-launchctl-basic",
+  "ruleId": "service/launchctl",
+  "input": {
+    "toolName": "exec",
+    "argv": ["launchctl", "list"],
+    "command": "launchctl list",
+    "combinedText": "PID\tStatus\tLabel\n123\t0\tcom.example.api\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "service/launchctl",
+    "family": "service-state",
+    "contains": ["service", "com.example.api"]
+  }
+}

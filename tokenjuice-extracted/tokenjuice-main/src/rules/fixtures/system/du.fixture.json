@@ -1,0 +1,16 @@
+{
+  "id": "system-du-basic",
+  "ruleId": "system/du",
+  "input": {
+    "toolName": "exec",
+    "argv": ["du", "-sh", "."],
+    "command": "du -sh .",
+    "combinedText": "1.2G\t.\n300M\t./node_modules\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "system/du",
+    "family": "system-disk",
+    "contains": ["entry", "node_modules"]
+  }
+}

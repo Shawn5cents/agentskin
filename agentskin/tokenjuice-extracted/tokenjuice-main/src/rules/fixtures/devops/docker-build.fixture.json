@@ -1,0 +1,16 @@
+{
+  "id": "devops-docker-build-basic",
+  "ruleId": "devops/docker-build",
+  "input": {
+    "toolName": "exec",
+    "argv": ["docker", "build", "."],
+    "command": "docker build .",
+    "combinedText": "#1 [internal] load build definition from Dockerfile\n#2 [2/4] RUN pnpm build\n#2 ERROR: process \"/bin/sh -c pnpm build\" did not complete successfully\n",
+    "exitCode": 1
+  },
+  "expect": {
+    "matchedReducer": "devops/docker-build",
+    "family": "container-build",
+    "contains": ["step", "ERROR"]
+  }
+}

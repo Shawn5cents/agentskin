@@ -1,0 +1,16 @@
+{
+  "id": "git-remote-v-basic",
+  "ruleId": "git/remote-v",
+  "input": {
+    "toolName": "exec",
+    "argv": ["git", "remote", "-v"],
+    "command": "git remote -v",
+    "combinedText": "origin\thttps://github.com/vincentkoc/tokenjuice.git (fetch)\norigin\thttps://github.com/vincentkoc/tokenjuice.git (push)\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "git/remote-v",
+    "family": "git-remote",
+    "contains": ["remote", "origin"]
+  }
+}

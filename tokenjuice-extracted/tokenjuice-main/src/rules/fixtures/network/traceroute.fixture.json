@@ -1,0 +1,16 @@
+{
+  "id": "network-traceroute-basic",
+  "ruleId": "network/traceroute",
+  "input": {
+    "toolName": "exec",
+    "argv": ["traceroute", "example.com"],
+    "command": "traceroute example.com",
+    "combinedText": " 1  router.local  1.123 ms\n 2  isp-gw  5.991 ms\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "network/traceroute",
+    "family": "network-route",
+    "contains": ["hop", "router.local"]
+  }
+}

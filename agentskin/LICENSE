@@ -1,0 +1,14 @@
+# AgentSkin License (v1.0)
+Copyright (c) 2026 Nichols Transco LLC. All rights reserved.
+
+### 1. OWNERSHIP
+The "AgentSkin Recursive Shorthand Engine" and all associated logic in the `backend/lib/skin-engine.js` file are the exclusive intellectual property of Nichols Transco LLC.
+
+### 2. USE CASE
+This software is provided as a "Semantic Protocol" utility. Users are permitted to integrate this protocol into their agentic workflows under the terms of the official AgentSkin service agreement.
+
+### 3. DISCLAIMER OF LIABILITY
+IN NO EVENT SHALL NICHOLS TRANSCO LLC BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE USE OF AGENTSKIN SKINS OR THE DECISIONS MADE BY AUTONOMOUS AGENTS BASED ON THE OPTIMIZED DATA PROVIDED BY THIS PROTOCOL.
+
+### 4. GOVERNING LAW
+Any legal action involving the AgentSkin protocol shall be governed by the laws of the jurisdiction in which Nichols Transco LLC is registered.

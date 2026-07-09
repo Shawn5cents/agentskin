@@ -1,0 +1,15 @@
+{
+  "id": "generic-fallback-basic",
+  "ruleId": "generic/fallback",
+  "input": {
+    "toolName": "exec",
+    "command": "custom-tool check",
+    "combinedText": "custom line one\ncustom line two\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "generic/fallback",
+    "family": "generic",
+    "contains": ["custom line one"]
+  }
+}

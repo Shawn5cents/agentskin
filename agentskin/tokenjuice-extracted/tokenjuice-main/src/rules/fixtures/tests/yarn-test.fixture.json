@@ -1,0 +1,16 @@
+{
+  "id": "tests-yarn-basic",
+  "ruleId": "tests/yarn-test",
+  "input": {
+    "toolName": "exec",
+    "argv": ["yarn", "test"],
+    "command": "yarn test",
+    "combinedText": "FAIL test/example.test.ts\n1 failed, 2 passed\n",
+    "exitCode": 1
+  },
+  "expect": {
+    "matchedReducer": "tests/yarn-test",
+    "family": "test-results",
+    "contains": ["failed", "FAIL test/example.test.ts"]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "filesystem-ls-basic",
+  "ruleId": "filesystem/ls",
+  "input": {
+    "toolName": "exec",
+    "argv": ["ls", "-la"],
+    "command": "ls -la",
+    "combinedText": "README.md\nsrc\ntest\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "filesystem/ls",
+    "family": "filesystem-listing",
+    "contains": ["item", "README.md"]
+  }
+}

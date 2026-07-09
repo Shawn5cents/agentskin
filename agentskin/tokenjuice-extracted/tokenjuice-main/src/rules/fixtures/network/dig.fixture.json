@@ -1,0 +1,16 @@
+{
+  "id": "network-dig-basic",
+  "ruleId": "network/dig",
+  "input": {
+    "toolName": "exec",
+    "argv": ["dig", "example.com"],
+    "command": "dig example.com",
+    "combinedText": ";; ANSWER SECTION:\nexample.com. 60 IN A 93.184.216.34\n",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "network/dig",
+    "family": "network-dns",
+    "contains": ["answer", "93.184.216.34"]
+  }
+}

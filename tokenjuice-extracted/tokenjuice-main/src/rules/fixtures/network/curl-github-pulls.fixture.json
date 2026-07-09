@@ -1,0 +1,16 @@
+{
+  "id": "network-curl-github-pulls",
+  "ruleId": "network/curl-github-pulls",
+  "input": {
+    "toolName": "exec",
+    "argv": ["curl", "https://api.github.com/repos/vercel/next.js/pulls/1"],
+    "command": "curl https://api.github.com/repos/vercel/next.js/pulls/1",
+    "combinedText": "{\n  \"number\": 1,\n  \"title\": \"Fix build\",\n  \"state\": \"open\",\n  \"additions\": 10,\n  \"deletions\": 5\n}",
+    "exitCode": 0
+  },
+  "expect": {
+    "matchedReducer": "network/curl-github-pulls",
+    "family": "network-http",
+    "contains": ["Fix build", "additions"]
+  }
+}
