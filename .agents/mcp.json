@@ -1,11 +1,11 @@
 {
-  "description": "MCP servers for AgentSkin Suite — token optimization, browser automation, and agent tools. All servers auto-resolve via wrapper scripts or npx.",
+  "description": "MCP servers for AgentSkin and Tokenjuice integration. Both servers expose token optimization tools that can be called by any MCP-aware agent (Claude Code, Cursor, Copilot Chat, Continue, Cline, etc.). Caveman-shrink variants wrap the servers to compress tool descriptions, saving additional context tokens. Paths are auto-resolved by wrapper scripts in .agents/mcp/ — no manual path editing needed.",
   "mcpServers": {
     "agentskin-mcp": {
       "command": "bash",
       "args": [".agents/mcp/agentskin-mcp.sh"],
       "env": {},
-      "description": "AgentSkin SSS v5.0 — exposes fetch_optimized_data (URL→optimized skin, up to 88% token reduction with auto-classification for GitHub, npm, HackerNews, weather, etc.), skin_reasoning, classify_url, and strip_ansi."
+      "description": "AgentSkin SSS v2.0 — exposes fetch_optimized_data (URL→optimized skin, up to 88% token reduction with auto-classification for GitHub, npm, HackerNews, weather, etc.) and skin_reasoning (LLM-to-LLM text noise removal)."
     },
     "tokenjuice-mcp": {
       "command": "bash",
@@ -17,19 +17,13 @@
       "command": "node",
       "args": [".agents/mcp/caveman-shrink/index.js", "bash", ".agents/mcp/agentskin-mcp.sh"],
       "env": {},
-      "description": "[SHRUNK] AgentSkin v5.0 via caveman-shrink — same 4 tools with compressed descriptions. Use when tool catalog size matters."
+      "description": "[SHRUNK] AgentSkin v2.0 via caveman-shrink — same 4 tools with compressed descriptions. Use when tool catalog size matters."
     },
     "tokenjuice-shrunk": {
       "command": "node",
       "args": [".agents/mcp/caveman-shrink/index.js", "bash", ".agents/mcp/tokenjuice-mcp.sh"],
       "env": {},
       "description": "[SHRUNK] Tokenjuice v0.8.0 via caveman-shrink — same 5 tools with compressed descriptions. Use when tool catalog size matters."
-    },
-    "chrome-devtools": {
-      "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"],
-      "env": {},
-      "description": "Chrome DevTools MCP — browser automation via CDP. Navigate pages, take screenshots, click elements, evaluate JS, test web apps. Requires Chromium/Chrome running with --remote-debugging-port=9222."
     }
   },
   "rateLimits": {
@@ -38,7 +32,6 @@
   },
   "buildInstructions": {
     "agentskin-mcp": "cd agentskin && npm install",
-    "tokenjuice-mcp": "cd tokenjuice-extracted/tokenjuice-main && npx tsc",
-    "chrome-devtools": "chromium --headless --remote-debugging-port=9222 &"
+    "tokenjuice-mcp": "cd tokenjuice-extracted/tokenjuice-main && npx tsc"
   }
 }
