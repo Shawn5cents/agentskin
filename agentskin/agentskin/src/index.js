@@ -663,16 +663,16 @@ const WHITEPAPER_CONTENT = `
     
     <div style="margin-top: 40px; font-size: 1.1rem;">
         <h3 style="font-family: 'IBM Plex Mono', monospace; font-size: 1rem; text-transform: uppercase; margin-bottom: 10px;">I. Abstract</h3>
-        <p style="margin-bottom: 30px;">The Semantic Shorthand Standard (SSS) addresses the systemic inefficiency of utilizing human-centric web data for Machine-to-Machine (M2M) perception. By providing a deterministic, mathematically verifiable layer of semantic compression, SSS eliminates the "Token Tax" associated with modern web architecture.</p>
+        <p style="margin-bottom: 30px;">The Semantic Shorthand Standard (SSS) addresses the systemic inefficiency of utilizing human-centric web data for Machine-to-Machine (M2M) perception. By providing a deterministic, mathematically verifiable layer of semantic compression, SSS eliminates the "Token Tax" associated with modern web architecture. The AgentSkin Suite bundles SSS alongside <strong>Tokenjuice</strong> (by <a href="https://github.com/vincentkoc/tokenjuice">Vincent Koc</a>, MIT License) and <strong>Caveman</strong> (by <a href="https://github.com/JuliusBrussee/caveman">Julius Brussee</a>) into one unified 7-tool MCP server.</p>
         
         <h3 style="font-family: 'IBM Plex Mono', monospace; font-size: 1rem; text-transform: uppercase; margin-bottom: 10px;">II. The Perceptual Drag Problem</h3>
         <p style="margin-bottom: 30px;">Transformer models allocate attention across context windows indiscriminately. High-entropy structures (HTML DOMs, deeply nested JSON metadata) force models to process structural "noise," degrading performance, increasing latency, and introducing points of failure (hallucination) in autonomous pipelines.</p>
         
         <h3 style="font-family: 'IBM Plex Mono', monospace; font-size: 1rem; text-transform: uppercase; margin-bottom: 10px;">III. Protocol Architecture</h3>
-        <p style="margin-bottom: 30px;">The SSS implementation operates strictly as a local reference client via the Model Context Protocol (MCP). By remaining local, the protocol ensures absolute data sovereignty and session integrity. The AgentSkin reference server allows agents to declare required signals dynamically, delegating the pruning execution to the local host environment.</p>
+        <p style="margin-bottom: 30px;">The SSS implementation operates strictly as a local reference client via the Model Context Protocol (MCP). The unified <code>agentskin-suite</code> server exposes 7 tools: AgentSkin's semantic pruning (<code>fetch_optimized_data</code>, <code>skin_reasoning</code>, <code>classify_url</code>, <code>strip_ansi</code>) merged with Tokenjuice's reduction engine (<code>reduce</code>, <code>estimate_tokens</code>, <code>apply_json_semantic</code>). By remaining local, the protocol ensures absolute data sovereignty and session integrity.</p>
         
         <h3 style="font-family: 'IBM Plex Mono', monospace; font-size: 1rem; text-transform: uppercase; margin-bottom: 10px;">IV. Conclusion</h3>
-        <p>The adoption of SSS provides the critical infrastructure necessary for scalable, reliable autonomous agent ecosystems. By standardizing the format in which machines perceive the web, we remove the final bottleneck in the agentic economy.</p>
+        <p>The adoption of SSS — combined with Tokenjuice's CLI reduction pipeline and Caveman's output compression — provides the critical infrastructure necessary for scalable, reliable autonomous agent ecosystems. By standardizing the format in which machines perceive the web, we remove the final bottleneck in the agentic economy.</p>
     </div>
 </section>
 `;
