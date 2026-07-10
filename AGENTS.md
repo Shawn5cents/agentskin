@@ -22,9 +22,6 @@ One unified MCP server with 7 tools:
 | Server | Wrapper | Tools |
 |--------|---------|-------|
 | `agentskin-suite` | `npx agentskin@latest` | `fetch_optimized_data`, `skin_reasoning`, `classify_url`, `strip_ansi`, `reduce`, `estimate_tokens`, `apply_json_semantic` |
-| `chrome-devtools` | `chrome-devtools-mcp@latest` via npx | Browser automation via CDP. Requires Chromium with `--remote-debugging-port=9222`. Config: `~/.config/mcp/mcp.json` |
-
-**Note:** `chrome-devtools` uses `chrome-devtools-mcp@latest` — NOT the old `@modelcontextprotocol/server-chrome` (that one doesn't resolve).
 
 ## Bash Hook
 
