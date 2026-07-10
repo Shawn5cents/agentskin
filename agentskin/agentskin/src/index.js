@@ -294,7 +294,7 @@ const INTRO_CONTENT = `
             <p>AgentSkin Suite combines three complementary tools that eliminate token waste across the full AI agent cycle:</p>
             <ul style="margin: 20px 0; padding-left: 20px;">
                 <li><strong>AgentSkin SSS</strong> — Semantic JSON pruning via MCP. Strips 60-88% of API response noise.</li>
-                <li><strong>Tokenjuice CLI</strong> — Rule-driven terminal output compaction. Up to 99.97% on large outputs.</li>
+                <li><strong>Tokenjuice</strong> — Rule-driven CLI compaction + powers 3 MCP tools (reduce, estimate_tokens, apply_json_semantic). Up to 99.97% on large outputs. By <a href="https://github.com/vincentkoc/tokenjuice">Vincent Koc</a> (MIT License).</li>
                 <li><strong>Caveman</strong> — Output compression via prompt engineering. 65% output token reduction.</li>
             </ul>
             <p>Combined, they reclaim <strong>60-80%</strong> of context that was previously wasted on noise.</p>
@@ -304,13 +304,13 @@ const INTRO_CONTENT = `
         <div class="thesis-number">02 / MCP INTEGRATION</div>
         <div class="thesis-content">
             <h2>One Unified MCP Server, 7 Tools</h2>
-            <p>The Suite exposes <strong>7 tools</strong> through a single MCP server — merging AgentSkin's semantic pruning with Tokenjuice's reduction pipeline:</p>
+            <p>The Suite exposes <strong>7 tools</strong> through a single MCP server — AgentSkin's semantic pruning merged with Tokenjuice's reduction engine (by <a href="https://github.com/vincentkoc/tokenjuice">Vincent Koc</a>, MIT License):</p>
             <ul style="margin: 10px 0; padding-left: 20px;">
                 <li><code>fetch_optimized_data</code> — Fetch URL, prune JSON, return Markdown skin (88% savings)</li>
                 <li><code>skin_reasoning</code> — Strip linguistic noise from text (14-29% reduction)</li>
                 <li><code>classify_url</code> — Match URL against 11 built-in API rules</li>
                 <li><code>strip_ansi</code> — Strip 5 patterns of ANSI escape codes</li>
-                <li><code>reduce</code> — Full Tokenjuice reduction pipeline (up to 99.97%)</li>
+                <li><code>reduce</code> — Tokenjuice reduction pipeline (up to 99.97%)</li>
                 <li><code>estimate_tokens</code> — Grapheme-aware token estimation</li>
                 <li><code>apply_json_semantic</code> — Prune raw JSON with signal keys</li>
             </ul>
@@ -387,7 +387,7 @@ const INTRO_CONTENT = `
                     </tr>
                     <tr style="border-bottom: 1px solid var(--border);">
                         <td style="padding: 10px;"><strong>Vincent Koc</strong><br><a href="https://github.com/vincentkoc/tokenjuice" style="color: var(--muted); font-size: 0.9rem;">github.com/vincentkoc/tokenjuice</a></td>
-                        <td style="padding: 10px;">Tokenjuice — MIT-licensed CLI output compactor</td>
+                        <td style="padding: 10px;">Tokenjuice — MIT-licensed engine: powers reduce, estimate_tokens, and apply_json_semantic in unified MCP server</td>
                     </tr>
                     <tr>
                         <td style="padding: 10px;"><strong>Julius Brussee</strong><br><a href="https://github.com/JuliusBrussee/caveman" style="color: var(--muted); font-size: 0.9rem;">github.com/JuliusBrussee/caveman</a></td>
@@ -649,7 +649,7 @@ const FAQ_CONTENT = `
             <p>Three complementary tools that eliminate token waste across the full AI agent cycle:</p>
             <ul style="margin: 15px 0; padding-left: 20px;">
                 <li><strong>AgentSkin SSS</strong> — Semantic JSON pruning via MCP. Strips 60-88% of API response noise.</li>
-                <li><strong>Tokenjuice CLI</strong> — Rule-driven terminal output compaction. Up to 99.97% on large outputs. By <a href="https://github.com/vincentkoc/tokenjuice">Vincent Koc</a> (MIT License).</li>
+                <li><strong>Tokenjuice</strong> — Powers 3 unified MCP tools (reduce, estimate_tokens, apply_json_semantic). Up to 99.97% on large outputs. By <a href="https://github.com/vincentkoc/tokenjuice">Vincent Koc</a> (MIT License).</li>
                 <li><strong>Caveman</strong> — Output compression via prompt engineering. 65% output token reduction. By <a href="https://github.com/JuliusBrussee/caveman">Julius Brussee</a>.</li>
             </ul>
         </div>
