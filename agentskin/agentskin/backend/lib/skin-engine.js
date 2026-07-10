@@ -1,0 +1,142 @@
+import { skinReasoning } from './reasoning-skin.js';
+
+/**
+ * AgentSkin: Master Semantic Engine (v4.2.0)
+ * Open Protocol for Recursive Object Pruning.
+ */
+
+// Export individual tools for specific options
+export { skinReasoning };
+
+/**
+ * Strip HTML tags and extract readable text
+ */
+export const stripHtmlTags = (html) => {
+    if (typeof html !== 'string') return html;
+
+    // First, remove script and style tags with their content
+    let text = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    text = text.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '');
+
+    // Remove HTML comments
+    text = text.replace(/<!--[\s\S]*?-->/g, '');
+
+    // Replace common block elements with newlines for readability
+    text = text.replace(/<\/(p|div|li|tr|h[1-6])>/gi, '\n');
+    text = text.replace(/<(p|div|li|tr|h[1-6])[^>]*>/gi, '\n');
+
+    // Remove all remaining HTML tags
+    text = text.replace(/<[^>]+>/g, '');
+
+    // Decode common HTML entities
+    text = text.replace(/&nbsp;/g, ' ');
+    text = text.replace(/&amp;/g, '&');
+    text = text.replace(/&lt;/g, '<');
+    text = text.replace(/&gt;/g, '>');
+    text = text.replace(/&quot;/g, '"');
+    text = text.replace(/&#39;/g, "'");
+
+    // Clean up whitespace
+    text = text.replace(/\n\s*\n/g, '\n');
+    text = text.trim();
+
+    return text;
+};
+
+/**
+ * Detect if content is HTML
+ */
+export const isHtml = (content) => {
+    if (typeof content !== 'string') return false;
+    return /<[a-z][\s\S]*>/i.test(content);
+};
+
+const DEFAULT_SIGNAL_KEYS = [
+    'id', 'name', 'title', 'value', 'status', 'price', 'temp', 'wind', 
+    'description', 'url', 'link', 'published_at', 'text', 'code', 'c', 'v', 'p'
+];
+
+export const recursive_prune = (data, requiredKeys = [], aliases = {}, applyReasoningSkin = false) => {
+    const signalKeys = [...new Set([...DEFAULT_SIGNAL_KEYS, ...requiredKeys])];
+    
+    if (Array.isArray(data)) {
+        return data.map(item => recursive_prune(item, requiredKeys, aliases, applyReasoningSkin)).filter(Boolean);
+    }
+    
+    if (typeof data === 'object' && data !== null) {
+        const pruned = {};
+        let hasSignal = false;
+        for (const [key, value] of Object.entries(data)) {
+            const lowerKey = key.toLowerCase();
+            const targetKey = aliases[lowerKey] || aliases[key] || key;
+            
+            if (signalKeys.includes(lowerKey) || signalKeys.includes(targetKey.toLowerCase())) {
+                let processedValue = value;
+                if (applyReasoningSkin && typeof value === 'string') {
+                    const { skin } = skinReasoning(value);
+                    processedValue = skin;
+                }
+                pruned[targetKey] = processedValue;
+                hasSignal = true;
+            } else if (typeof value === 'object') {
+                const subPruned = recursive_prune(value, requiredKeys, aliases, applyReasoningSkin);
+                if (subPruned && Object.keys(subPruned).length > 0) {
+                    pruned[key] = subPruned;
+                    hasSignal = true;
+                }
+            }
+        }
+        return hasSignal ? pruned : null;
+    }
+    
+    return data;
+};
+
+export const to_markdown_skin = (prunedData, title = "", rawDataSize = 0) => {
+    let output = "";
+    // Only add title if it doesn't break the token budget for tiny data
+    if (title && rawDataSize > 500) output += `[${title}]\n`;
+    
+    const flatten = (obj, indent = "") => {
+        if (Array.isArray(obj)) {
+            obj.forEach(item => flatten(item, indent));
+        } else if (typeof obj === 'object' && obj !== null) {
+            for (const [k, v] of Object.entries(obj)) {
+                if (typeof v === 'object') {
+                    flatten(v, indent + `${k}.`);
+                } else {
+                    output += `${indent}${k}: ${v}\n`;
+                }
+            }
+        } else {
+            output += `${indent}${obj}\n`;
+        }
+    };
+
+    flatten(prunedData);
+    return output.trim();
+};
+
+export const analyze_compression = (rawJson, skinText) => {
+    const rawStr = JSON.stringify(rawJson);
+    const rawTokens = rawStr.length / 4;
+    const skinTokens = skinText.length / 4;
+    
+    // Safety Valve: If Skin is bigger or nearly equal, return 0 savings
+    if (skinText.length >= rawStr.length) {
+        return {
+            raw_est_tokens: Math.ceil(rawTokens),
+            skin_est_tokens: Math.ceil(rawTokens), // Use raw size
+            savings_ratio: "0.00%",
+            applied: false
+        };
+    }
+    
+    const savings = 1 - (skinTokens / rawTokens);
+    return {
+        raw_est_tokens: Math.ceil(rawTokens),
+        skin_est_tokens: Math.ceil(skinTokens),
+        savings_ratio: (savings * 100).toFixed(2) + "%",
+        applied: true
+    };
+};

@@ -156,7 +156,7 @@ export const mergeCompactionMetadata = (...values) => {
  * @param {string} skinText - The skin text output
  * @param {Object} [options] - Options
 n * @param {boolean} [options.graphemeAware=false] - Use grapheme-aware counting
- * @returns {{ raw_est_tokens: number, skin_est_tokens: number, savings_ratio: string, platform_fee: number, applied: boolean, compaction: Object }}
+ * @returns {{ raw_est_tokens: number, skin_est_tokens: number, savings_ratio: string, applied: boolean, compaction: Object }}
  */
 export const analyze_compression = (rawJson, skinText, options = {}) => {
     const rawStr = JSON.stringify(rawJson);
@@ -171,7 +171,6 @@ export const analyze_compression = (rawJson, skinText, options = {}) => {
             raw_est_tokens: Math.ceil(rawTokens),
             skin_est_tokens: Math.ceil(rawTokens),
             savings_ratio: "0.00%",
-            platform_fee: 0,
             applied: false,
             compaction: createCompactionMetadata(false, 'raw-passthrough')
         };
@@ -182,7 +181,6 @@ export const analyze_compression = (rawJson, skinText, options = {}) => {
         raw_est_tokens: Math.ceil(rawTokens),
         skin_est_tokens: Math.ceil(skinTokens),
         savings_ratio: (savings * 100).toFixed(2) + "%",
-        platform_fee: Math.ceil(rawTokens * 0.9 * 0.20),
         applied: true,
         compaction: createCompactionMetadata(true, 'signal-prune', 'alias-remap')
     };
@@ -297,7 +295,6 @@ export const skin = (rawData, options = {}) => {
             raw_est_tokens: Math.ceil(rawTokens),
             skin_est_tokens: Math.ceil(skinTokens),
             savings_ratio: (savings * 100).toFixed(2) + '%',
-            platform_fee: Math.ceil(rawTokens * 0.9 * 0.20),
             raw_chars: rawJson.length,
             skin_chars: skinText.length
         },

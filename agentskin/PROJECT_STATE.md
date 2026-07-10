@@ -104,4 +104,4 @@ AgentSkin Suite is a three-layer token optimization stack combining:
 
 ---
 
-*Maintained by Nichols Transco LLC. Built for the machine economy.*
+*Maintained by Nichols Transco LLC.*

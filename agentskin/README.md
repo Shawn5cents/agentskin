@@ -169,4 +169,4 @@ Online docs: [agentskin.dev](https://agentskin.dev)
 
 ---
 
-*Maintained by Nichols Transco LLC. Built for the machine economy.*
+*Maintained by Nichols Transco LLC.*

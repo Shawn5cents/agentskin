@@ -278,7 +278,6 @@ Enhanced pipeline. Options:
 | `autoClassify` | `true` | Auto-detect URL rules |
 | `smallThreshold` | `300` | Bypass for small payloads |
 | `stripAnsi` | `true` | Strip ANSI before processing |
-| `fee` | `300` | Platform fee (tokens) |
 
 Returns: `{ skin, metrics, compaction }`
 
@@ -306,19 +305,6 @@ URL rules are defined in `backend/lib/api-skin-rules.js` with the same schema as
 1. Auto-classifies URL if `autoClassify=true` and no explicit signals
 2. Prunes with matched rule's signals/aliases
 3. Builds `CompactionMetadata` tracking which strategies were applied
-
-## Fee Model
-
-```
-estimated_tokens = ceil(grapheme_count / 4)
-fee = 300 tokens per skin operation
-net_savings = raw_tokens - skin_tokens - fee
-
-If net_savings <= 0:
-  → Reject skin, return raw ("fee exceeded")
-```
-
-This prevents negative-value operations where the skin processing cost exceeds the token savings.
 
 ## Bash Optimizer Hook (Phase 3c)
 

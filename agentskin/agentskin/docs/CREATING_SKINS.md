@@ -82,15 +82,5 @@ For **Sylectus**, we reduced the data from **8,400 tokens to 670 tokens (92.02% 
 > — **Shawn Nichols Sr.**
 
 **Architect:** Shawn Nichols Sr.
-**Protocol:** AgentSkin Suite v5.0.0
+**Protocol:** AgentSkin v4.2.2
 **Status:** 🚀 **CREATOR READY.**
-
----
-
-## Credits
-
-| Creator | Contribution |
-|---------|-------------|
-| **Shawn Nichols Sr.** (Nichols Transco LLC) | AgentSkin SSS protocol |
-| **Vincent Koc** | Tokenjuice CLI compaction (MIT License) |
-| **Julius Brussee** | Caveman output compression ([github.com/JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman)) |

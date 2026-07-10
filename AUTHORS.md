@@ -15,14 +15,13 @@ The AgentSkin Suite is a combined project integrating three complementary token 
 ### AgentSkin SSS
 - **Protocol:** Semantic Shorthand Standard (SSS) v1.0
 - **Engine:** Recursive JSON pruning → Markdown skin
-- **MCP Server:** 4 tools (fetch_optimized_data, skin_reasoning, classify_url, strip_ansi)
+- **Unified MCP Server:** 7 tools (fetch_optimized_data, skin_reasoning, classify_url, strip_ansi, reduce, estimate_tokens, apply_json_semantic)
 - **Auto-Classification:** 11 URL rule families
 - **Website:** [agentskin.dev](https://agentskin.dev)
 - **NPM:** [agentskin](https://www.npmjs.com/package/agentskin)
 
 ### Tokenjuice
-- **Engine:** Rule-driven CLI output compaction
-- **MCP Server:** 5 tools (apply_json_semantic, classify_url, strip_ansi, estimate_tokens, reduce)
+- **Engine:** Rule-driven CLI output compaction — powers reduce, estimate_tokens, and apply_json_semantic in unified MCP server
 - **Bash Hook:** Transparent CLI optimization
 - **Rules:** 136 rules, 143 fixtures
 - **Repository:** [github.com/vincentkoc/tokenjuice](https://github.com/vincentkoc/tokenjuice)
@@ -38,5 +37,3 @@ The AgentSkin Suite is a combined project integrating three complementary token 
 All three components are released under the MIT License. See individual component repositories for full license text.
 
 ---
-
-*Built for the machine economy.*

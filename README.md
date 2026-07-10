@@ -33,18 +33,15 @@ source .agents/hooks/bash-optimizer.sh
 | `ls -laR` directory listing | **99.97%** (3.19M → 897 chars) |
 | Caveman output compression | **65%** average |
 | Caveman memory compression | **46%** smaller |
-| MCP tools | **9** across 2 servers |
+| MCP tools | **7** across unified server |
 | Combined test suite | **4,695 tests**, 274 files — 100% passing |
 | Pipeline throughput | **3,030 fixtures/sec** (0.33ms avg) |
 | Net session savings | **17.1%** (zero overhead via bash hook) |
 
 ## Tools
 
-### AgentSkin MCP (4 tools)
-`fetch_optimized_data` · `skin_reasoning` · `classify_url` · `strip_ansi`
-
-### Tokenjuice MCP (5 tools)
-`apply_json_semantic` · `classify_url` · `strip_ansi` · `estimate_tokens` · `reduce`
+### AgentSkin Suite MCP (7 tools, unified)
+`fetch_optimized_data` · `skin_reasoning` · `classify_url` · `strip_ansi` · `reduce` · `estimate_tokens` · `apply_json_semantic`
 
 ### Caveman Skills (6 skills)
 `caveman` · `caveman-commit` · `caveman-review` · `caveman-stats` · `caveman-compress` · `cavecrew`
@@ -64,7 +61,7 @@ source .agents/hooks/bash-optimizer.sh
 ## Security
 
 - **SSRF Protection:** Blocks private IPv4/IPv6 ranges and cloud metadata services
-- **Rate Limiting:** 30 req/min (AgentSkin), 60 req/min (Tokenjuice)
+- **Rate Limiting:** 60 req/min sliding window
 - **Input Validation:** Zod schemas for all tool inputs
 - **Processing Timeout:** 30-second limit
 
@@ -82,4 +79,4 @@ source .agents/hooks/bash-optimizer.sh
 
 ---
 
-*Built for the machine economy. © 2026 Nichols Transco LLC.*
+*© 2026 Nichols Transco LLC.*

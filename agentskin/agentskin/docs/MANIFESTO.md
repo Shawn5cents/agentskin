@@ -1,18 +1,14 @@
-# The AgentSkin Suite Manifesto (v5.0) 🛡️
+# The AgentSkin Manifesto (v4.2) 🛡️
 
-## 🤖 What is AgentSkin Suite?
-AgentSkin Suite is the **Complete Token Optimization Stack** for the Agentic Web.
-It combines three complementary tools:
-
-- **AgentSkin SSS** — Semantic JSON pruning. Strips 60-88% of API response noise.
-- **Tokenjuice** — Rule-driven CLI output compaction (99.97% on large outputs). By **Vincent Koc** (MIT License).
-- **Caveman** — Output compression via prompt engineering (65% output reduction). By **Julius Brussee**.
-
+## 🤖 What is AgentSkin?
+AgentSkin is the **Universal Semantic Layer** for the Agentic Web.
 While the internet was built for human eyes (HTML/CSS), the future is built for machine brains. We are the bridge.
+
+We take fragmented, messy, and token-heavy API data and "skin" it into high-density, deterministic Markdown that AI Agents can process at 10x speed and 1/10th the cost.
 
 ---
 
-### 🧪 THE EXPERIMENTAL LAB (v5.0+)
+### 🧪 THE EXPERIMENTAL LAB (v4.4+)
 The following modules are currently in high-speed development:
 1.  **Search Triage:** Synthesis of Brave, Tavily, and Exa into a single high-density stream.
 2.  **Logistics Skin:** Zero-Failure pruning for EDI 214 and Load Board JSON.
@@ -29,16 +25,12 @@ Aaron Levie's vision of "Trillions of Agents" is only possible if we kill the **
 
 ---
 
-### 🏛️ ABOUT THE ARCHITECT & CREDITS
-AgentSkin Suite was built by **Shawn Nichols Sr.** (@Shawn5cents). 
+### 🏛️ ABOUT THE ARCHITECT
+AgentSkin was built by **Shawn Nichols Sr.** (@Shawn5cents). 
 
 I spent 15 years in high-pressure Logistics management, running 24/7 terminals for global supply chains. I am a systems-first leader who thrives in high-stakes environments. I build software the same way I run fleets: with a zero-failure mindset.
 
 AgentSkin is the result of **20,000+ hours** of technical obsession. I built the bridge for the machines because I know what it's like to manage infrastructure that the world depends on.
-
-**Built with:**
-- **Tokenjuice** by Vincent Koc ([github.com/vincentkoc/tokenjuice](https://github.com/vincentkoc/tokenjuice)) — MIT License
-- **Caveman** by Julius Brussee ([github.com/JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman))
 
 **Build for the machines. The humans will follow.**
 

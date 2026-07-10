@@ -6,10 +6,6 @@
 
 import { countTextChars, estimateTokens, estimateTokensFast } from './text-utils.js';
 
-// --- Constants ---
-
-const COMMISSION_RATE = 0.20;
-
 // --- Pattern Libraries ---
 
 // Hedge patterns: uncertain, non-committal language
@@ -73,17 +69,13 @@ function calculateSavings(original, skinned) {
     const charsRemoved = original.length - skinned.length;
     const estimatedTokenSavings = Math.floor(charsRemoved / 4);
     const graphemeTokenSavings = estimateTokens(original) - estimateTokens(skinned);
-    const platformFee = Math.floor(estimatedTokenSavings * COMMISSION_RATE);
     const percentReduced = Math.round((charsRemoved / original.length) * 100);
-    const netBenefit = estimatedTokenSavings - platformFee;
 
     return {
         charsRemoved,
         estimatedTokenSavings,
         graphemeTokenSavings: Math.max(0, graphemeTokenSavings),
-        platformFee,
-        percentReduced,
-        netBenefit
+        percentReduced
     };
 }
 

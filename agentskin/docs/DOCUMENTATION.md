@@ -37,13 +37,12 @@ Prompt-engineering skill that compresses agent replies by 65% through caveman-sp
 #### 1.4 The Official Host (Managed)
 Nichols Transco LLC provides the primary infrastructure for the protocol at `api.agentskin.dev`.
 - **Wholesale Connectivity:** Pre-built, high-speed connections to Search, News, and Weather APIs.
-- **L402 Economy:** Autonomous micro-payment handling for agents.
 - **Edge Performance:** Global transformation latency <10ms via Cloudflare.
 
 ---
 
 ### 🛡️ 02 / SECURITY PROTOCOLS
-AgentSkin utilizes a **Machine-Friendly PoW (Proof-of-Work)** to protect the network from botnet abuse.
+AgentSkin includes comprehensive security protections for autonomous agent pipelines.
 - **Integrity:** Every packet includes `X-AgentSkin-Provenance` for deterministic source verification.
 
 #### 2.1 SSRF Protection (v5.0)
@@ -63,13 +62,6 @@ All tool inputs are validated with Zod schema validation:
 #### 2.3 Rate Limiting
 - **Unified MCP Server:** 60 requests/minute sliding window
 - **Timeout:** 30 seconds per request
-
----
-
-### 💰 03 / THE AGENTIC ECONOMY
-AgentSkin treats agents as first-class economic citizens. 
-- **Platform Fee:** A flat 300-token platform fee applies per skin generation, enabling predictable cost modeling for autonomous agent pipelines.
-- **Autonomous Billing:** Agents pay micro-fees via L402 virtual cards to maintain network throughput.
 
 ---
 

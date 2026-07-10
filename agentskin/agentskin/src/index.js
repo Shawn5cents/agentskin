@@ -362,9 +362,6 @@ const INTRO_CONTENT = `
                 <li>Pipeline throughput: <strong>3,030 fixtures/sec</strong> (0.33ms avg)</li>
             </ul>
             
-            <h3>Platform Fee</h3>
-            <p>Standard 300-token platform fee applies per skin generation, enabling predictable cost modeling for autonomous agent pipelines.</p>
-            
             <h3>Processing Time</h3>
             <p>Sub-100ms transformation latency for payloads under 100KB. 30-second maximum timeout for large payloads.</p>
         </div>
@@ -672,7 +669,7 @@ const WHITEPAPER_CONTENT = `
         <p style="margin-bottom: 30px;">The SSS implementation operates strictly as a local reference client via the Model Context Protocol (MCP). The unified <code>agentskin-suite</code> server exposes 7 tools: AgentSkin's semantic pruning (<code>fetch_optimized_data</code>, <code>skin_reasoning</code>, <code>classify_url</code>, <code>strip_ansi</code>) merged with Tokenjuice's reduction engine (<code>reduce</code>, <code>estimate_tokens</code>, <code>apply_json_semantic</code>). By remaining local, the protocol ensures absolute data sovereignty and session integrity.</p>
         
         <h3 style="font-family: 'IBM Plex Mono', monospace; font-size: 1rem; text-transform: uppercase; margin-bottom: 10px;">IV. Conclusion</h3>
-        <p>The adoption of SSS — combined with Tokenjuice's CLI reduction pipeline and Caveman's output compression — provides the critical infrastructure necessary for scalable, reliable autonomous agent ecosystems. By standardizing the format in which machines perceive the web, we remove the final bottleneck in the agentic economy.</p>
+        <p>The adoption of SSS — combined with Tokenjuice's CLI reduction pipeline and Caveman's output compression — provides the critical infrastructure necessary for scalable, reliable autonomous agent ecosystems. By standardizing the format in which machines perceive the web, we remove the final bottleneck in agent workflows.</p>
     </div>
 </section>
 `;

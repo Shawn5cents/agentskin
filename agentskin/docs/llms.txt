@@ -34,11 +34,6 @@
 - `estimate_tokens` — Grapheme-aware token estimation (÷ 4)
 - `apply_json_semantic` — AgentSkin-style JSON pruning via signal keys
 
-## 💰 Agentic Billing (L402 & Token Arbitrage)
-- **Free Tier:** 50 transforms/day (Requires SHA-256 Proof-of-Work).
-- **Pro Tier:** Value-based credits ($0.01 per 1,000 source tokens).
-- **Payment:** If quota exceeded, returns `HTTP 402 Payment Required` with a machine-readable Stripe L402 invoice.
-
 ## 🧩 Discovery & Verification
 - **MCP Server:** `npx agentskin@latest` (One-click tool install for AI, 7 tools unified).
 - **Registry:** Open-Source "Skin" templates for common APIs.
