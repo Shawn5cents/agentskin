@@ -9,8 +9,7 @@
   },
   "files": [
     "backend/",
-    "backend/package.json",
-    "backend/package-lock.json",
+    "suite/",
     "README.md",
     "LICENSE",
     "docs/",
@@ -23,7 +22,8 @@
     "test:watch": "vitest",
     "lint": "eslint backend/mcp.js backend/lib/ benchmarks/run.js tests/ --ext .js",
     "lint:fix": "eslint backend/mcp.js backend/lib/ benchmarks/run.js tests/ --fix --ext .js",
-    "benchmark": "node benchmarks/run.js"
+    "benchmark": "node benchmarks/run.js",
+    "prepublishOnly": "node scripts/prepublish.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.1",
