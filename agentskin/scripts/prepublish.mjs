@@ -75,7 +75,7 @@ async function main() {
   // agentskin-mcp.sh — resolves to ../../backend/mcp.js (package root)
   const agentskinWrapper = bashScript([
     '#!/usr/bin/env bash',
-    '# AgentSkin MCP launcher (bundled in AgentSkin Suite npm package).',
+    '# AgentSkin Suite unified MCP launcher (7 tools, bundled in npm package).',
     '# Resolves backend/mcp.js relative to this script location.',
     'set -euo pipefail',
     '',
@@ -93,62 +93,19 @@ async function main() {
     'exec node "${AGENTSKIN_DIR}/backend/mcp.js" "$@"',
   ]);
 
-  // tokenjuice-mcp.sh — resolves to ../tokenjuice/dist/hosts/mcp/index.js
-  const tokenjuiceWrapper = bashScript([
-    '#!/usr/bin/env bash',
-    '# Tokenjuice MCP launcher (bundled in AgentSkin Suite npm package).',
-    '# Resolves tokenjuice dist relative to this script location.',
-    'set -euo pipefail',
-    '',
-    'SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"',
-    '# suite/mcp/ -> suite/tokenjuice/dist/hosts/mcp/index.js',
-    'TJ_DIR="${TOKENJUICE_DIR:-$(cd "$SCRIPT_DIR/../tokenjuice" 2>/dev/null && pwd || echo "")}"',
-    '',
-    'if [[ -z "${TJ_DIR}" ]] || [[ ! -f "${TJ_DIR}/dist/hosts/mcp/index.js" ]]; then',
-    '  echo "ERROR: Could not find Tokenjuice dist at expected path." >&2',
-    '  echo "  Looked for: ${TJ_DIR}/dist/hosts/mcp/index.js" >&2',
-    '  echo "  Set TOKENJUICE_DIR env var to override." >&2',
-    '  exit 1',
-    'fi',
-    '',
-    'exec node "${TJ_DIR}/dist/hosts/mcp/index.js" "$@"',
-  ]);
-
   await writeFile(resolve(SUITE, 'mcp/agentskin-mcp.sh'), agentskinWrapper, { mode: 0o755 });
-  await writeFile(resolve(SUITE, 'mcp/tokenjuice-mcp.sh'), tokenjuiceWrapper, { mode: 0o755 });
 
   // 7. Generate mcp.json reference config for the bundled package
-  // NOTE: These paths assume the project root has agentskin installed in
-  // node_modules. Users may need to adjust paths for their setup.
   const mcpConfig = {
-    description: 'Reference MCP config for bundled AgentSkin Suite. Paths assume agentskin installed in node_modules. Adjust if using npx or global install.',
+    description: 'AgentSkin Suite — unified 7-tool MCP server. Single server, all tools.',
     mcpServers: {
-      'agentskin-mcp': {
-        command: 'bash',
-        args: ['./node_modules/agentskin/suite/mcp/agentskin-mcp.sh'],
+      'agentskin-suite': {
+        command: 'npx',
+        args: ['-y', 'agentskin@latest'],
         env: {},
-        description: 'AgentSkin SSS v5.0 — fetch_optimized_data, skin_reasoning, classify_url, strip_ansi',
-      },
-      'tokenjuice-mcp': {
-        command: 'bash',
-        args: ['./node_modules/agentskin/suite/mcp/tokenjuice-mcp.sh'],
-        env: {},
-        description: 'Tokenjuice v0.8.0 — apply_json_semantic, classify_url, strip_ansi, estimate_tokens, reduce',
-      },
-      'agentskin-shrunk': {
-        command: 'node',
-        args: ['./node_modules/agentskin/suite/mcp/caveman-shrink/index.js', 'bash', './node_modules/agentskin/suite/mcp/agentskin-mcp.sh'],
-        env: {},
-        description: '[SHRUNK] AgentSkin v5.0 — same 4 tools with compressed descriptions',
-      },
-      'tokenjuice-shrunk': {
-        command: 'node',
-        args: ['./node_modules/agentskin/suite/mcp/caveman-shrink/index.js', 'bash', './node_modules/agentskin/suite/mcp/tokenjuice-mcp.sh'],
-        env: {},
-        description: '[SHRUNK] Tokenjuice v0.8.0 — same 5 tools with compressed descriptions',
+        description: 'AgentSkin Suite v5.0.0 — 7 tools: fetch_optimized_data, skin_reasoning, classify_url, strip_ansi, reduce, estimate_tokens, apply_json_semantic',
       },
     },
-    usage: 'Copy the mcpServers entries you need into your agent MCP config file.',
   };
 
   await writeFile(
@@ -190,7 +147,7 @@ async function main() {
   console.log('   - Tokenjuice dist (4.4M)');
   console.log('   - Bash hooks + agent-optimizer');
   console.log('   - Caveman skills (7 skill packs)');
-  console.log('   - MCP wrapper scripts + caveman-shrink');
+  console.log('   - MCP wrapper script + caveman-shrink');
   console.log('   - mcp.json reference config');
 }
 

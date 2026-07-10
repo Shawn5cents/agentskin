@@ -15,7 +15,7 @@ AgentSkin Suite is a three-layer token optimization stack combining:
 | 2 | **Tokenjuice** — Rule-driven CLI output compaction | Vincent Koc | 99.8% on large outputs |
 | 3 | **Caveman** — Output compression via prompt engineering | Julius Brussee | 65% on agent replies |
 
-**Combined:** 4,695 tests passing, 9 MCP tools, 17.1% net session savings (zero overhead).
+**Combined:** 4,695 tests passing, 7 MCP tools (unified server), 17.1% net session savings (zero overhead).
 
 ---
 
@@ -40,7 +40,7 @@ AgentSkin Suite is a three-layer token optimization stack combining:
 
 ### Phase 3: MCP Server Integration & Shell Hooks — ✅ COMPLETE
 
-- [x] **3a:** Created `.agents/mcp.json` with two MCP servers (agentskin-mcp + tokenjuice-mcp)
+- [x] **3a:** Created `.agents/mcp.json` with unified MCP server (agentskin-suite, 7 tools)
 - [x] **3b:** Created Composio tool configs for both servers
 - [x] **3c:** Instrumented bash hook for transparent optimization — `opt` command, ARG_MAX fix applied
 - [x] **End-to-end pipeline tested** — Verified 99.97% reduction on 3.1MB directory listings
@@ -49,7 +49,7 @@ AgentSkin Suite is a three-layer token optimization stack combining:
 
 ## 🔌 MCP Tool Inventory
 
-### `agentskin-mcp` — 4 tools
+### `agentskin-suite` — 7 tools (unified server)
 
 | Tool | Purpose |
 |------|---------|
@@ -57,23 +57,16 @@ AgentSkin Suite is a three-layer token optimization stack combining:
 | `skin_reasoning` | Strip linguistic noise from LLM-to-LLM text (14–29% savings) |
 | `classify_url` | Match URL against 11 built-in API rules |
 | `strip_ansi` | Strip ANSI escape codes from text |
-
-### `tokenjuice-mcp` — 5 tools
-
-| Tool | Purpose |
-|------|---------|
-| `apply_json_semantic` | AgentSkin-style JSON pruning via signal keys |
-| `classify_url` | URL extraction + rule scoring |
-| `strip_ansi` | 5-pattern ANSI stripping |
+| `reduce` | Full Tokenjuice reduction pipeline on CLI command output (up to 99.97%) |
 | `estimate_tokens` | Grapheme-accurate token estimation |
-| `reduce` | Full reduction pipeline on CLI command output |
+| `apply_json_semantic` | AgentSkin-style JSON pruning via signal keys |
 
 ---
 
 ## 🛡️ Security Features
 
 - **SSRF Protection:** All IPv4 private ranges, IPv6 link-local/loopback, cloud metadata blocking
-- **Rate Limiting:** 30 req/min (AgentSkin), 60 req/min (Tokenjuice) sliding window
+- **Rate Limiting:** 60 req/min sliding window
 - **Input Validation:** Zod schemas for all tool inputs
 - **Processing Limits:** 30s timeout, 5MB response cap
 

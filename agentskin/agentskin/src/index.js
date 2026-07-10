@@ -225,7 +225,7 @@ const LAYOUT = (content, activeTab = 'introduction') => `
 <body>
     <div class="top-ticker">
         <div><span class="status-dot"></span> SUITE: v5.0.0 ACTIVE</div>
-        <div>3 COMPONENTS / 9 MCP TOOLS</div>
+        <div>3 COMPONENTS / 7 MCP TOOLS</div>
         <div><a href="/sitemap.xml">SITEMAP</a></div>
     </div>
 
@@ -303,22 +303,16 @@ const INTRO_CONTENT = `
     <div class="thesis-item">
         <div class="thesis-number">02 / MCP INTEGRATION</div>
         <div class="thesis-content">
-            <h2>Two MCP Servers, 9 Tools</h2>
-            <p>The Suite exposes <strong>9 tools</strong> across two MCP servers:</p>
-            <h3>agentskin-mcp (4 tools)</h3>
+            <h2>One Unified MCP Server, 7 Tools</h2>
+            <p>The Suite exposes <strong>7 tools</strong> through a single MCP server — merging AgentSkin's semantic pruning with Tokenjuice's reduction pipeline:</p>
             <ul style="margin: 10px 0; padding-left: 20px;">
-                <li><code>fetch_optimized_data</code> — Fetch URL, prune JSON, return Markdown skin</li>
+                <li><code>fetch_optimized_data</code> — Fetch URL, prune JSON, return Markdown skin (88% savings)</li>
                 <li><code>skin_reasoning</code> — Strip linguistic noise from text (14-29% reduction)</li>
                 <li><code>classify_url</code> — Match URL against 11 built-in API rules</li>
                 <li><code>strip_ansi</code> — Strip 5 patterns of ANSI escape codes</li>
-            </ul>
-            <h3>tokenjuice-mcp (5 tools)</h3>
-            <ul style="margin: 10px 0; padding-left: 20px;">
-                <li><code>apply_json_semantic</code> — AgentSkin-style JSON pruning via Tokenjuice</li>
-                <li><code>classify_url</code> — Match URL against built-in API rules</li>
-                <li><code>strip_ansi</code> — Strip ANSI escape codes</li>
+                <li><code>reduce</code> — Full Tokenjuice reduction pipeline (up to 99.97%)</li>
                 <li><code>estimate_tokens</code> — Grapheme-aware token estimation</li>
-                <li><code>reduce</code> — Full Tokenjuice reduction pipeline</li>
+                <li><code>apply_json_semantic</code> — Prune raw JSON with signal keys</li>
             </ul>
             <pre>echo "source $(pwd)/.agents/hooks/bash-optimizer.sh" >> ~/.bashrc && source ~/.bashrc</pre>
             <p>The bash hook intercepts noisy CLI commands and pipes output through Tokenjuice before the agent sees it — zero overhead, zero agent awareness.</p>
@@ -337,7 +331,7 @@ const INTRO_CONTENT = `
             <p>Prevents access to cloud provider metadata services (metadata.google.internal, metadata.azure.com, kubernetes.default.svc) that could expose cloud credentials or configuration.</p>
 
             <h3>Rate Limiting</h3>
-            <p>30 requests/minute (AgentSkin), 60 requests/minute (Tokenjuice) sliding window per client to prevent abuse and ensure fair resource allocation in multi-agent environments.</p>
+            <p>60 requests/minute sliding window per client to prevent abuse and ensure fair resource allocation in multi-agent environments.</p>
             
             <h3>Input Validation</h3>
             <p>All tool inputs are validated with Zod schema validation. Type coercion ensures signals, aliases, and apply_reasoning parameters are properly typed before processing.</p>
@@ -639,7 +633,7 @@ const FAQ_CONTENT = `
             <ul style="margin: 15px 0; padding-left: 20px;">
                 <li><strong>SSRF Protection:</strong> Blocks private network ranges (127.x, 10.x, 172.16-31.x, 192.168.x, 169.254.x) and IPv6 variants</li>
                 <li><strong>Cloud Metadata Blocking:</strong> Prevents access to GCP, Azure, and Kubernetes metadata services</li>
-                <li><strong>Rate Limiting:</strong> 30 requests/minute (AgentSkin), 60 requests/minute (Tokenjuice) per client prevents abuse</li>
+                <li><strong>Rate Limiting:</strong> 60 requests/minute per client prevents abuse</li>
                 <li><strong>Input Validation:</strong> Zod schemas validate all tool inputs with type coercion</li>
                 <li><strong>URL Sanitization:</strong> javascript: and data: URL schemes blocked from HTML extraction</li>
                 <li><strong>Resource Limits:</strong> 30-second timeout prevents resource exhaustion</li>
@@ -695,7 +689,7 @@ const SUITE_CONTENT = `
                 <li><strong>Savings:</strong> 60-88% on rich APIs</li>
                 <li><strong>Auto-Classification:</strong> 11 URL rule families</li>
                 <li><strong>3-Layer Config:</strong> Builtin → User → Project override semantics</li>
-                <li><strong>MCP Tools:</strong> 4 (fetch_optimized_data, skin_reasoning, classify_url, strip_ansi)</li>
+                <li><strong>MCP Tools (4):</strong> fetch_optimized_data, skin_reasoning, classify_url, strip_ansi</li>
             </ul>
         </div>
     </div>
@@ -711,7 +705,7 @@ const SUITE_CONTENT = `
                 <li><strong>Rules:</strong> 136 rules, 143 fixtures</li>
                 <li><strong>Bash Hook:</strong> Transparent CLI optimization via <code>opt</code> prefix</li>
                 <li><strong>Pipeline:</strong> 3,030 fixtures/sec (0.33ms avg)</li>
-                <li><strong>MCP Tools:</strong> 5 (apply_json_semantic, classify_url, strip_ansi, estimate_tokens, reduce)</li>
+                <li><strong>MCP Tools (3):</strong> reduce, estimate_tokens, apply_json_semantic (merged into unified server)</li>
             </ul>
         </div>
     </div>
@@ -743,16 +737,12 @@ echo "source $(pwd)/.agents/hooks/bash-optimizer.sh" >> ~/.bashrc && source ~/.b
 # 2. Caveman skills — already active via AGENTS.md
 # (auto-discovered by Claude Code, Codex, Cursor, etc.)
 
-# 3. MCP servers — add to agent config
+# 3. MCP server — add to agent config (unified 7-tool server)
 {
   "mcpServers": {
-    "agentskin-mcp": {
-      "command": "bash",
-      "args": [".agents/mcp/agentskin-mcp.sh"]
-    },
-    "tokenjuice-mcp": {
-      "command": "bash",
-      "args": [".agents/mcp/tokenjuice-mcp.sh"]
+    "agentskin-suite": {
+      "command": "npx",
+      "args": ["-y", "agentskin@latest"]
     }
   }
 }

@@ -61,8 +61,7 @@ All tool inputs are validated with Zod schema validation:
 - Sanitization of HTML-extracted URLs (javascript:, data: schemes blocked)
 
 #### 2.3 Rate Limiting
-- **AgentSkin MCP:** 30 requests/minute sliding window
-- **Tokenjuice MCP:** 60 requests/minute sliding window
+- **Unified MCP Server:** 60 requests/minute sliding window
 - **Timeout:** 30 seconds per request
 
 ---
@@ -131,7 +130,7 @@ The reference implementation includes comprehensive test coverage:
 - **4,695 tests** across 274 files (100% passing)
 - SSRF protection validation (IPv4, IPv6, zone IDs, mapped addresses, cloud metadata)
 - Cloud metadata service blocking (GCP, Azure, Kubernetes)
-- Rate limiting (30/60 requests/minute sliding window)
+- Rate limiting (60 requests/minute sliding window)
 - HTML parsing verification (title, headings, links, sanitization)
 - Skinning engine edge cases (null, empty, nested, arrays)
 - Real HTTP fetch integration tests (GitHub, Open-Meteo, JSONPlaceholder, example.com)

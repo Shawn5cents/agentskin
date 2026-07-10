@@ -94,7 +94,7 @@ Claude Code, Codex, Gemini, Cursor, Windsurf, Cline, Copilot, and 30+ other agen
 
 ### Should I use MCP or the bash hook?
 
-**Hook** for daily terminal work (zero overhead). **MCP** when you need custom signal/alias control. **Both** for maximum savings. The MCP paradox: MCP tools spend ~2,061 tokens per session (tool catalog + per-call framing) before saving anything. The hook saves 17.1% net because it has zero overhead.
+**Hook** for daily terminal work (zero overhead). **MCP** when you need custom signal/alias control or CLI reduction via `reduce`. **Both** for maximum savings. The MCP paradox: MCP tools spend ~2,061 tokens per session (tool catalog + per-call framing) before saving anything. The hook saves 17.1% net because it has zero overhead.
 
 ### How do I install the full suite?
 
@@ -104,7 +104,7 @@ echo "source $(pwd)/.agents/hooks/bash-optimizer.sh" >> ~/.bashrc && source ~/.b
 
 # 2. Caveman — already active via AGENTS.md (auto-discovered by agents)
 
-# 3. MCP servers — add to agent config or rely on .agents/mcp.json auto-discovery
+# 3. MCP server (7 tools) — add to agent config or rely on .agents/mcp.json auto-discovery
 ```
 
 Run `npm test` for local reproduction (4,695 tests).

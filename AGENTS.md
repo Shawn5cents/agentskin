@@ -15,16 +15,13 @@ This project combines three token-saving tools into the AgentSkin Suite:
 - **Tokenjuice** — Rule-driven CLI output compaction. Strips ANSI, compacts git/build/lint output. By [Vincent Koc](https://github.com/vincentkoc/tokenjuice) (MIT License).
 - **Caveman** — Output compression via prompt engineering. Cuts 65% of output tokens. By [Julius Brussee](https://github.com/JuliusBrussee/caveman).
 
-## MCP Servers
+## MCP Server
 
-Two MCP servers available at startup:
+One unified MCP server with 7 tools:
 
 | Server | Wrapper | Tools |
 |--------|---------|-------|
-| `agentskin-mcp` | `.agents/mcp/agentskin-mcp.sh` | `fetch_optimized_data`, `skin_reasoning`, `classify_url`, `strip_ansi` |
-| `tokenjuice-mcp` | `.agents/mcp/tokenjuice-mcp.sh` | `apply_json_semantic`, `classify_url`, `strip_ansi`, `estimate_tokens`, `reduce` |
-| `agentskin-shrunk` | `caveman-shrink` wrapping agentskin-mcp | Same 4 tools, compressed descriptions |
-| `tokenjuice-shrunk` | `caveman-shrink` wrapping tokenjuice-mcp | Same 5 tools, compressed descriptions |
+| `agentskin-suite` | `npx agentskin@latest` | `fetch_optimized_data`, `skin_reasoning`, `classify_url`, `strip_ansi`, `reduce`, `estimate_tokens`, `apply_json_semantic` |
 | `chrome-devtools` | `chrome-devtools-mcp@latest` via npx | Browser automation via CDP. Requires Chromium with `--remote-debugging-port=9222`. Config: `~/.config/mcp/mcp.json` |
 
 **Note:** `chrome-devtools` uses `chrome-devtools-mcp@latest` — NOT the old `@modelcontextprotocol/server-chrome` (that one doesn't resolve).

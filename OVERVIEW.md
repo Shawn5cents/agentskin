@@ -22,29 +22,25 @@ echo "source $(pwd)/.agents/hooks/bash-optimizer.sh" >> ~/.bashrc && source ~/.b
 
 `AGENTS.md` in the repo root is auto-discovered by Claude Code, Codex, Cursor, and other agents. No config needed — caveman mode, cavecrew subagents, and caveman-compress are active from message one.
 
-**3. Connect MCP servers** — add to your agent's MCP config:
+**3. Connect MCP server** — add to your agent's MCP config:
 
 ```json
 {
   "mcpServers": {
-    "agentskin-mcp": {
-      "command": "bash",
-      "args": [".agents/mcp/agentskin-mcp.sh"]
-    },
-    "tokenjuice-mcp": {
-      "command": "bash",
-      "args": [".agents/mcp/tokenjuice-mcp.sh"]
+    "agentskin-suite": {
+      "command": "npx",
+      "args": ["-y", "agentskin@latest"]
     }
   }
 }
 ```
 
-For agents that auto-discover `.agents/mcp.json` (Claude Code, Codex, etc.), the servers are detected at startup — no config needed.
+For agents that auto-discover `.agents/mcp.json` (Claude Code, Codex, etc.), the server is detected at startup — no config needed.
 
 **What you get:**
 - Transparent bash hook → 99.8% reduction on directory listings, 58.7% on npm output (auto, silent)
 - Caveman skills → 73.5% smaller agent replies, 46% smaller memory files
-- MCP tools → 88%+ API response pruning with custom signal/alias control
+- MCP server → 7 tools: 88%+ API response pruning, CLI reduction, token estimation
 - Combined → 17.1% net token savings per session (zero context overhead from the hook)
 
 **→ Full usage guide:** [USAGE.md](USAGE.md) — copy-paste examples, troubleshooting, and combined workflows for all three optimization paths (bash hook, Caveman skills, MCP servers).
@@ -59,7 +55,7 @@ AgentSkin excels at stripping semantic noise from **JSON API responses** (88%+ s
 
 **Solution:** Noise goes through AgentSkin (API) + Tokenjuice (CLI) before entering context. Combined recovery: 60-80% of context that was previously wasted.
 
-Both projects expose **MCP servers** (Model Context Protocol), so they integrate with any MCP-aware agent — Claude Code, Cursor, Copilot Chat, Continue, Cline, and others. No vendor lock-in.
+The Suite exposes a **unified MCP server** (Model Context Protocol) with 7 tools, integrating with any MCP-aware agent — Claude Code, Cursor, Copilot Chat, Continue, Cline, and others. No vendor lock-in.
 
 ## Project Structure
 
@@ -190,10 +186,7 @@ Shows: optimizer path, mode, min raw threshold, Node.js status, cache location.
 # Tokenjuice CLI
 npx tokenjuice <command>
 
-# Tokenjuice MCP server (integrates with Claude Code, Cursor, Copilot Chat, etc.)
-node tokenjuice-extracted/tokenjuice-main/dist/hosts/mcp/index.js
-
-# AgentSkin MCP server
+# Unified MCP server (7 tools — integrates with Claude Code, Cursor, Copilot Chat, etc.)
 npx agentskin
 
 # Run tests

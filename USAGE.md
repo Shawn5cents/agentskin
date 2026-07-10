@@ -10,9 +10,9 @@
 |------|--------------|-----|----------|
 | **Bash Hook** | CLI output (curl, git, npm, ls, builds) | Source a script → prefix with `opt` | Zero — transparent |
 | **Caveman Skills** | Agent output (replies, memory files) | AGENTS.md auto-loads on session start | ~1–1.5k input tokens per turn |
-| **MCP Servers** | API responses (GitHub, npm, weather, etc.) | Connect to agent config → call as tools | Tool catalog + per-call JSON-RPC framing |
+| **MCP Server** | API responses (GitHub, npm, weather, etc.) + CLI output | Connect to agent config → call as tools | Tool catalog + per-call JSON-RPC framing |
 
-> **Rule of thumb:** Hook for daily terminal work. Caveman for long agent sessions. MCP when you need custom signal/alias control.
+> **Rule of thumb:** Hook for daily terminal work. Caveman for long agent sessions. MCP when you need custom signal/alias control or CLI reduction via `reduce`.
 
 ---
 
@@ -152,9 +152,9 @@ Each file shrinks ~46%. Every agent that reads them after saves input tokens for
 
 ---
 
-## Path 3: MCP Servers (Precision API Optimization)
+## Path 3: MCP Server (Precision API + CLI Optimization)
 
-MCP tools let the agent call AgentSkin and Tokenjuice directly — giving it control over signals, aliases, and pruning strategy.
+The unified MCP server gives the agent 7 tools — covering API pruning, CLI reduction, token estimation, and text denoising.
 
 ### Connect
 
@@ -163,59 +163,27 @@ Add to your agent's MCP config (`claude_desktop_config.json`, `.codex/config.jso
 ```json
 {
   "mcpServers": {
-    "agentskin-mcp": {
-      "command": "bash",
-      "args": [".agents/mcp/agentskin-mcp.sh"]
-    },
-    "tokenjuice-mcp": {
-      "command": "bash",
-      "args": [".agents/mcp/tokenjuice-mcp.sh"]
+    "agentskin-suite": {
+      "command": "npx",
+      "args": ["-y", "agentskin@latest"]
     }
   }
 }
 ```
 
-> **Auto-discovery:** Agents that support `.agents/mcp.json` (Claude Code, Codex) detect servers at startup — no config needed.
+> **Auto-discovery:** Agents that support `.agents/mcp.json` (Claude Code, Codex) detect the server at startup — no config needed.
 
-### Available Tools
-
-**AgentSkin (4 tools):**
+### Available Tools (7 tools)
 
 | Tool | What It Does |
 |------|-------------|
-| `fetch_optimized_data(url, signals?, aliases?)` | Fetches API URL, prunes JSON, returns compact Markdown skin. Auto-classifies GitHub, npm, weather, HackerNews, Reddit, etc. Params passed as JSON: `{"url": "...", "signals": ["name"], "aliases": {"stargazers_count": "stars"}}` |
+| `fetch_optimized_data(url, signals?, aliases?)` | Fetches API URL, prunes JSON, returns compact Markdown skin. Auto-classifies GitHub, npm, weather, HackerNews, Reddit, etc. |
 | `skin_reasoning(text)` | Strips hedge words, filler, redundant qualifiers from LLM-to-LLM text (14–29% savings) |
 | `classify_url(url)` | Returns the URL rule family and score (for debugging) |
 | `strip_ansi(text)` | Strips 5 patterns of ANSI escape codes |
-
-**Tokenjuice (5 tools):**
-
-| Tool | What It Does |
-|------|-------------|
-| `apply_json_semantic(json, url?)` | AgentSkin-style JSON pruning — extracts signal keys, applies URL rules. Pass `{"json": {...}, "url": "https://..."}` |
-| `classify_url(url)` | URL extraction + rule scoring |
-| `strip_ansi(text)` | 5-pattern ANSI stripping |
+| `reduce(command, output)` | Full Tokenjuice reduction pipeline on CLI command output (up to 99.97%) |
 | `estimate_tokens(text)` | Grapheme-accurate token estimation (Intl.Segmenter) |
-| `reduce(command, output)` | Full reduction pipeline on CLI command output |
-
-### Caveman-Shrunk Variants
-
-For when tool catalog size matters — same tools, compressed descriptions:
-
-```json
-{
-  "mcpServers": {
-    "agentskin-shrunk": {
-      "command": "node",
-      "args": [".agents/mcp/caveman-shrink/index.js", "bash", ".agents/mcp/agentskin-mcp.sh"]
-    },
-    "tokenjuice-shrunk": {
-      "command": "node",
-      "args": [".agents/mcp/caveman-shrink/index.js", "bash", ".agents/mcp/tokenjuice-mcp.sh"]
-    }
-  }
-}
-```
+| `apply_json_semantic(json, url?)` | AgentSkin-style JSON pruning — extracts signal keys, applies URL rules, flattens to markdown |
 
 ### When to Use MCP vs the Hook
 
@@ -234,10 +202,10 @@ For when tool catalog size matters — same tools, compressed descriptions:
 
 | Symptom | Fix |
 |---------|-----|
-| MCP server not connecting | Check `node` is installed. Run `cd agentskin && npm install`. Verify wrapper scripts exist at `.agents/mcp/*.sh` |
+| MCP server not connecting | Check `node` is installed. Run `npx -y agentskin@latest` to verify. Or use wrapper: `bash .agents/mcp/agentskin-mcp.sh` |
 | `fetch_optimized_data` returns raw JSON | URL isn't recognized. Check `classify_url(url)` — if no rule matches, the raw data is returned |
 | Negative savings (skin larger than raw) | Small payloads (< 500 bytes) can grow from Markdown conversion overhead. The safety valve catches most cases via the fee model, but payloads ~225 tokens may slip through (known edge case — see BENCHMARK.md). Consider skipping MCP for tiny responses. |
-| Rate limiting | 30 req/min for AgentSkin, 60 req/min for Tokenjuice. Wait 60s or spread calls |
+| Rate limiting | 60 req/min sliding window. Wait 60s or spread calls |
 | Tool not appearing in agent | Restart the agent session after changing MCP config |
 
 ---
@@ -253,13 +221,13 @@ echo "source $(pwd)/.agents/hooks/bash-optimizer.sh" >> ~/.bashrc && source ~/.b
 # 2. Caveman skills (output compression) — already active via AGENTS.md
 # Verify: cat AGENTS.md | head -5
 
-# 3. MCP servers (API precision) — add to agent config or rely on .agents/mcp.json auto-discovery
+# 3. MCP server (7 tools) — add to agent config or rely on .agents/mcp.json auto-discovery
 # Restart your agent session
 
 # Verify all three:
 tokenjuice-hook-status          # Path 1: hook loaded?
 ls .agents/skills/caveman/      # Path 2: skills present?
-ls .agents/mcp/*.sh             # Path 3: MCP wrappers present?
+npx agentskin --version         # Path 3: MCP server available?
 ```
 
 ### Expected Savings (Per Session)
@@ -268,7 +236,7 @@ ls .agents/mcp/*.sh             # Path 3: MCP wrappers present?
 |-------|---------|-----------|
 | Bash Hook | 17.1% net (up to 99.8% on large outputs) | Transparent CLI compaction |
 | Caveman | 73.5% of output tokens | Compressed agent replies |
-| MCP (optional) | 42–88% per API call (minus ~2k overhead) | Precision JSON pruning |
+| MCP (optional) | 42–88% per API call (minus ~2k overhead) | 7 tools: JSON pruning, CLI reduction, token estimation |
 
 ### When to Disable Each Path
 
@@ -276,5 +244,5 @@ ls .agents/mcp/*.sh             # Path 3: MCP wrappers present?
 |------|-------------|
 | Bash Hook | `TOKENJUICE_HOOK=off` or `NO_OPTIMIZE=1` per command |
 | Caveman | Remove `@.agents/skills/caveman/SKILL.md` from `AGENTS.md` (Caveman has intensity levels, not an off toggle) |
-| MCP | Remove from agent's MCP config |
-| All three | `TOKENJUICE_HOOK=off` + remove caveman from AGENTS.md + remove MCP config |
+| MCP | Remove `agentskin-suite` from agent's MCP config |
+| All three | `TOKENJUICE_HOOK=off` + remove caveman from AGENTS.md + remove `agentskin-suite` from MCP config |

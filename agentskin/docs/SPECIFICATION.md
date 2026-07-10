@@ -138,8 +138,7 @@ The reference implementation includes security measures to protect against commo
 - **Protocol Enforcement:** Only http: and https: allowed
 
 ### Rate Limiting
-- **AgentSkin MCP:** 30 requests/minute sliding window per server instance
-- **Tokenjuice MCP:** 60 requests/minute sliding window per server instance
+- **Unified MCP Server:** 60 requests/minute sliding window per server instance
 - Prevents resource exhaustion from rapid fire tool calls
 
 ### Processing Limits

@@ -46,7 +46,7 @@
 ## Phase 3: MCP Server Integration & Shell Hooks — ✅ COMPLETE
 
 ### Done
-- [x] **3a:** Created `.agents/mcp.json` with two MCP servers (`agentskin-mcp` at 30 req/60s, `tokenjuice-mcp` at 60 req/60s) — zero code changes, works with any MCP-aware agent (Claude Code, Cursor, Copilot Chat, Continue, Cline, etc.)
+- [x] **3a:** Created `.agents/mcp.json` with unified MCP server (`agentskin-suite` at 60 req/60s, 7 tools) — works with any MCP-aware agent (Claude Code, Cursor, Copilot Chat, Continue, Cline, etc.)
 - [x] **3b:** Created two Composio tool configs (`.agents/composio/agentskin.json` → `skin_api_response` with signals/aliases/autoClassify, `.agents/composio/tokenjuice.json` → `tokenjuice_reduce` with command/cwd/trace) — optional integration for Composio-based agent workflows
 - [x] **3c:** Instrumented bash hook for transparent optimization in any terminal — `.agents/hooks/bash-optimizer.sh` + `scripts/agent-optimizer.mjs` (Node.js shim) + `install.sh` / `uninstall.sh` / `README.md`. Cross-platform timestamps, 10 MiB raw cap, aliases OFF by default, full compact result cached at `~/.cache/tokenjuice/<id>.json`
 - [x] **Fix ARG_MAX bug in `bash-optimizer.sh`:** The payload builder passed raw stdout as a `node -e` command-line argument, hitting Linux's 2 MB `ARG_MAX`. Commands with >~23 KB output silently produced empty optimizer input. Fixed by passing temp file **paths** (not content) as argv and having node read them via `fs.readFileSync`. Verified on a 3.1 MB / 56,947-line directory listing: **3,192,814 → 897 chars (99.97% reduction, 18 lines)**.
@@ -56,7 +56,7 @@
 ### Key Metrics
 | File | Status |
 |------|--------|
-| `.agents/mcp.json` | ✅ 2 MCP servers (AgentSkin + Tokenjuice) |
+| `.agents/mcp.json` | ✅ 1 unified MCP server (7 tools) |
 | `.agents/composio/agentskin.json` | ✅ `skin_api_response` tool (v2.0.0) |
 | `.agents/composio/tokenjuice.json` | ✅ `tokenjuice_reduce` tool (v0.8.0) |
 | `.agents/hooks/bash-optimizer.sh` | ✅ Source hook, `opt` command. **`ARG_MAX` fix applied.** See README. |
@@ -67,9 +67,9 @@
 
 ## Verified MCP Tool Inventory
 
-The tool inventories below were verified by sending a `tools/list` JSON-RPC request to each running MCP server (post-`initialize` + `notifications/initialized` handshake). Both servers are launched by the shell wrappers in `.agents/mcp/*.sh`, which MCP clients discover via `.agents/mcp.json`.
+The tool inventory below was verified by sending a `tools/list` JSON-RPC request to the unified MCP server (post-`initialize` + `notifications/initialized` handshake). The server is launched via `npx agentskin@latest` or the shell wrapper in `.agents/mcp/agentskin-mcp.sh`.
 
-### `agentskin-mcp` — `agentskin-sss` v2.0.0 (4 tools)
+### `agentskin-suite` — `agentskin-suite` v5.0.0 (7 tools)
 
 | Tool | Purpose | Required params | Key optional params |
 |------|---------|-----------------|---------------------|
@@ -77,18 +77,9 @@ The tool inventories below were verified by sending a `tools/list` JSON-RPC requ
 | `skin_reasoning` | Optimize natural language text by removing linguistic noise (hedging, filler words, redundant phrases). 14–29% typical reduction. | `text` | — |
 | `classify_url` | Check if a URL matches any built-in API skin rules (GitHub, npm, weather, etc.). Returns matched rule with signals/aliases, or null. | `url` | — |
 | `strip_ansi` | Strip ANSI escape codes from text. | `text` | — |
-
-### `tokenjuice-mcp` — `tokenjuice-mcp` v0.8.0 (5 tools)
-
-| Tool | Purpose | Required params | Key optional params |
-|------|---------|-----------------|---------------------|
-| `apply_json_semantic` | Prune a JSON string using signal keys (AgentSkin-style semantic pruning). Keeps only matching keys, optionally remaps via aliases, flattens to key:value markdown. Up to 88% reduction. | `json` | `url`, `signals`, `aliases`, `stripAnsiCodes`, `smallThreshold` |
-| `classify_url` | Match a URL against built-in API skin rules (GitHub repos/users, npm registry, etc.). Returns matched rule with signals, aliases, and URL pattern. | `url` | — |
-| `strip_ansi` | Strip ANSI escape codes from terminal output. Handles CSI, OSC, incomplete sequences, and single-char escapes. | `text` | — |
-| `estimate_tokens` | Estimate token count for a string using grapheme-aware counting (÷ 4). | `text` | — |
 | `reduce` | Run the full Tokenjuice reduction pipeline on command output. Applies rule matching, ANSI stripping, truncation, JSON semantic pruning, and other reducers. | `command`, `output` | `cwd`, `exitCode` |
-
-> **Note on overlap:** `classify_url` and `strip_ansi` appear in both servers because both wrappers expose a small subset of the same underlying utilities. They are independent implementations registered on different MCP daemons — call whichever the routing layer prefers.
+| `estimate_tokens` | Estimate token count for a string using grapheme-aware counting (÷ 4). | `text` | — |
+| `apply_json_semantic` | Prune a JSON string using signal keys (AgentSkin-style semantic pruning). Keeps only matching keys, optionally remaps via aliases, flattens to key:value markdown. Up to 88% reduction. | `json` | `url`, `signals`, `aliases`, `stripAnsiCodes`, `smallThreshold` |
 
 ## Known Edge Cases
 
@@ -108,14 +99,10 @@ cd ~/Desktop/agentskin && npx vitest run
 # 2. Run benchmark
 node /tmp/agentskin-benchmark.js
 
-# 3. Test AgentSkin MCP server manually via the shell launcher
+# 3. Test unified MCP server manually via the shell launcher
 #    (the project-root .agents/ directory is discovered by MCP clients at startup)
 echo '{"jsonrpc":"2.0","method":"tools/list","id":1}' | \
   bash .agents/mcp/agentskin-mcp.sh
-
-# 3b. Same for Tokenjuice (also promoted to the project root)
-echo '{"jsonrpc":"2.0","method":"tools/list","id":1}' | \
-  bash .agents/mcp/tokenjuice-mcp.sh
 
 # 4. Test skin transformation
 node -e "

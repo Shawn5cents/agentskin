@@ -23,20 +23,16 @@
 - **Capability:** 65% output token reduction via prompt engineering. 6 skills.
 - **Memory compression:** 46% smaller files, saved forever.
 
-## 🧩 MCP TOOLS (9 total across 2 servers)
+## 🧩 MCP TOOLS (7 total, unified server)
 
-### agentskin-mcp (4 tools)
-- `fetch_optimized_data` — Fetch URL, prune JSON, return Markdown skin
+### agentskin-suite (7 tools)
+- `fetch_optimized_data` — Fetch URL, prune JSON, return Markdown skin (88% savings)
 - `skin_reasoning` — Strip linguistic noise from text (14-29% reduction)
 - `classify_url` — Match URL against 11 built-in API rules
 - `strip_ansi` — Strip 5 patterns of ANSI escape codes
-
-### tokenjuice-mcp (5 tools)
-- `apply_json_semantic` — AgentSkin-style JSON pruning via Tokenjuice
-- `classify_url` — Match URL against built-in API rules
-- `strip_ansi` — Strip ANSI escape codes
+- `reduce` — Full Tokenjuice reduction pipeline (up to 99.97%)
 - `estimate_tokens` — Grapheme-aware token estimation (÷ 4)
-- `reduce` — Full Tokenjuice reduction pipeline
+- `apply_json_semantic` — AgentSkin-style JSON pruning via signal keys
 
 ## 💰 Agentic Billing (L402 & Token Arbitrage)
 - **Free Tier:** 50 transforms/day (Requires SHA-256 Proof-of-Work).
@@ -44,7 +40,7 @@
 - **Payment:** If quota exceeded, returns `HTTP 402 Payment Required` with a machine-readable Stripe L402 invoice.
 
 ## 🧩 Discovery & Verification
-- **MCP Server:** `https://api.agentskin.dev/mcp` (One-click tool install for AI).
+- **MCP Server:** `npx agentskin@latest` (One-click tool install for AI, 7 tools unified).
 - **Registry:** Open-Source "Skin" templates for common APIs.
 - **Identity:** Verified via `X-AgentSkin-Provenance` header.
 

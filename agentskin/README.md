@@ -48,18 +48,14 @@ Add the following to your `claude_desktop_config.json`:
 
 ### Full Suite Setup
 
-For the complete token optimization stack, connect both MCP servers and source the bash hook:
+For the complete token optimization stack, connect the unified MCP server and source the bash hook:
 
 ```json
 {
   "mcpServers": {
-    "agentskin-mcp": {
-      "command": "bash",
-      "args": [".agents/mcp/agentskin-mcp.sh"]
-    },
-    "tokenjuice-mcp": {
-      "command": "bash",
-      "args": [".agents/mcp/tokenjuice-mcp.sh"]
+    "agentskin-suite": {
+      "command": "npx",
+      "args": ["-y", "agentskin@latest"]
     }
   }
 }
@@ -72,9 +68,7 @@ echo "source $(pwd)/.agents/hooks/bash-optimizer.sh" >> ~/.bashrc && source ~/.b
 
 ## Tools
 
-The suite exposes **9 tools** across two MCP servers:
-
-### AgentSkin MCP (4 tools)
+The suite exposes **7 tools** through one unified MCP server:
 
 | Tool | Description |
 |------|-------------|
@@ -82,16 +76,9 @@ The suite exposes **9 tools** across two MCP servers:
 | `skin_reasoning` | Optimize natural language text by removing linguistic noise (hedging, filler). 14–29% typical reduction |
 | `classify_url` | Match a URL against 11 built-in API skin rules |
 | `strip_ansi` | Strip 5 patterns of ANSI escape codes from text |
-
-### Tokenjuice MCP (5 tools)
-
-| Tool | Description |
-|------|-------------|
-| `apply_json_semantic` | AgentSkin-style JSON pruning — extract signal keys, apply URL rules, flatten to markdown |
-| `classify_url` | Match a URL against built-in API skin rules |
-| `strip_ansi` | Strip ANSI escape codes from terminal output |
+| `reduce` | Full Tokenjuice reduction pipeline on command output (up to 99.97%) |
 | `estimate_tokens` | Grapheme-aware token count estimation (÷ 4) |
-| `reduce` | Full Tokenjuice reduction pipeline on command output |
+| `apply_json_semantic` | AgentSkin-style JSON pruning — extract signal keys, apply URL rules, flatten to markdown |
 
 ### Caveman Skills (6 skills)
 
@@ -135,7 +122,7 @@ This package is designed as a **Local-First, Open Studio**.
 The reference implementation includes robust security measures:
 - **SSRF Protection:** Blocks private network ranges (IPv4: 127.x, 10.x, 172.16-31.x, 192.168.x; IPv6: ::1, ::ffff:, fe80:)
 - **Cloud Metadata Blocking:** Prevents access to GCP, Azure, and Kubernetes metadata services
-- **Rate Limiting:** 30 requests/minute (AgentSkin), 60 requests/minute (Tokenjuice) sliding window per client
+- **Rate Limiting:** 60 requests/minute sliding window per client
 - **Input Validation:** All tool inputs validated with Zod schemas
 - **URL Sanitization:** Dangerous URL schemes (javascript:, data:) stripped from HTML links
 - **Processing Timeout:** 30s limit prevents resource exhaustion
