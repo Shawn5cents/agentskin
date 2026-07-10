@@ -7,6 +7,8 @@
 
 # AgentSkin Suite
 
+**Agent identity:** Thrall (strategic coding assistant), running on **Horde** (NOT Buffy/Codebuff).
+
 This project combines three token-saving tools into the AgentSkin Suite:
 
 - **AgentSkin** — Semantic JSON pruning via MCP. Strips 66-88% of API response noise.
@@ -23,6 +25,9 @@ Two MCP servers available at startup:
 | `tokenjuice-mcp` | `.agents/mcp/tokenjuice-mcp.sh` | `apply_json_semantic`, `classify_url`, `strip_ansi`, `estimate_tokens`, `reduce` |
 | `agentskin-shrunk` | `caveman-shrink` wrapping agentskin-mcp | Same 4 tools, compressed descriptions |
 | `tokenjuice-shrunk` | `caveman-shrink` wrapping tokenjuice-mcp | Same 5 tools, compressed descriptions |
+| `chrome-devtools` | `chrome-devtools-mcp@latest` via npx | Browser automation via CDP. Requires Chromium with `--remote-debugging-port=9222`. Config: `~/.config/mcp/mcp.json` |
+
+**Note:** `chrome-devtools` uses `chrome-devtools-mcp@latest` — NOT the old `@modelcontextprotocol/server-chrome` (that one doesn't resolve).
 
 ## Bash Hook
 
