@@ -241,8 +241,10 @@ const LAYOUT = (content, activeTab = 'introduction') => `
             <a href="/suite" class="nav-tab ${activeTab === 'suite' ? 'active' : ''}">Suite</a>
             <a href="/specification" class="nav-tab ${activeTab === 'specification' ? 'active' : ''}">Specification</a>
             <a href="/examples" class="nav-tab ${activeTab === 'examples' ? 'active' : ''}">Examples</a>
+            <a href="/bash-hook" class="nav-tab ${activeTab === 'bash-hook' ? 'active' : ''}">Bash Hook</a>
             <a href="/faq" class="nav-tab ${activeTab === 'faq' ? 'active' : ''}">FAQ</a>
             <a href="/whitepaper" class="nav-tab ${activeTab === 'whitepaper' ? 'active' : ''}">Whitepaper</a>
+            <a href="https://github.com/Shawn5cents/agentskin" class="nav-tab" target="_blank" rel="noopener">GitHub ↗</a>
         </nav>
 
         ${content}
@@ -271,6 +273,7 @@ const LAYOUT = (content, activeTab = 'introduction') => `
                 <a href="/suite" style="color:inherit; text-decoration:none">Suite</a> | 
                 <a href="/specification" style="color:inherit; text-decoration:none">Specification</a> | 
                 <a href="/examples" style="color:inherit; text-decoration:none">Examples</a> | 
+                <a href="/bash-hook" style="color:inherit; text-decoration:none">Bash Hook</a> | 
                 <a href="/faq" style="color:inherit; text-decoration:none">FAQ</a> | 
                 <a href="/whitepaper" style="color:inherit; text-decoration:none">Whitepaper</a>
             </div>
@@ -288,7 +291,25 @@ const LAYOUT = (content, activeTab = 'introduction') => `
 const INTRO_CONTENT = `
 <section>
     <div class="thesis-item">
-        <div class="thesis-number">01 / OVERVIEW</div>
+        <div class="thesis-number">01 / QUICK START</div>
+        <div class="thesis-content">
+            <h2>Get Started in 30 Seconds</h2>
+            <p>Run the unified MCP server with a single command:</p>
+            <pre>npx -y agentskin@latest</pre>
+            <p>Then add to your agent's MCP config:</p>
+            <pre>{
+  "mcpServers": {
+    "agentskin-suite": {
+      "command": "npx",
+      "args": ["-y", "agentskin@latest"]
+    }
+  }
+}</pre>
+            <p>That's it. You now have 7 tools: API pruning, CLI reduction, token estimation, and more.</p>
+        </div>
+    </div>
+    <div class="thesis-item">
+        <div class="thesis-number">02 / OVERVIEW</div>
         <div class="thesis-content">
             <h2>The Complete Token Optimization Stack</h2>
             <p>AgentSkin Suite combines three complementary tools that eliminate token waste across the full AI agent cycle:</p>
@@ -301,7 +322,7 @@ const INTRO_CONTENT = `
         </div>
     </div>
     <div class="thesis-item">
-        <div class="thesis-number">02 / MCP INTEGRATION</div>
+        <div class="thesis-number">03 / MCP INTEGRATION</div>
         <div class="thesis-content">
             <h2>One Unified MCP Server, 7 Tools</h2>
             <p>The Suite exposes <strong>7 tools</strong> through a single MCP server — AgentSkin's semantic pruning merged with Tokenjuice's reduction engine (by <a href="https://github.com/vincentkoc/tokenjuice">Vincent Koc</a>, MIT License):</p>
@@ -319,7 +340,7 @@ const INTRO_CONTENT = `
         </div>
     </div>
     <div class="thesis-item">
-        <div class="thesis-number">03 / SECURITY</div>
+        <div class="thesis-number">04 / SECURITY</div>
         <div class="thesis-content">
             <h2>Enterprise-Grade Protection</h2>
             <p>The reference implementation includes robust security measures to protect against common attack vectors in AI agent pipelines.</p>
@@ -347,7 +368,7 @@ const INTRO_CONTENT = `
         </div>
     </div>
     <div class="thesis-item">
-        <div class="thesis-number">04 / BENCHMARKS</div>
+        <div class="thesis-number">05 / BENCHMARKS</div>
         <div class="thesis-content">
             <h2>Performance Metrics</h2>
             <p>The reference implementation delivers verifiable, deterministic compression results.</p>
@@ -367,7 +388,22 @@ const INTRO_CONTENT = `
         </div>
     </div>
     <div class="thesis-item">
-        <div class="thesis-number">05 / CREDITS</div>
+        <div class="thesis-number">06 / WHAT'S NEW IN v5.0</div>
+        <div class="thesis-content">
+            <h2>Unified 7-Tool MCP Server</h2>
+            <p>v5.0 merges AgentSkin's semantic pruning with Tokenjuice's reduction pipeline into a single MCP server:</p>
+            <ul style="margin: 15px 0; padding-left: 20px;">
+                <li><strong>Unified server</strong> — One <code>npx agentskin@latest</code> instead of two separate servers</li>
+                <li><strong>3 new tools</strong> — <code>reduce</code>, <code>estimate_tokens</code>, <code>apply_json_semantic</code> from Tokenjuice</li>
+                <li><strong>Tokenjuice integration</strong> — 136 rules, 143 fixtures, 3,030 fixtures/sec pipeline</li>
+                <li><strong>Rate limit unified</strong> — 60 req/min sliding window (was 30/60 split)</li>
+                <li><strong>Backward compatible</strong> — All existing AgentSkin tools unchanged</li>
+            </ul>
+            <p>Special thanks to <strong>Vincent Koc</strong> for the MIT-licensed Tokenjuice engine that powers the reduction pipeline.</p>
+        </div>
+    </div>
+    <div class="thesis-item">
+        <div class="thesis-number">07 / CREDITS</div>
         <div class="thesis-content">
             <h2>Built By</h2>
             <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
@@ -450,6 +486,59 @@ parent.child.key: value
                 <li>JSONPlaceholder (posts/users)</li>
             </ul>
             <p>Custom rules can be added via the 3-layer config (builtin → user → project).</p>
+        </div>
+    </div>
+
+    <div class="thesis-item">
+        <div class="thesis-number">05 / TOOL SCHEMAS</div>
+        <div class="thesis-content">
+            <h2>All 7 MCP Tools</h2>
+            <h3>fetch_optimized_data</h3>
+            <pre>{
+  "url": "string (required)",
+  "signals": ["array of strings"],
+  "aliases": {"object mapping original keys to standardized keys"},
+  "apply_reasoning": "boolean (default: false)",
+  "auto_classify": "boolean (default: true)"
+}</pre>
+
+            <h3>skin_reasoning</h3>
+            <pre>{
+  "text": "string (required)"
+}</pre>
+
+            <h3>classify_url</h3>
+            <pre>{
+  "url": "string (required)"
+}</pre>
+
+            <h3>strip_ansi</h3>
+            <pre>{
+  "text": "string (required)"
+}</pre>
+
+            <h3>reduce</h3>
+            <pre>{
+  "command": "string (required)",
+  "output": "string (required)",
+  "cwd": "string (optional)",
+  "exitCode": "number (optional)"
+}</pre>
+
+            <h3>estimate_tokens</h3>
+            <pre>{
+  "text": "string (required)"
+}</pre>
+
+            <h3>apply_json_semantic</h3>
+            <pre>{
+  "json": "string (required)",
+  "url": "string (optional)",
+  "signals": ["array of strings"],
+  "aliases": {"object mapping original keys to standardized keys"},
+  "stripAnsiCodes": "boolean (default: true)",
+  "smallThreshold": "number (default: 300)"
+}</pre>
         </div>
     </div>
 </section>
@@ -654,6 +743,122 @@ const FAQ_CONTENT = `
 </section>
 `;
 
+const BASH_HOOK_CONTENT = `
+<section>
+    <div class="thesis-item">
+        <div class="thesis-number">01 / OVERVIEW</div>
+        <div class="thesis-content">
+            <h2>Transparent CLI Optimization</h2>
+            <p>The bash hook intercepts noisy CLI commands and pipes their output through the Tokenjuice reduce pipeline before you see it. Zero agent awareness needed.</p>
+            <ul style="margin: 20px 0; padding-left: 20px;">
+                <li><strong>Transparent:</strong> Works automatically when enabled</li>
+                <li><strong>Zero overhead:</strong> No MCP tool catalog cost (~2k tokens saved per session)</li>
+                <li><strong>Up to 99.97%:</strong> Reduction on large outputs like <code>ls -laR</code></li>
+                <li><strong>Cache-friendly:</strong> Results cached to <code>~/.cache/tokenjuice/</code></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="thesis-item">
+        <div class="thesis-number">02 / INSTALL</div>
+        <div class="thesis-content">
+            <h2>One-Line Setup</h2>
+            <p>Add to your <code>~/.bashrc</code>:</p>
+            <pre>source /path/to/.agents/hooks/bash-optimizer.sh</pre>
+            <p>Or use the install script:</p>
+            <pre>bash .agents/hooks/install.sh</pre>
+            <p>Verify it works:</p>
+            <pre>tokenjuice-hook-status</pre>
+        </div>
+    </div>
+
+    <div class="thesis-item">
+        <div class="thesis-number">03 / USAGE</div>
+        <div class="thesis-content">
+            <h2>The <code>opt</code> Command</h2>
+            <p>Prefix any command with <code>opt</code> to optimize its output:</p>
+            <pre>opt curl -s https://api.github.com/repos/expressjs/express
+opt npm view express
+opt git log --oneline -30
+opt ls -laR node_modules/</pre>
+            
+            <h3>Transparent Alias Mode</h3>
+            <p>Enable auto-optimization for common commands without the prefix:</p>
+            <pre>export TOKENJUICE_HOOK_ALIAS=1</pre>
+            <p>When enabled, <code>curl</code>, <code>git</code>, <code>npm</code>, <code>pnpm</code>, <code>docker</code>, <code>kubectl</code>, and other noisy commands are automatically intercepted.</p>
+            
+            <h3>Disable for One Command</h3>
+            <pre>NO_OPTIMIZE=1 opt curl -s https://api.github.com/repos/expressjs/express</pre>
+        </div>
+    </div>
+
+    <div class="thesis-item">
+        <div class="thesis-number">04 / ENV VARS</div>
+        <div class="thesis-content">
+            <h2>Configuration</h2>
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem;">
+                <thead>
+                    <tr style="border-bottom: 2px solid var(--border);">
+                        <th style="text-align: left; padding: 10px;">Variable</th>
+                        <th style="text-align: left; padding: 10px;">Default</th>
+                        <th style="text-align: left; padding: 10px;">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 10px;"><code>TOKENJUICE_HOOK</code></td>
+                        <td style="padding: 10px;"><code>on</code></td>
+                        <td style="padding: 10px;"><code>on</code> or <code>off</code> — global toggle</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 10px;"><code>TOKENJUICE_OPT</code></td>
+                        <td style="padding: 10px;"><code>auto</code></td>
+                        <td style="padding: 10px;"><code>always</code>, <code>auto</code>, or <code>off</code></td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 10px;"><code>TOKENJUICE_MIN_RAW</code></td>
+                        <td style="padding: 10px;"><code>4096</code></td>
+                        <td style="padding: 10px;">Min bytes before optimization kicks in (4KB)</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 10px;"><code>TOKENJUICE_MAX_RAW</code></td>
+                        <td style="padding: 10px;"><code>10485760</code></td>
+                        <td style="padding: 10px;">Max bytes to capture (10MB cap)</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 10px;"><code>TOKENJUICE_HOOK_ALIAS</code></td>
+                        <td style="padding: 10px;"><code>0</code></td>
+                        <td style="padding: 10px;"><code>1</code> to enable transparent aliases</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 10px;"><code>TOKENJUICE_CACHE</code></td>
+                        <td style="padding: 10px;"><code>~/.cache/tokenjuice</code></td>
+                        <td style="padding: 10px;">Cache directory for optimized results</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px;"><code>NO_OPTIMIZE</code></td>
+                        <td style="padding: 10px;"><code>0</code></td>
+                        <td style="padding: 10px;"><code>1</code> to skip optimization for a single command</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="thesis-item">
+        <div class="thesis-number">05 / UNINSTALL</div>
+        <div class="thesis-content">
+            <h2>Clean Removal</h2>
+            <p>Use the uninstall script:</p>
+            <pre>bash .agents/hooks/uninstall.sh</pre>
+            <p>Or manually:</p>
+            <pre>sed -i '/bash-optimizer.sh/d' ~/.bashrc
+source ~/.bashrc</pre>
+        </div>
+    </div>
+</section>
+`;
+
 const WHITEPAPER_CONTENT = `
 <section>
     <div class="metadata">Protocol Specification Document / 2026</div>
@@ -769,7 +974,7 @@ app.get('/favicon.svg', (c) => {
 
 app.get('/sitemap.xml', (c) => {
     c.header('Content-Type', 'text/xml');
-    return c.body('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://agentskin.dev/</loc></url><url><loc>https://agentskin.dev/suite</loc></url><url><loc>https://agentskin.dev/specification</loc></url><url><loc>https://agentskin.dev/examples</loc></url><url><loc>https://agentskin.dev/faq</loc></url><url><loc>https://agentskin.dev/whitepaper</loc></url></urlset>');
+    return c.body('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://agentskin.dev/</loc></url><url><loc>https://agentskin.dev/suite</loc></url><url><loc>https://agentskin.dev/specification</loc></url><url><loc>https://agentskin.dev/examples</loc></url><url><loc>https://agentskin.dev/bash-hook</loc></url><url><loc>https://agentskin.dev/faq</loc></url><url><loc>https://agentskin.dev/whitepaper</loc></url></urlset>');
 });
 
 app.get('/', (c) => c.html(LAYOUT(INTRO_CONTENT, 'introduction')));
@@ -777,6 +982,7 @@ app.get('/suite', (c) => c.html(LAYOUT(SUITE_CONTENT, 'suite')));
 app.get('/specification', (c) => c.html(LAYOUT(SPEC_CONTENT, 'specification')));
 app.get('/examples', (c) => c.html(LAYOUT(EXAMPLES_CONTENT, 'examples')));
 app.get('/faq', (c) => c.html(LAYOUT(FAQ_CONTENT, 'faq')));
+app.get('/bash-hook', (c) => c.html(LAYOUT(BASH_HOOK_CONTENT, 'bash-hook')));
 app.get('/whitepaper', (c) => c.html(LAYOUT(WHITEPAPER_CONTENT, 'whitepaper')));
 
 // Legacy fallback endpoint for local reference
