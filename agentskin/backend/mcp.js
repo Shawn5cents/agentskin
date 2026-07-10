@@ -8,7 +8,8 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 import { recursive_prune, to_markdown_skin, skin, classify_url, createCompactionMetadata } from "./lib/skin-engine.js";
 import { skinReasoning } from "./lib/reasoning-skin.js";
-import { stripAnsi } from "./lib/text-utils.js";
+import { stripAnsi, estimateTokens } from "./lib/text-utils.js";
+import { reduceExecution } from "../suite/tokenjuice/dist/core/reduce.js";
 
 // --- Input Validation ---
 
@@ -24,12 +25,32 @@ const SkinReasoningArgsSchema = z.object({
     text: z.string().min(1, "Text is required").max(50000, "Text exceeds 50,000 character limit")
 });
 
+const ReduceArgsSchema = z.object({
+    command: z.string().min(1, "command is required"),
+    output: z.string().min(1, "output is required"),
+    cwd: z.string().optional(),
+    exitCode: z.number().int().optional()
+});
+
+const EstimateTokensArgsSchema = z.object({
+    text: z.string().min(1, "text is required")
+});
+
+const ApplyJsonSemanticArgsSchema = z.object({
+    json: z.string().min(1, "json must be a non-empty string"),
+    url: z.string().optional(),
+    signals: z.array(z.string()).default([]),
+    aliases: z.record(z.string(), z.string()).default({}),
+    stripAnsiCodes: z.boolean().default(true),
+    smallThreshold: z.number().min(0).default(300)
+});
+
 const MAX_REASONING_CHARS = 50_000;
 
 // --- Rate Limiting ---
 
 const RATE_LIMIT_WINDOW = 60_000; // 60 seconds
-const RATE_LIMIT_MAX = 30; // max requests per window
+const RATE_LIMIT_MAX = 60; // max requests per window
 const requestTimestamps = [];
 
 function checkRateLimit() {
@@ -87,7 +108,7 @@ export function htmlToText(html) {
 // --- MCP Server ---
 
 const server = new Server(
-    { name: "agentskin-sss", version: "2.0.0" },
+    { name: "agentskin-suite", version: "5.0.0" },
     { capabilities: { tools: {} } }
 );
 
@@ -156,6 +177,47 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
                     text: { type: "string", description: "Text to strip ANSI codes from" }
                 },
                 required: ["text"]
+            }
+        },
+        {
+            name: "reduce",
+            description: "Run the full Tokenjuice reduction pipeline on command output. Applies rule matching (136 rules), ANSI stripping, truncation, JSON semantic pruning, and other reducers based on the matched rule set.",
+            inputSchema: {
+                type: "object",
+                properties: {
+                    command: { type: "string", description: "The command that was run (e.g. curl ..., git status)" },
+                    output: { type: "string", description: "The raw stdout output to reduce" },
+                    cwd: { type: "string", description: "Working directory the command was run in" },
+                    exitCode: { type: "number", description: "Exit code of the command" }
+                },
+                required: ["command", "output"]
+            }
+        },
+        {
+            name: "estimate_tokens",
+            description: "Estimate the token count for a string. Uses grapheme-aware counting (via Intl.Segmenter) for accurate estimates on CJK, emoji, and combining marks.",
+            inputSchema: {
+                type: "object",
+                properties: {
+                    text: { type: "string", description: "Text to estimate tokens for" }
+                },
+                required: ["text"]
+            }
+        },
+        {
+            name: "apply_json_semantic",
+            description: "Prune a JSON string using signal keys. Auto-classifies URL against built-in API rules (GitHub, npm, HackerNews, weather, Reddit, JSONPlaceholder). Keeps only signal-matched keys, applies alias remapping, flattens to markdown.",
+            inputSchema: {
+                type: "object",
+                properties: {
+                    json: { type: "string", description: "Raw JSON string to prune" },
+                    url: { type: "string", description: "Original URL for auto-classification (e.g. https://api.github.com/repos/vercel/next.js)" },
+                    signals: { type: "array", items: { type: "string" }, description: "Signal keys to keep (overrides auto-classification)" },
+                    aliases: { type: "object", description: "Key alias remapping (e.g. stargazers_count -> stars)" },
+                    stripAnsiCodes: { type: "boolean", description: "Strip ANSI before processing" },
+                    smallThreshold: { type: "number", description: "Bypass threshold in tokens (default 300)" }
+                },
+                required: ["json"]
             }
         }
     ]
@@ -303,8 +365,84 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 return { content: [{ type: "text", text: stripAnsi(args.text) }] };
             }
 
+            case "reduce": {
+                const validated = ReduceArgsSchema.parse(args);
+                const input = {
+                    toolName: "mcp-reduce",
+                    command: validated.command,
+                    argv: validated.command.split(/\s+/),
+                    stdout: validated.output,
+                    stderr: ""
+                };
+                if (validated.cwd) input.cwd = validated.cwd;
+                if (validated.exitCode != null) input.exitCode = validated.exitCode;
+
+                const result = await withTimeout(reduceExecution(input), 30_000);
+
+                if (!result) {
+                    return { content: [{ type: "text", text: "(no reduction applied)" }] };
+                }
+
+                const lines = [];
+                if (result.classification?.matchedReducer) {
+                    lines.push(`[classified: ${result.classification.matchedReducer}]`);
+                }
+                if (result.stats) {
+                    const ratio = ((1 - result.stats.reducedChars / result.stats.rawChars) * 100).toFixed(1);
+                    lines.push(`[reduction: ${ratio}%, ${result.stats.rawChars} → ${result.stats.reducedChars} chars]`);
+                }
+                lines.push(result.inlineText ?? "(empty result)");
+                return { content: [{ type: "text", text: lines.join("\n") }] };
+            }
+
+            case "estimate_tokens": {
+                const validated = EstimateTokensArgsSchema.parse(args);
+                const tokens = estimateTokens(validated.text);
+                return { content: [{ type: "text", text: JSON.stringify({ textLength: validated.text.length, estimatedTokens: tokens }) }] };
+            }
+
+            case "apply_json_semantic": {
+                const validated = ApplyJsonSemanticArgsSchema.parse(args);
+                let jsonStr = validated.json;
+
+                if (validated.stripAnsiCodes) {
+                    jsonStr = stripAnsi(jsonStr);
+                }
+
+                let parsedJson;
+                try {
+                    parsedJson = JSON.parse(jsonStr);
+                } catch {
+                    return { content: [{ type: "text", text: "Error: Invalid JSON string provided." }] };
+                }
+
+                const result = await withTimeout(
+                    Promise.resolve(skin(parsedJson, {
+                        url: validated.url || '',
+                        signals: validated.signals,
+                        aliases: validated.aliases,
+                        stripAnsiCodes: validated.stripAnsiCodes,
+                        smallThreshold: validated.smallThreshold
+                    })),
+                    30_000
+                );
+
+                let responseText = result.skin;
+                const metaLines = [];
+                if (result.rule) metaLines.push(`[auto-classified: ${result.rule.id}]`);
+                if (result.metrics.applied) {
+                    metaLines.push(`[${result.metrics.savings_ratio} reduction, ${result.metrics.raw_est_tokens} → ${result.metrics.skin_est_tokens} tokens]`);
+                } else if (result.metrics.reason) {
+                    metaLines.push(`[${result.metrics.reason}]`);
+                }
+                if (metaLines.length > 0) {
+                    responseText = metaLines.join(' ') + '\n' + responseText;
+                }
+                return { content: [{ type: "text", text: responseText || "(empty result)" }] };
+            }
+
             default:
-                return { content: [{ type: "text", text: `Error: Unknown tool: ${name}` }] };
+                return { content: [{ type: "text", text: `Error: Unknown tool: ${name}. Available: fetch_optimized_data, skin_reasoning, classify_url, strip_ansi, reduce, estimate_tokens, apply_json_semantic` }] };
         }
     } catch (error) {
         if (error instanceof z.ZodError) {
@@ -319,4 +457,4 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
 const transport = new StdioServerTransport();
 await server.connect(transport);
-console.error("AgentSkin MCP Server v2.0.0 running via Stdio");
+console.error("AgentSkin Suite MCP Server v5.0.0 running via Stdio");
