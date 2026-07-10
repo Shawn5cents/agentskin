@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  agentskin:
+    name: AgentSkin — Tests + Lint + Pack
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: agentskin
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: agentskin/package-lock.json
+
+      - run: npm ci
+      - run: npm test
+      - run: npm run lint
+
+      # Build Tokenjuice dist first — required by prepublishOnly
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.11.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: tokenjuice-extracted/tokenjuice-main/pnpm-lock.yaml
+
+      - name: Build Tokenjuice dist
+        run: |
+          cd ../tokenjuice-extracted/tokenjuice-main
+          pnpm install --frozen-lockfile
+          pnpm run build
+
+      # Smoke test: verify npm pack bundles suite/ correctly
+      - run: npm run prepublishOnly
+      - run: npm pack --dry-run 2>&1 | tee pack-output.txt
+      - run: grep -q 'package/suite/' pack-output.txt || (echo "ERROR: suite/ missing from package" && exit 1)
+
+  tokenjuice:
+    name: Tokenjuice — Typecheck + Tests + Lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tokenjuice-extracted/tokenjuice-main
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.11.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: tokenjuice-extracted/tokenjuice-main/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run verify
