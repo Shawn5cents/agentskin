@@ -1,0 +1,14 @@
+{
+  "description": "AgentSkin Suite — unified 7-tool MCP server. Single server, all tools.",
+  "mcpServers": {
+    "agentskin-suite": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "agentskin@latest"
+      ],
+      "env": {},
+      "description": "AgentSkin Suite v5.0.0 — 7 tools: fetch_optimized_data, skin_reasoning, classify_url, strip_ansi, reduce, estimate_tokens, apply_json_semantic"
+    }
+  }
+}
