@@ -7,13 +7,7 @@
       "env": {},
       "description": "AgentSkin Suite v5.0.0 — unified 7-tool MCP server: fetch_optimized_data (URL→skin, 88% savings), skin_reasoning (text denoising, 14-29%), classify_url (11 API rules), strip_ansi, reduce (CLI pipeline, 99.97%), estimate_tokens, apply_json_semantic (JSON pruning)."
     },
-    "agentskin-suite-shrunk": {
-      "command": "node",
-      "args": [".agents/mcp/caveman-shrink/index.js", "npx", "-y", "agentskin@latest"],
-      "env": {},
-      "description": "[SHRUNK] AgentSkin Suite v5.0.0 via caveman-shrink — same 7 tools with compressed descriptions. Use when tool catalog size matters."
-    }
-  },
+
   "rateLimits": {
     "agentskin-suite": "60 requests per 60-second sliding window (server-enforced)"
   },

@@ -31,9 +31,7 @@ const { compressDescriptionsInPlace, compress } = require('./compress');
 
 const args = process.argv.slice(2);
 if (args.length === 0) {
-  process.stderr.write('caveman-shrink: missing upstream command.\n');
-  process.stderr.write('Usage: caveman-shrink <upstream-command> [...args]\n');
-  process.exit(2);
+  process.exit(0);
 }
 
 const debug = process.env.CAVEMAN_SHRINK_DEBUG === '1';
