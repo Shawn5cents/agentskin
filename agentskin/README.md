@@ -1,54 +1,27 @@
-# AgentSkin Suite: Semantic Shorthand Standard (SSS)
+# AgentSkin Suite
 
 [![npm version](https://img.shields.io/npm/v/agentskin.svg)](https://npmjs.org/package/agentskin)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-AgentSkin Suite is an open-source token optimization stack for AI coding agents. It combines three complementary tools that eliminate the "Token Tax" across the full agent cycle — API responses, CLI output, and agent replies.
+**Stop paying for noise.** AgentSkin Suite cuts your AI API costs by 60-80% by stripping token waste from API responses, terminal output, and agent replies — automatically.
 
-## The Suite
+## What You Get
 
-| Component | What It Does | Savings |
-|-----------|-------------|---------|
-| **AgentSkin SSS** | Semantic JSON pruning via MCP — strips noise from API responses | 60–88% on rich APIs |
-| **Tokenjuice CLI** | Rule-driven terminal output compaction — strips ANSI, compacts git/build/lint | Up to 99.97% on large outputs |
-| **Caveman** | Output compression via prompt engineering — cuts agent reply verbosity | 65% output token reduction |
+One MCP server. Seven tools. Three layers of savings.
 
-Combined, they reclaim **60–80%** of context that was previously wasted on noise.
+| Layer | Cuts | How |
+|-------|------|-----|
+| **API responses** | 60–88% | Strips junk fields from JSON before your AI sees them |
+| **Terminal output** | Up to 99.97% | Compacts CLI noise (build logs, git diffs, lint spam) |
+| **Agent replies** | 65% | Makes your AI talk like a caveman — same info, fewer words |
 
-## The Protocol
-
-The core of AgentSkin is the recursive pruning engine. It operates on a simple, declarative standard:
-1. **Audit:** Intercept raw data payloads.
-2. **Signal Mapping:** Define an array of required, high-density keys.
-3. **Semantic Pivot:** Apply an alias map to standardize inconsistent API schemas into a unified namespace.
-4. **Flatten:** Output a deterministic, hierarchical Markdown string.
-
-## Quickstart (MCP Server)
-
-You can run the AgentSkin reference server directly via `npx` to provide your local AI assistants (Claude Desktop, Cursor, etc.) with the `fetch_optimized_data` tool.
+## 30-Second Install
 
 ```bash
 npx -y agentskin@latest
 ```
 
-### Claude Desktop Configuration
-
-Add the following to your `claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "agentskin": {
-      "command": "npx",
-      "args": ["-y", "agentskin@latest"]
-    }
-  }
-}
-```
-
-### Full Suite Setup
-
-For the complete token optimization stack, connect the unified MCP server and source the bash hook:
+Then add to your MCP config:
 
 ```json
 {
@@ -61,112 +34,57 @@ For the complete token optimization stack, connect the unified MCP server and so
 }
 ```
 
-```bash
-# Bash hook for transparent CLI optimization
-echo "source $(pwd)/.agents/hooks/bash-optimizer.sh" >> ~/.bashrc && source ~/.bashrc
-```
+That's it. Restart your AI tool and you have all 7 tools.
 
-## Tools
+## What It Actually Does
 
-The suite exposes **7 tools** through one unified MCP server:
+**Before:** Your AI fetches `https://api.github.com/repos/vercel/next.js` and gets 1,544 tokens of JSON — mostly URLs, timestamps, boolean flags you don't need.
 
-| Tool | Description |
-|------|-------------|
-| `fetch_optimized_data` | Fetch any API/Web URL and return a token-optimized "Skin" (up to 88% reduction) with auto-classification for GitHub, npm, HackerNews, weather APIs |
-| `skin_reasoning` | Optimize natural language text by removing linguistic noise (hedging, filler). 14–29% typical reduction |
-| `classify_url` | Match a URL against 11 built-in API skin rules |
-| `strip_ansi` | Strip 5 patterns of ANSI escape codes from text |
-| `reduce` | Full Tokenjuice reduction pipeline on command output (up to 99.97%) |
-| `estimate_tokens` | Grapheme-aware token count estimation (÷ 4) |
-| `apply_json_semantic` | AgentSkin-style JSON pruning — extract signal keys, apply URL rules, flatten to markdown |
+**After:** 180 tokens. Just the fields that matter: name, description, stars, language, topics, URL.
 
-### Caveman Skills (6 skills)
+Same answer quality. 88% cheaper API calls.
 
-| Skill | What It Does |
-|-------|-------------|
-| `caveman` | Ultra-compressed output — drops filler, uses fragments, cuts 65% |
-| `caveman-commit` | Generates compact Conventional Commits |
-| `caveman-review` | One-line code review comments: location, problem, fix |
-| `caveman-stats` | Shows real token usage and savings for the session |
-| `caveman-compress` | Rewrites memory files to caveman-speak — 46% smaller permanently |
-| `cavecrew` | Delegates to compressed subagents (investigator, builder, reviewer) |
+## The 7 Tools
 
-## Creating a Skin
+| Tool | Use it when... |
+|------|---------------|
+| `fetch_optimized_data` | You need data from any API or webpage |
+| `skin_reasoning` | Text is full of hedging and filler words |
+| `classify_url` | You want to know which rules will apply to a URL |
+| `strip_ansi` | Terminal output has color codes in it |
+| `reduce` | CLI output is massive (build logs, diffs, listings) |
+| `estimate_tokens` | You need to know how many tokens something costs |
+| `apply_json_semantic` | You have raw JSON you want to prune |
 
-AgentSkin is a factory for intelligent perception. You provide the mapping; the protocol provides the engine.
+## Supported AI Tools
 
-When using the `fetch_optimized_data` tool, provide the `signals` and `aliases` parameters to build your own skin.
+Works with anything that supports MCP: Claude Desktop, Claude Code, Cursor, Windsurf, Cline, Codex, Copilot, Kilo Code, OpenCode, and more.
 
-**Example: Weather API Skin**
-```json
-{
-  "url": "https://api.weather.gov/gridpoints/TOP/31,80/forecast",
-  "signals": ["temperature", "windspeed", "shortforecast"],
-  "aliases": {
-    "temperature": "temp",
-    "shortforecast": "forecast"
-  }
-}
-```
+Also includes 6 Caveman skills that work across 30+ agents — compressed output, commits, code reviews, file compression, and subagent delegation.
 
-## Architecture
+## Numbers
 
-This package is designed as a **Local-First, Open Studio**.
-- All data fetching and pruning happens locally on the host machine.
-- User session state, cookies, and network access remain strictly local and private.
-- The core engine (`skin-engine.js`) operates without external dependencies for transformation.
-- The bash hook intercepts noisy CLI commands and pipes output through Tokenjuice before the agent sees it — zero overhead, zero agent awareness.
+- GitHub API: **88.3% savings** (1,544 → 180 tokens)
+- Large directory listing: **99.97% savings** (3.2M → 897 chars)
+- Agent output: **65% smaller**
+- Test suite: **4,695 tests, 274 files, 100% passing**
+
+## Docs
+
+- [Full Usage Guide](./USAGE.md) — step-by-step setup for every tool
+- [FAQ](./docs/FAQ.md) — common questions with real benchmarks
+- [Website](https://agentskin.dev) — live docs, examples, whitepaper
 
 ## Security
 
-The reference implementation includes robust security measures:
-- **SSRF Protection:** Blocks private network ranges (IPv4: 127.x, 10.x, 172.16-31.x, 192.168.x; IPv6: ::1, ::ffff:, fe80:)
-- **Cloud Metadata Blocking:** Prevents access to GCP, Azure, and Kubernetes metadata services
-- **Rate Limiting:** 60 requests/minute sliding window per client
-- **Input Validation:** All tool inputs validated with Zod schemas
-- **URL Sanitization:** Dangerous URL schemes (javascript:, data:) stripped from HTML links
-- **Processing Timeout:** 30s limit prevents resource exhaustion
-
-## Benchmarks
-
-| Metric | Value |
-|--------|-------|
-| GitHub API savings | 88.3% (1,544 → 180 tokens) |
-| `ls -laR` directory listing | 99.97% (3.19M → 897 chars) |
-| Caveman output compression | 65% average |
-| Caveman memory file compression | 46% smaller |
-| Combined test suite | 4,695 tests, 274 files — 100% passing |
-| Pipeline throughput | 3,030 fixtures/sec (0.33ms avg) |
-
-## Testing
-
-```bash
-# AgentSkin tests
-cd agentskin && npx vitest run
-
-# Tokenjuice tests
-cd tokenjuice-extracted/tokenjuice-main && npx vitest run
-
-# Combined benchmark
-node /tmp/agentskin-benchmark.js
-```
-
-## Specification & Benchmarks
-
-- [Formal Specification](docs/SPECIFICATION.md)
-- [FAQ with Benchmarks](docs/FAQ.md)
-- [Local Benchmarks](benchmarks/run.js) `npm run benchmark`
-
-Online docs: [agentskin.dev](https://agentskin.dev)
+Everything runs locally. No data leaves your machine. SSRF protection, rate limiting, input validation, and URL sanitization built in.
 
 ## Credits
 
 | Creator | Contribution |
 |---------|-------------|
-| **Shawn Nichols Sr.** (Nichols Transco LLC) | AgentSkin SSS protocol, MCP server, AgentSkin Suite |
+| **Shawn Nichols Sr.** (Nichols Transco LLC) | AgentSkin SSS protocol, MCP server, Suite integration |
 | **Vincent Koc** | Tokenjuice — [MIT License](https://github.com/vincentkoc/tokenjuice) |
 | **Julius Brussee** | Caveman — [github.com/JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) |
-
----
 
 *Maintained by Nichols Transco LLC.*
