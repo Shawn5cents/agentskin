@@ -226,7 +226,7 @@ const LAYOUT = (content, activeTab = 'introduction') => `
     <div class="top-ticker">
         <div><span class="status-dot"></span> SUITE: v5.0.0 ACTIVE</div>
         <div>3 COMPONENTS / 7 MCP TOOLS</div>
-        <div><a href="/sitemap.xml">SITEMAP</a></div>
+        <div><a href="/autonomy-ratings">AUTONOMY RATINGS</a><a href="/sitemap.xml">SITEMAP</a></div>
     </div>
 
     <div class="container">
@@ -275,7 +275,8 @@ const LAYOUT = (content, activeTab = 'introduction') => `
                 <a href="/examples" style="color:inherit; text-decoration:none">Examples</a> | 
                 <a href="/bash-hook" style="color:inherit; text-decoration:none">Bash Hook</a> | 
                 <a href="/faq" style="color:inherit; text-decoration:none">FAQ</a> | 
-                <a href="/whitepaper" style="color:inherit; text-decoration:none">Whitepaper</a>
+                <a href="/whitepaper" style="color:inherit; text-decoration:none">Whitepaper</a> |
+                <a href="/autonomy-ratings" style="color:inherit; text-decoration:none">Autonomy Ratings</a>
             </div>
             <div style="margin-top:10px; font-size: 0.6rem;">
                 Built with <a href="https://github.com/vincentkoc/tokenjuice" style="color:inherit">Tokenjuice</a> by Vincent Koc & <a href="https://github.com/JuliusBrussee/caveman" style="color:inherit">Caveman</a> by Julius Brussee
@@ -879,6 +880,23 @@ const WHITEPAPER_CONTENT = `
 </section>
 `;
 
+const AUTONOMY_RATINGS_CONTENT = `
+<section>
+    <div class="thesis-item">
+        <div class="thesis-number">RATINGS / PREVIEW</div>
+        <div class="thesis-content">
+            <h2>Autonomy Ratings</h2>
+            <p><strong>Autonomy Ratings</strong> is an independent ratings initiative for autonomous systems — measuring whether agents can be trusted with access, authority, tools, data, and money.</p>
+            <blockquote>The independent rating agency for autonomous systems.</blockquote>
+            <h3>Rating Model</h3>
+            <p>A quantitative risk score is paired with institutional-style letter ratings for security, reliability, authority control, financial risk, and insurability.</p>
+            <h3>Status</h3>
+            <p>In development. Brand and metric names are working titles while final name clearance and the public rating methodology are prepared.</p>
+        </div>
+    </div>
+</section>
+`;
+
 const SUITE_CONTENT = `
 <section>
     <div class="thesis-item">
@@ -974,7 +992,7 @@ app.get('/favicon.svg', (c) => {
 
 app.get('/sitemap.xml', (c) => {
     c.header('Content-Type', 'text/xml');
-    return c.body('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://agentskin.dev/</loc></url><url><loc>https://agentskin.dev/suite</loc></url><url><loc>https://agentskin.dev/specification</loc></url><url><loc>https://agentskin.dev/examples</loc></url><url><loc>https://agentskin.dev/bash-hook</loc></url><url><loc>https://agentskin.dev/faq</loc></url><url><loc>https://agentskin.dev/whitepaper</loc></url></urlset>');
+    return c.body('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://agentskin.dev/</loc></url><url><loc>https://agentskin.dev/suite</loc></url><url><loc>https://agentskin.dev/specification</loc></url><url><loc>https://agentskin.dev/examples</loc></url><url><loc>https://agentskin.dev/bash-hook</loc></url><url><loc>https://agentskin.dev/faq</loc></url><url><loc>https://agentskin.dev/whitepaper</loc></url><url><loc>https://agentskin.dev/autonomy-ratings</loc></url></urlset>');
 });
 
 app.get('/', (c) => c.html(LAYOUT(INTRO_CONTENT, 'introduction')));
@@ -984,6 +1002,8 @@ app.get('/examples', (c) => c.html(LAYOUT(EXAMPLES_CONTENT, 'examples')));
 app.get('/faq', (c) => c.html(LAYOUT(FAQ_CONTENT, 'faq')));
 app.get('/bash-hook', (c) => c.html(LAYOUT(BASH_HOOK_CONTENT, 'bash-hook')));
 app.get('/whitepaper', (c) => c.html(LAYOUT(WHITEPAPER_CONTENT, 'whitepaper')));
+app.get('/autonomy-ratings', (c) => c.html(LAYOUT(AUTONOMY_RATINGS_CONTENT, 'autonomy-ratings')));
+app.get('/arc', (c) => c.redirect('/autonomy-ratings', 302));
 
 // Legacy fallback endpoint for local reference
 // Hardened: body size caps, input validation
