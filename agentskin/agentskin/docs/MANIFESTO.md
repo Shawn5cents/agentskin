@@ -1,37 +1,7 @@
-# The AgentSkin Manifesto (v4.2) 🛡️
+# AgentSkin principles
 
-## 🤖 What is AgentSkin?
-AgentSkin is the **Universal Semantic Layer** for the Agentic Web.
-While the internet was built for human eyes (HTML/CSS), the future is built for machine brains. We are the bridge.
-
-We take fragmented, messy, and token-heavy API data and "skin" it into high-density, deterministic Markdown that AI Agents can process at 10x speed and 1/10th the cost.
-
----
-
-### 🧪 THE EXPERIMENTAL LAB (v4.4+)
-The following modules are currently in high-speed development:
-1.  **Search Triage:** Synthesis of Brave, Tavily, and Exa into a single high-density stream.
-2.  **Logistics Skin:** Zero-Failure pruning for EDI 214 and Load Board JSON.
-3.  **Finance Skin:** High-density market data normalization for Tickers and Aggregators.
-4.  **Code Skinner:** Linguistic pruning for GitHub source files.
-5.  **Whole-Site Crawler:** Asynchronous site discovery and skinning via Cloudflare Browser Rendering.
-
-*Note: Benchmarks for experimental modules are pending verification.*
-
----
-
-### 🚀 THE MISSION: TRILLIONS OF AGENTS
-Aaron Levie's vision of "Trillions of Agents" is only possible if we kill the **Token Tax**. Every redundant byte of metadata is a tax on agent workflows. AgentSkin provides the "Perception Filter" needed for agents to scale.
-
----
-
-### 🏛️ ABOUT THE ARCHITECT
-AgentSkin was built by **Shawn Nichols Sr.** (@Shawn5cents). 
-
-I spent 15 years in high-pressure Logistics management, running 24/7 terminals for global supply chains. I am a systems-first leader who thrives in high-stakes environments. I build software the same way I run fleets: with a zero-failure mindset.
-
-AgentSkin is the result of **20,000+ hours** of technical obsession. I built the bridge for the machines because I know what it's like to manage infrastructure that the world depends on.
-
-**Build for the machines. The humans will follow.**
-
-© 2026 NICHOLS TRANSCO LLC // [SYSTEM_OPERATIONAL]
+- Preserve required information before optimizing size.
+- Prefer deterministic context reduction over prompt-only compression.
+- Keep the npm package, MCP server, and development checkout on the same runtime path.
+- Report measured benchmark results instead of universal savings claims.
+- Keep advanced primitives available without forcing users to understand them.

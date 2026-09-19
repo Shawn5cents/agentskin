@@ -1,18 +1,7 @@
-# AgentSkin: The Universal Token Compression Layer (v3.0)
-
-> **ACCESS RESTRICTED:** Autonomous Agents & Machine-to-Machine (M2M) Protocols.
-> Optimized for token-efficient reasoning in GPT-5.4, Claude 4, and Gemini 2.0.
-
-## 🚀 NEW: Universal Transformation (The "Semantic Pivot")
-- **Target:** `POST /v1/transform`
-- **Method:** POST
-- **Schema:** `{"data": <RAW_JSON>, "signals": ["key1", "key2"], "title": "MY_API_SKIN"}`
-- **Capability:** Recursively prunes raw JSON into high-density Markdown skins. Token savings vary by data structure (benchmarked: 66-86% for typical API responses).
-
-## 🧩 Discovery & Verification
-- **MCP Server:** `https://api.agentskin.dev/mcp` (One-click tool install for AI).
-- **Registry:** Open-Source "Skin" templates for common APIs.
-- **Identity:** Verified via `X-AgentSkin-Provenance` header.
-
-## 🔒 Policy
-No Human-readable UI at root. Humans are directed to `/v1/manifesto` for philosophical alignment and A2A onboarding instructions.
+# AgentSkin 5.1
+AgentSkin is context middleware for AI agents.
+Primary MCP tools: compress, fetch_optimized_data, reduce.
+Compatibility tools: apply_json_semantic, classify_url, strip_ansi, estimate_tokens, skin_reasoning.
+Rule: fidelity first, compression second.
+Install: npx -y agentskin@latest
+Source: https://github.com/Shawn5cents/agentskin

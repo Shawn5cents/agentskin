@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
   recursive_prune,
-  to_markdown_skin,
   analyze_compression,
   classify_url,
   createCompactionMetadata,
@@ -123,6 +122,28 @@ describe('skin-engine v5 enhancements', () => {
       expect(result.skin).toContain('name: test');
       expect(result.skin).toContain('value: 42');
       expect(result.skin).not.toContain('secret');
+    });
+
+    it('does not leak generic nested keys when a URL rule supplies explicit signals', () => {
+      const data = {
+        name: 'demo',
+        full_name: 'acme/demo',
+        description: 'demo repo',
+        stargazers_count: 42,
+        junk: Array.from({ length: 80 }, (_, i) => ({ id: i, url: `https://junk.invalid/${i}` })),
+        owner: { id: 99, url: 'https://api.github.com/users/acme', avatar_url: 'https://junk.invalid/avatar' }
+      };
+      const result = skin(data, { url: 'https://api.github.com/repos/acme/demo', smallThreshold: 0 });
+      expect(result.skin).toContain('stars: 42');
+      expect(result.skin).not.toContain('junk.');
+      expect(result.skin).not.toContain('owner.');
+      expect(result.skin).not.toContain('junk.invalid');
+      expect(result.metrics.skin_est_tokens).toBeLessThan(result.metrics.raw_est_tokens);
+    });
+
+    it('keeps generic defaults as a fallback when no explicit signals exist', () => {
+      const result = recursive_prune({ id: 7, url: 'https://example.com', secret: 'drop-me' });
+      expect(result).toEqual({ id: 7, url: 'https://example.com' });
     });
 
     it('safety valve returns raw when skin is larger', () => {

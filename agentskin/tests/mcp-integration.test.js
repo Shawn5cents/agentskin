@@ -109,6 +109,7 @@ describe('MCP Security Tests', () => {
 
         setTimeout(() => {
           const response = responseData.join('');
+          expect(response).toContain('compress');
           expect(response).toContain('fetch_optimized_data');
           expect(response).toContain('skin_reasoning');
           done();
