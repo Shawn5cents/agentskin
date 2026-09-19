@@ -1,5 +1,5 @@
 import { skinReasoning } from './reasoning-skin.js';
-import { estimateTokens, estimateTokensFast, stripAnsi, isBelowSkinThreshold, countTextChars } from './text-utils.js';
+import { estimateTokens, estimateTokensFast, stripAnsi, isBelowSkinThreshold } from './text-utils.js';
 import { findMatchingRule } from './api-skin-rules.js';
 
 /**
@@ -36,7 +36,12 @@ const DEFAULT_SIGNAL_KEYS = [
  * @returns {*} Pruned data, or null if no signals matched
  */
 export const recursive_prune = (data, requiredKeys = [], aliases = {}, applyReasoningSkin = false) => {
-    const signalKeys = [...new Set([...DEFAULT_SIGNAL_KEYS, ...requiredKeys])];
+    // Explicit signals (including URL-rule signals) are authoritative. Generic
+    // defaults are only a fallback when the caller supplied no signals at all.
+    // This prevents unrelated nested `id`, `name`, and `url` fields from leaking
+    // into rule-driven skins merely because those keys are common defaults.
+    const explicitSignals = Array.isArray(requiredKeys) && requiredKeys.length > 0;
+    const signalKeys = [...new Set((explicitSignals ? requiredKeys : DEFAULT_SIGNAL_KEYS).map(key => key.toLowerCase()))];
     
     if (Array.isArray(data)) {
         return data.map(item => recursive_prune(item, requiredKeys, aliases, applyReasoningSkin)).filter(Boolean);

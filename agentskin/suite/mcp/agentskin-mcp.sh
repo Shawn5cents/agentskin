@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# AgentSkin MCP launcher (bundled in AgentSkin Suite npm package).
+# AgentSkin MCP launcher (8 tools, bundled in npm package).
 # Resolves backend/mcp.js relative to this script location.
 set -euo pipefail
 

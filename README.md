@@ -1,82 +1,78 @@
-# AgentSkin Suite
+# AgentSkin
 
-[![npm version](https://img.shields.io/npm/v/agentskin.svg)](https://npmjs.org/package/agentskin)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![npm version](https://img.shields.io/npm/v/agentskin.svg)](https://www.npmjs.com/package/agentskin)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](agentskin/LICENSE)
 
-**The complete token optimization stack for AI coding agents.** Three complementary tools that eliminate the "Token Tax" across the full agent cycle — API responses, CLI output, and agent replies.
+**Context middleware for AI agents.** AgentSkin removes low-value API, JSON, and terminal noise before it enters model context.
 
-## The Suite
+## What it does
 
-| Component | What It Does | Savings | Creator |
-|-----------|-------------|---------|---------|
-| **AgentSkin SSS** | Semantic JSON pruning via MCP | 60–88% on rich APIs | Shawn Nichols Sr. |
-| **Tokenjuice CLI** | Rule-driven terminal output compaction | Up to 99.97% on large outputs | [Vincent Koc](https://github.com/vincentkoc/tokenjuice) (MIT) |
-| **Caveman** | Output compression via prompt engineering | 65% output reduction | [Julius Brussee](https://github.com/JuliusBrussee/caveman) |
+AgentSkin has three primary workflows:
 
-## Quick Start
+- `compress` — one front door that auto-detects JSON, CLI output, or plain text.
+- `fetch_optimized_data` — fetches a public URL and applies URL-specific pruning rules when available.
+- `reduce` — compacts terminal output using Tokenjuice's rule-driven reducers.
+
+Five advanced tools remain for compatibility and diagnostics: `apply_json_semantic`, `classify_url`, `strip_ansi`, `estimate_tokens`, and `skin_reasoning`.
+
+## Quick start
 
 ```bash
-# 1. AgentSkin MCP server
 npx -y agentskin@latest
-
-# 2. Bash hook (transparent CLI optimization)
-source .agents/hooks/bash-optimizer.sh
-
-# 3. Caveman — already active via AGENTS.md
 ```
 
-## By the Numbers
+MCP config:
 
-| Metric | Value |
-|--------|-------|
-| GitHub API savings | **88.3%** (1,544 → 180 tokens) |
-| `ls -laR` directory listing | **99.97%** (3.19M → 897 chars) |
-| Caveman output compression | **65%** average |
-| Caveman memory compression | **46%** smaller |
-| MCP tools | **7** across unified server |
-| Combined test suite | **4,695 tests**, 274 files — 100% passing |
-| Pipeline throughput | **3,030 fixtures/sec** (0.33ms avg) |
-| Net session savings | **17.1%** (zero overhead via bash hook) |
+```json
+{
+  "mcpServers": {
+    "agentskin": {
+      "command": "npx",
+      "args": ["-y", "agentskin@latest"]
+    }
+  }
+}
+```
 
-## Tools
+## Design rule
 
-### AgentSkin Suite MCP (7 tools, unified)
-`fetch_optimized_data` · `skin_reasoning` · `classify_url` · `strip_ansi` · `reduce` · `estimate_tokens` · `apply_json_semantic`
+**Fidelity first, compression second.** Explicit signals and URL rules are authoritative. Generic keys such as `id`, `name`, and `url` are only fallback signals when no explicit rule exists.
 
-### Caveman Skills (6 skills)
-`caveman` · `caveman-commit` · `caveman-review` · `caveman-stats` · `caveman-compress` · `cavecrew`
+A reduction is useful only when the information required by the task survives it.
 
-## Documentation
+## Current verification
 
-| Doc | Description |
-|-----|-------------|
-| [OVERVIEW.md](OVERVIEW.md) | Project overview and quick start |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Technical architecture and data flow |
-| [STATUS.md](STATUS.md) | Phase completion and test coverage |
-| [BENCHMARK.md](BENCHMARK.md) | Live API compression benchmarks |
-| [USAGE.md](USAGE.md) | Full usage guide — hook, caveman, MCP |
-| [THREE-LAYER-RULES.md](THREE-LAYER-RULES.md) | Rule config override semantics |
-| [AUTHORS.md](AUTHORS.md) | Credits and component details |
+The release gate runs the AgentSkin-owned test suite, including MCP startup/security and live HTTP integration tests. Run it with:
 
-## Security
+```bash
+cd agentskin
+npm ci
+npm test
+```
 
-- **SSRF Protection:** Blocks private IPv4/IPv6 ranges and cloud metadata services
-- **Rate Limiting:** 60 req/min sliding window
-- **Input Validation:** Zod schemas for all tool inputs
-- **Processing Timeout:** 30-second limit
+Benchmarks are workload-specific. The test suite prints measured reductions for its fixtures instead of claiming one universal savings percentage.
+
+## Runtime
+
+- Node.js MCP server over stdio
+- Tokenjuice is a normal npm dependency for CLI reduction
+- URL-specific semantic pruning rules for structured APIs
+- SSRF checks for fetches, response-size limits, rate limiting, Zod validation, and processing timeouts
+
+## Development
+
+The npm package lives in `agentskin/` inside this repository.
+
+```bash
+cd agentskin
+npm ci
+npm test
+npm run lint
+npm pack --dry-run
+```
 
 ## Credits
 
-| Creator | Contribution |
-|---------|-------------|
-| **Shawn Nichols Sr.** (Nichols Transco LLC) | AgentSkin SSS protocol, MCP server, Suite integration |
-| **Vincent Koc** | Tokenjuice — [MIT License](https://github.com/vincentkoc/tokenjuice) |
-| **Julius Brussee** | Caveman — [github.com/JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) |
+AgentSkin semantic pruning and MCP integration: Shawn Nichols Sr. / Nichols Transco LLC.
 
-## Website
-
-[agentskin.dev](https://agentskin.dev) — Protocol specification, examples, FAQ, and whitepaper.
-
----
-
-*© 2026 Nichols Transco LLC.*
+CLI reduction uses [Tokenjuice](https://github.com/vincentkoc/tokenjuice) by Vincent Koc under its MIT license.

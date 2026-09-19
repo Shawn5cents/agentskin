@@ -1,17 +1,14 @@
 {
-  "description": "Unified MCP server for AgentSkin Suite — 7 tools covering API pruning, CLI reduction, token estimation, and text denoising. Compatible with any MCP-aware agent (Claude Code, Cursor, Copilot Chat, Continue, Cline, etc.). Caveman-shrink variant wraps the server to compress tool descriptions, saving additional context tokens.",
+  "description": "AgentSkin context middleware for AI agents. Three primary workflows: compress, fetch, and reduce; compatibility tools remain available.",
   "mcpServers": {
-    "agentskin-suite": {
+    "agentskin": {
       "command": "npx",
       "args": ["-y", "agentskin@latest"],
       "env": {},
-      "description": "AgentSkin Suite v5.0.0 — unified 7-tool MCP server: fetch_optimized_data (URL→skin, 88% savings), skin_reasoning (text denoising, 14-29%), classify_url (11 API rules), strip_ansi, reduce (CLI pipeline, 99.97%), estimate_tokens, apply_json_semantic (JSON pruning)."
-    },
-
-  "rateLimits": {
-    "agentskin-suite": "60 requests per 60-second sliding window (server-enforced)"
+      "description": "AgentSkin 5.1 MCP server"
+    }
   },
-  "buildInstructions": {
-    "agentskin-suite": "cd agentskin && npm install"
+  "rateLimits": {
+    "agentskin": "60 requests per 60-second sliding window"
   }
 }

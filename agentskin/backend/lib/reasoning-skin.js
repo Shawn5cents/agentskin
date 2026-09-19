@@ -4,7 +4,7 @@
  * Enhanced with grapheme-aware metrics from Tokenjuice patterns.
  */
 
-import { countTextChars, estimateTokens, estimateTokensFast } from './text-utils.js';
+import { estimateTokens } from './text-utils.js';
 
 // --- Pattern Libraries ---
 

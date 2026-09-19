@@ -1,32 +1,32 @@
-# AgentSkin Suite
+# AgentSkin
 
-[![npm version](https://img.shields.io/npm/v/agentskin.svg)](https://npmjs.org/package/agentskin)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![npm version](https://img.shields.io/npm/v/agentskin.svg)](https://www.npmjs.com/package/agentskin)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**Stop paying for noise.** AgentSkin Suite cuts your AI API costs by 60-80% by stripping token waste from API responses, terminal output, and agent replies — automatically.
+**Context middleware for AI agents.** AgentSkin removes low-value API, JSON, and terminal noise before it enters model context.
 
-## What You Get
+## What it does
 
-One MCP server. Seven tools. Three layers of savings.
+AgentSkin has three primary workflows:
 
-| Layer | Cuts | How |
-|-------|------|-----|
-| **API responses** | 60–88% | Strips junk fields from JSON before your AI sees them |
-| **Terminal output** | Up to 99.97% | Compacts CLI noise (build logs, git diffs, lint spam) |
-| **Agent replies** | 65% | Makes your AI talk like a caveman — same info, fewer words |
+- `compress` — one front door that auto-detects JSON, CLI output, or plain text.
+- `fetch_optimized_data` — fetches a public URL and applies URL-specific pruning rules when available.
+- `reduce` — compacts terminal output using Tokenjuice's rule-driven reducers.
 
-## 30-Second Install
+Five advanced tools remain for compatibility and diagnostics: `apply_json_semantic`, `classify_url`, `strip_ansi`, `estimate_tokens`, and `skin_reasoning`.
+
+## Quick start
 
 ```bash
 npx -y agentskin@latest
 ```
 
-Then add to your MCP config:
+MCP config:
 
 ```json
 {
   "mcpServers": {
-    "agentskin-suite": {
+    "agentskin": {
       "command": "npx",
       "args": ["-y", "agentskin@latest"]
     }
@@ -34,57 +34,43 @@ Then add to your MCP config:
 }
 ```
 
-That's it. Restart your AI tool and you have all 7 tools.
+## Design rule
 
-## What It Actually Does
+**Fidelity first, compression second.** Explicit signals and URL rules are authoritative. Generic keys such as `id`, `name`, and `url` are only fallback signals when no explicit rule exists.
 
-**Before:** Your AI fetches `https://api.github.com/repos/vercel/next.js` and gets 1,544 tokens of JSON — mostly URLs, timestamps, boolean flags you don't need.
+A reduction is useful only when the information required by the task survives it.
 
-**After:** 180 tokens. Just the fields that matter: name, description, stars, language, topics, URL.
+## Current verification
 
-Same answer quality. 88% cheaper API calls.
+The release gate runs the AgentSkin-owned test suite, including MCP startup/security and live HTTP integration tests. Run it with:
 
-## The 7 Tools
+```bash
+npm ci
+npm test
+```
 
-| Tool | Use it when... |
-|------|---------------|
-| `fetch_optimized_data` | You need data from any API or webpage |
-| `skin_reasoning` | Text is full of hedging and filler words |
-| `classify_url` | You want to know which rules will apply to a URL |
-| `strip_ansi` | Terminal output has color codes in it |
-| `reduce` | CLI output is massive (build logs, diffs, listings) |
-| `estimate_tokens` | You need to know how many tokens something costs |
-| `apply_json_semantic` | You have raw JSON you want to prune |
+Benchmarks are workload-specific. The test suite prints measured reductions for its fixtures instead of claiming one universal savings percentage.
 
-## Supported AI Tools
+## Runtime
 
-Works with anything that supports MCP: Claude Desktop, Claude Code, Cursor, Windsurf, Cline, Codex, Copilot, Kilo Code, OpenCode, and more.
+- Node.js MCP server over stdio
+- Tokenjuice is a normal npm dependency for CLI reduction
+- URL-specific semantic pruning rules for structured APIs
+- SSRF checks for fetches, response-size limits, rate limiting, Zod validation, and processing timeouts
 
-Also includes 6 Caveman skills that work across 30+ agents — compressed output, commits, code reviews, file compression, and subagent delegation.
+## Development
 
-## Numbers
+This directory is the npm package root.
 
-- GitHub API: **88.3% savings** (1,544 → 180 tokens)
-- Large directory listing: **99.97% savings** (3.2M → 897 chars)
-- Agent output: **65% smaller**
-- Test suite: **4,695 tests, 274 files, 100% passing**
-
-## Docs
-
-- [Full Usage Guide](./USAGE.md) — step-by-step setup for every tool
-- [FAQ](./docs/FAQ.md) — common questions with real benchmarks
-- [Website](https://agentskin.dev) — live docs, examples, whitepaper
-
-## Security
-
-Everything runs locally. No data leaves your machine. SSRF protection, rate limiting, input validation, and URL sanitization built in.
+```bash
+npm ci
+npm test
+npm run lint
+npm pack --dry-run
+```
 
 ## Credits
 
-| Creator | Contribution |
-|---------|-------------|
-| **Shawn Nichols Sr.** (Nichols Transco LLC) | AgentSkin SSS protocol, MCP server, Suite integration |
-| **Vincent Koc** | Tokenjuice — [MIT License](https://github.com/vincentkoc/tokenjuice) |
-| **Julius Brussee** | Caveman — [github.com/JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) |
+AgentSkin semantic pruning and MCP integration: Shawn Nichols Sr. / Nichols Transco LLC.
 
-*Maintained by Nichols Transco LLC.*
+CLI reduction uses [Tokenjuice](https://github.com/vincentkoc/tokenjuice) by Vincent Koc under its MIT license.

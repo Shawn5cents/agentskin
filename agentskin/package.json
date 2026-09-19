@@ -1,25 +1,24 @@
 {
   "name": "agentskin",
-  "version": "5.0.0",
-  "description": "AgentSkin Suite: Three-layer token optimization stack — AgentSkin SSS (JSON pruning) + Tokenjuice (CLI compaction) + Caveman (output compression). 88%+ API savings, 99.8% CLI savings, 4,695 tests.",
+  "version": "5.1.0",
+  "description": "Context middleware for AI agents: prune API and JSON responses and compact CLI output before it enters model context.",
   "type": "module",
   "main": "backend/mcp.js",
   "bin": {
     "agentskin": "backend/mcp.js"
   },
   "files": [
-    "backend/",
-    "!backend/.env",
+    "backend/mcp.js",
+    "backend/lib/",
     "suite/",
     "README.md",
+    "USAGE.md",
     "LICENSE",
-    "docs/",
-    "MANIFESTO.md",
     "PROJECT_STATE.md"
   ],
   "scripts": {
     "start": "node backend/mcp.js",
-    "test": "vitest run",
+    "test": "vitest run tests",
     "test:watch": "vitest",
     "lint": "eslint backend/mcp.js backend/lib/ benchmarks/run.js tests/ --ext .js",
     "lint:fix": "eslint backend/mcp.js backend/lib/ benchmarks/run.js tests/ --fix --ext .js",
@@ -28,10 +27,9 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.1",
-    "axios": "^1.7.9",
+    "axios": "^1.20.0",
     "cheerio": "^1.0.0",
-    "dotenv": "^17.4.2",
-    "esbuild": "^0.28.1",
+    "tokenjuice": "^0.8.5",
     "zod": "^3.24.2"
   },
   "keywords": [

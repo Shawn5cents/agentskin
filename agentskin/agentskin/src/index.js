@@ -1,7 +1,7 @@
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
-import { recursive_prune, to_markdown_skin } from '../backend/lib/skin-engine.js';
-import { skinReasoning } from '../backend/lib/reasoning-skin.js';
+import { recursive_prune, to_markdown_skin } from '../../backend/lib/skin-engine.js';
+import { skinReasoning } from '../../backend/lib/reasoning-skin.js';
 
 /**
  * AgentSkin: Semantic Shorthand Standard (SSS) Gateway
@@ -215,7 +215,7 @@ const LAYOUT = (content, activeTab = 'introduction') => `
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgentSkin Suite | Token Optimization Stack</title>
+    <title>AgentSkin | Context Middleware for AI Agents</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -224,21 +224,21 @@ const LAYOUT = (content, activeTab = 'introduction') => `
 </head>
 <body>
     <div class="top-ticker">
-        <div><span class="status-dot"></span> SUITE: v5.0.0 ACTIVE</div>
-        <div>3 COMPONENTS / 7 MCP TOOLS</div>
+        <div><span class="status-dot"></span> AGENTSKIN: v5.1.0</div>
+        <div>CONTEXT MIDDLEWARE / 8 MCP TOOLS</div>
         <div><a href="/autonomy-ratings">AUTONOMY RATINGS</a><a href="/sitemap.xml">SITEMAP</a></div>
     </div>
 
     <div class="container">
         <header>
-            <div class="metadata">AgentSkin Suite / 2026</div>
-            <h1>AgentSkin Suite</h1>
-            <div class="metadata">Token Optimization Stack: SSS + Tokenjuice + Caveman</div>
+            <div class="metadata">AgentSkin / 2026</div>
+            <h1>AgentSkin</h1>
+            <div class="metadata">Context Middleware for AI Agents</div>
         </header>
 
         <nav class="nav-tabs">
             <a href="/" class="nav-tab ${activeTab === 'introduction' ? 'active' : ''}">Introduction</a>
-            <a href="/suite" class="nav-tab ${activeTab === 'suite' ? 'active' : ''}">Suite</a>
+            <a href="/suite" class="nav-tab ${activeTab === 'suite' ? 'active' : ''}">Architecture</a>
             <a href="/specification" class="nav-tab ${activeTab === 'specification' ? 'active' : ''}">Specification</a>
             <a href="/examples" class="nav-tab ${activeTab === 'examples' ? 'active' : ''}">Examples</a>
             <a href="/bash-hook" class="nav-tab ${activeTab === 'bash-hook' ? 'active' : ''}">Bash Hook</a>
@@ -269,17 +269,17 @@ const LAYOUT = (content, activeTab = 'introduction') => `
         <footer>
             &copy; 2026 Nichols Transco LLC. Open-Source Protocol.
             <div style="margin-top:10px">
-                <a href="/" style="color:inherit; text-decoration:none">Introduction</a> | 
-                <a href="/suite" style="color:inherit; text-decoration:none">Suite</a> | 
-                <a href="/specification" style="color:inherit; text-decoration:none">Specification</a> | 
-                <a href="/examples" style="color:inherit; text-decoration:none">Examples</a> | 
-                <a href="/bash-hook" style="color:inherit; text-decoration:none">Bash Hook</a> | 
-                <a href="/faq" style="color:inherit; text-decoration:none">FAQ</a> | 
+                <a href="/" style="color:inherit; text-decoration:none">Introduction</a> |
+                <a href="/suite" style="color:inherit; text-decoration:none">Architecture</a> |
+                <a href="/specification" style="color:inherit; text-decoration:none">Specification</a> |
+                <a href="/examples" style="color:inherit; text-decoration:none">Examples</a> |
+                <a href="/bash-hook" style="color:inherit; text-decoration:none">Bash Hook</a> |
+                <a href="/faq" style="color:inherit; text-decoration:none">FAQ</a> |
                 <a href="/whitepaper" style="color:inherit; text-decoration:none">Whitepaper</a> |
                 <a href="/autonomy-ratings" style="color:inherit; text-decoration:none">Autonomy Ratings</a>
             </div>
             <div style="margin-top:10px; font-size: 0.6rem;">
-                Built with <a href="https://github.com/vincentkoc/tokenjuice" style="color:inherit">Tokenjuice</a> by Vincent Koc & <a href="https://github.com/JuliusBrussee/caveman" style="color:inherit">Caveman</a> by Julius Brussee
+                CLI reduction uses <a href="https://github.com/vincentkoc/tokenjuice" style="color:inherit">Tokenjuice</a> by Vincent Koc (MIT)
             </div>
         </footer>
     </div>
@@ -292,143 +292,21 @@ const LAYOUT = (content, activeTab = 'introduction') => `
 const INTRO_CONTENT = `
 <section>
     <div class="thesis-item">
-        <div class="thesis-number">01 / QUICK START</div>
+        <div class="thesis-number">01 / PURPOSE</div>
         <div class="thesis-content">
-            <h2>Get Started in 30 Seconds</h2>
-            <p>Run the unified MCP server with a single command:</p>
+            <h2>Less tool noise. More task-relevant context.</h2>
+            <p>AgentSkin sits between APIs, structured data, terminal output, and an AI agent. It preserves selected facts and removes low-value context before the model sees it.</p>
+            <blockquote>Fidelity first. Compression second.</blockquote>
+            <h3>Install</h3>
             <pre>npx -y agentskin@latest</pre>
-            <p>Then add to your agent's MCP config:</p>
-            <pre>{
-  "mcpServers": {
-    "agentskin-suite": {
-      "command": "npx",
-      "args": ["-y", "agentskin@latest"]
-    }
-  }
-}</pre>
-            <p>That's it. You now have 7 tools: API pruning, CLI reduction, token estimation, and more.</p>
         </div>
     </div>
     <div class="thesis-item">
-        <div class="thesis-number">02 / OVERVIEW</div>
+        <div class="thesis-number">02 / SURFACE</div>
         <div class="thesis-content">
-            <h2>The Complete Token Optimization Stack</h2>
-            <p>AgentSkin Suite combines three complementary tools that eliminate token waste across the full AI agent cycle:</p>
-            <ul style="margin: 20px 0; padding-left: 20px;">
-                <li><strong>AgentSkin SSS</strong> — Semantic JSON pruning via MCP. Strips 60-88% of API response noise.</li>
-                <li><strong>Tokenjuice</strong> — Rule-driven CLI compaction + powers 3 MCP tools (reduce, estimate_tokens, apply_json_semantic). Up to 99.97% on large outputs. By <a href="https://github.com/vincentkoc/tokenjuice">Vincent Koc</a> (MIT License).</li>
-                <li><strong>Caveman</strong> — Output compression via prompt engineering. 65% output token reduction.</li>
-            </ul>
-            <p>Combined, they reclaim <strong>60-80%</strong> of context that was previously wasted on noise.</p>
-        </div>
-    </div>
-    <div class="thesis-item">
-        <div class="thesis-number">03 / MCP INTEGRATION</div>
-        <div class="thesis-content">
-            <h2>One Unified MCP Server, 7 Tools</h2>
-            <p>The Suite exposes <strong>7 tools</strong> through a single MCP server — AgentSkin's semantic pruning merged with Tokenjuice's reduction engine (by <a href="https://github.com/vincentkoc/tokenjuice">Vincent Koc</a>, MIT License):</p>
-            <ul style="margin: 10px 0; padding-left: 20px;">
-                <li><code>fetch_optimized_data</code> — Fetch URL, prune JSON, return Markdown skin (88% savings)</li>
-                <li><code>skin_reasoning</code> — Strip linguistic noise from text (14-29% reduction)</li>
-                <li><code>classify_url</code> — Match URL against 11 built-in API rules</li>
-                <li><code>strip_ansi</code> — Strip 5 patterns of ANSI escape codes</li>
-                <li><code>reduce</code> — Tokenjuice reduction pipeline (up to 99.97%)</li>
-                <li><code>estimate_tokens</code> — Grapheme-aware token estimation</li>
-                <li><code>apply_json_semantic</code> — Prune raw JSON with signal keys</li>
-            </ul>
-            <pre>echo "source $(pwd)/.agents/hooks/bash-optimizer.sh" >> ~/.bashrc && source ~/.bashrc</pre>
-            <p>The bash hook intercepts noisy CLI commands and pipes output through Tokenjuice before the agent sees it — zero overhead, zero agent awareness.</p>
-        </div>
-    </div>
-    <div class="thesis-item">
-        <div class="thesis-number">04 / SECURITY</div>
-        <div class="thesis-content">
-            <h2>Enterprise-Grade Protection</h2>
-            <p>The reference implementation includes robust security measures to protect against common attack vectors in AI agent pipelines.</p>
-            
-            <h3>SSRF Protection</h3>
-            <p>Blocks requests to private network ranges including IPv4 (127.x.x.x, 10.x.x.x, 172.16-31.x.x, 192.168.x.x, 169.254.x.x) and IPv6 variants (::1, ::ffff:, fe80:). Zone IDs are stripped and validated before processing.</p>
-            
-            <h3>Cloud Metadata Blocking</h3>
-            <p>Prevents access to cloud provider metadata services (metadata.google.internal, metadata.azure.com, kubernetes.default.svc) that could expose cloud credentials or configuration.</p>
-
-            <h3>Rate Limiting</h3>
-            <p>60 requests/minute sliding window per client to prevent abuse and ensure fair resource allocation in multi-agent environments.</p>
-            
-            <h3>Input Validation</h3>
-            <p>All tool inputs are validated with Zod schema validation. Type coercion ensures signals, aliases, and apply_reasoning parameters are properly typed before processing.</p>
-            
-            <h3>URL Sanitization</h3>
-            <p>HTML-extracted URLs are sanitized to block dangerous schemes (javascript:, data:) that could enable XSS attacks through the MCP tool interface.</p>
-            
-            <h3>Resource Limits</h3>
-            <p>30-second processing timeout prevents resource exhaustion from maliciously large payloads.</p>
-            
-            <h3>Open Source Auditing</h3>
-            <p>The security implementation is fully open-source and includes <strong>4,695 tests</strong> across 274 files for continuous validation.</p>
-        </div>
-    </div>
-    <div class="thesis-item">
-        <div class="thesis-number">05 / BENCHMARKS</div>
-        <div class="thesis-content">
-            <h2>Performance Metrics</h2>
-            <p>The reference implementation delivers verifiable, deterministic compression results.</p>
-            
-            <h3>Token Reduction</h3>
-            <ul style="margin: 15px 0; padding-left: 20px;">
-                <li>GitHub API: <strong>88.3%</strong> (1,544 → 180 tokens)</li>
-                <li>CLI <code>ls -laR</code>: <strong>99.97%</strong> (3.19M → 897 chars)</li>
-                <li>Caveman output compression: <strong>65%</strong> average</li>
-                <li>Caveman memory file compression: <strong>46%</strong> smaller</li>
-                <li>Combined test suite: <strong>4,695 tests</strong>, 274 files — 100% passing</li>
-                <li>Pipeline throughput: <strong>3,030 fixtures/sec</strong> (0.33ms avg)</li>
-            </ul>
-            
-            <h3>Processing Time</h3>
-            <p>Sub-100ms transformation latency for payloads under 100KB. 30-second maximum timeout for large payloads.</p>
-        </div>
-    </div>
-    <div class="thesis-item">
-        <div class="thesis-number">06 / WHAT'S NEW IN v5.0</div>
-        <div class="thesis-content">
-            <h2>Unified 7-Tool MCP Server</h2>
-            <p>v5.0 merges AgentSkin's semantic pruning with Tokenjuice's reduction pipeline into a single MCP server:</p>
-            <ul style="margin: 15px 0; padding-left: 20px;">
-                <li><strong>Unified server</strong> — One <code>npx agentskin@latest</code> instead of two separate servers</li>
-                <li><strong>3 new tools</strong> — <code>reduce</code>, <code>estimate_tokens</code>, <code>apply_json_semantic</code> from Tokenjuice</li>
-                <li><strong>Tokenjuice integration</strong> — 136 rules, 143 fixtures, 3,030 fixtures/sec pipeline</li>
-                <li><strong>Rate limit unified</strong> — 60 req/min sliding window (was 30/60 split)</li>
-                <li><strong>Backward compatible</strong> — All existing AgentSkin tools unchanged</li>
-            </ul>
-            <p>Special thanks to <strong>Vincent Koc</strong> for the MIT-licensed Tokenjuice engine that powers the reduction pipeline.</p>
-        </div>
-    </div>
-    <div class="thesis-item">
-        <div class="thesis-number">07 / CREDITS</div>
-        <div class="thesis-content">
-            <h2>Built By</h2>
-            <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
-                <thead>
-                    <tr style="border-bottom: 2px solid var(--border);">
-                        <th style="text-align: left; padding: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem;">Creator</th>
-                        <th style="text-align: left; padding: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem;">Contribution</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px;"><strong>Shawn Nichols Sr.</strong><br><span style="color: var(--muted); font-size: 0.9rem;">Nichols Transco LLC</span></td>
-                        <td style="padding: 10px;">AgentSkin SSS protocol, MCP server, Suite integration</td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px;"><strong>Vincent Koc</strong><br><a href="https://github.com/vincentkoc/tokenjuice" style="color: var(--muted); font-size: 0.9rem;">github.com/vincentkoc/tokenjuice</a></td>
-                        <td style="padding: 10px;">Tokenjuice — MIT-licensed engine: powers reduce, estimate_tokens, and apply_json_semantic in unified MCP server</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px;"><strong>Julius Brussee</strong><br><a href="https://github.com/JuliusBrussee/caveman" style="color: var(--muted); font-size: 0.9rem;">github.com/JuliusBrussee/caveman</a></td>
-                        <td style="padding: 10px;">Caveman — Output compression via prompt engineering</td>
-                    </tr>
-                </tbody>
-            </table>
+            <h2>Three primary workflows</h2>
+            <p><code>compress</code> compacts existing context, <code>fetch_optimized_data</code> fetches and prunes public resources, and <code>reduce</code> compacts command output.</p>
+            <p>Compatibility tools remain available for direct JSON pruning, URL classification, ANSI stripping, token estimation, and optional prose denoising.</p>
         </div>
     </div>
 </section>
@@ -437,109 +315,17 @@ const INTRO_CONTENT = `
 const SPEC_CONTENT = `
 <section>
     <div class="thesis-item">
-        <div class="thesis-number">01 / SIGNAL MAPPING</div>
+        <div class="thesis-number">RULE / 01</div>
         <div class="thesis-content">
-            <h2>Targeted Pruning</h2>
-            <p>The protocol requires agents to explicitly declare the subset of keys necessary for reasoning. The engine recursively traverses the data object, retaining only the declared signals and discarding all ambient structural metadata.</p>
-            <pre>
-// Protocol Request Schema
-{
-  "url": "string",
-  "signals": ["array of strings"],
-  "aliases": {"object mapping original keys to standardized keys"},
-  "auto_classify": true
-}
-            </pre>
+            <h2>Explicit signals are authoritative</h2>
+            <p>When a caller or URL rule supplies fields to preserve, AgentSkin does not merge generic fallback keys such as <code>id</code>, <code>name</code>, or <code>url</code>. This prevents unrelated nested objects from leaking into compact context.</p>
         </div>
     </div>
-
     <div class="thesis-item">
-        <div class="thesis-number">02 / SEMANTIC PIVOT</div>
+        <div class="thesis-number">RULE / 02</div>
         <div class="thesis-content">
-            <h2>Namespace Normalization</h2>
-            <p>Fragmented API schemas introduce linguistic friction into the context window. The protocol utilizes an alias dictionary to map inconsistent or deeply nested keys (e.g., <code>temperature_2m_max</code>) into normalized, domain-specific terminology (e.g., <code>temp</code>).</p>
-        </div>
-    </div>
-
-    <div class="thesis-item">
-        <div class="thesis-number">03 / FLATTENING</div>
-        <div class="thesis-content">
-            <h2>Hierarchical Markdown</h2>
-            <p>Once pruned and aliased, the resulting object is flattened into a deterministic, single-level Markdown syntax optimized for transformer-based tokenization. JSON syntax (brackets, quotes) is eradicated.</p>
-            <pre>
-parent.child.key: value
-parent.child.key: value
-            </pre>
-        </div>
-    </div>
-
-    <div class="thesis-item">
-        <div class="thesis-number">04 / AUTO-CLASSIFICATION</div>
-        <div class="thesis-content">
-            <h2>11 Built-in URL Rule Families</h2>
-            <p>The engine auto-detects URLs against built-in rules:</p>
-            <ul style="margin: 15px 0; padding-left: 20px;">
-                <li>GitHub (repos/users/issues/pulls/search)</li>
-                <li>npm (registry)</li>
-                <li>Weather (Open-Meteo)</li>
-                <li>HackerNews (items)</li>
-                <li>Reddit (posts)</li>
-                <li>JSONPlaceholder (posts/users)</li>
-            </ul>
-            <p>Custom rules can be added via the 3-layer config (builtin → user → project).</p>
-        </div>
-    </div>
-
-    <div class="thesis-item">
-        <div class="thesis-number">05 / TOOL SCHEMAS</div>
-        <div class="thesis-content">
-            <h2>All 7 MCP Tools</h2>
-            <h3>fetch_optimized_data</h3>
-            <pre>{
-  "url": "string (required)",
-  "signals": ["array of strings"],
-  "aliases": {"object mapping original keys to standardized keys"},
-  "apply_reasoning": "boolean (default: false)",
-  "auto_classify": "boolean (default: true)"
-}</pre>
-
-            <h3>skin_reasoning</h3>
-            <pre>{
-  "text": "string (required)"
-}</pre>
-
-            <h3>classify_url</h3>
-            <pre>{
-  "url": "string (required)"
-}</pre>
-
-            <h3>strip_ansi</h3>
-            <pre>{
-  "text": "string (required)"
-}</pre>
-
-            <h3>reduce</h3>
-            <pre>{
-  "command": "string (required)",
-  "output": "string (required)",
-  "cwd": "string (optional)",
-  "exitCode": "number (optional)"
-}</pre>
-
-            <h3>estimate_tokens</h3>
-            <pre>{
-  "text": "string (required)"
-}</pre>
-
-            <h3>apply_json_semantic</h3>
-            <pre>{
-  "json": "string (required)",
-  "url": "string (optional)",
-  "signals": ["array of strings"],
-  "aliases": {"object mapping original keys to standardized keys"},
-  "stripAnsiCodes": "boolean (default: true)",
-  "smallThreshold": "number (default: 300)"
-}</pre>
+            <h2>Fallbacks are conservative</h2>
+            <p>Generic signal keys are used only when no explicit rule exists. Small or already-compact inputs may pass through unchanged.</p>
         </div>
     </div>
 </section>
@@ -548,126 +334,19 @@ parent.child.key: value
 const EXAMPLES_CONTENT = `
 <section>
     <div class="thesis-item">
-        <div class="thesis-number">01 / WEATHER API</div>
+        <div class="thesis-number">JSON</div>
         <div class="thesis-content">
-            <h2>Standard Pruning Example</h2>
-            <p>A typical implementation of the protocol standardizing a verbose meteorological API payload.</p>
-
-            <h3>The MCP Request</h3>
-            <pre>
-{
-  "url": "https://api.weather.gov/gridpoints/TOP/31,80/forecast",
-  "signals": ["temperature", "windspeed", "shortforecast"],
-  "aliases": {
-    "temperature": "temp",
-    "shortforecast": "forecast"
-  }
-}
-            </pre>
-
-            <h3>The Resulting Skin</h3>
-            <pre>
-periods[0].temp: 45
-periods[0].windspeed: 10 mph
-periods[0].forecast: Mostly Clear
-periods[1].temp: 38
-periods[1].windspeed: 5 mph
-periods[1].forecast: Sunny
-            </pre>
+            <h2>Compact structured context</h2>
+            <pre>{ "input": "{...}", "url": "https://api.github.com/repos/acme/demo" }</pre>
+            <p>Use the <code>compress</code> MCP tool. In auto mode, parseable JSON is sent through the semantic pruning pipeline.</p>
         </div>
     </div>
-
     <div class="thesis-item">
-        <div class="thesis-number">02 / GITHUB API</div>
+        <div class="thesis-number">CLI</div>
         <div class="thesis-content">
-            <h2>88.3% Token Reduction</h2>
-            <p>GitHub API responses are rich with metadata — <code>node_id</code>, <code>owner.profile</code>, <code>permissions</code>, <code>topics</code>. AgentSkin strips to just the essentials.</p>
-
-            <h3>Before (1,544 tokens)</h3>
-            <pre style="color: #cc0000;">
-{
-  "id": 10270250,
-  "node_id": "MDEwOlJlcG9zaXRvcnk...",
-  "name": "next.js",
-  "full_name": "vercel/next.js",
-  "owner": {
-    "login": "vercel",
-    "id": 113386749,
-    "avatar_url": "https://...",
-    "gravatar_id": "",
-    "url": "https://api.github.com/users/vercel",
-    ...
-  },
-  "description": "The React Framework",
-  "stargazers_count": 127000,
-  "language": "JavaScript",
-  ...
-}
-            </pre>
-
-            <h3>After (180 tokens)</h3>
-            <pre style="color: #006600;">
-name: next.js
-repo: vercel/next.js
-description: The React Framework
-stars: 127000
-language: JavaScript
-forks: 26000
-open_issues: 2400
-license: MIT
-updated: 2026-07-09T12:00:00Z
-            </pre>
-        </div>
-    </div>
-
-    <div class="thesis-item">
-        <div class="thesis-number">03 / CLI OUTPUT</div>
-        <div class="thesis-content">
-            <h2>99.97% Reduction on Directory Listings</h2>
-            <p>The bash hook transparently compacts noisy CLI output.</p>
-
-            <h3>Before (3.19M chars)</h3>
-            <pre style="color: #cc0000;">
-$ ls -laR agentskin/backend/
-agentskin/backend/:
-total 551898
-drwxr-xr-x 1 user user      4096 Jul  9 12:00 .
-drwxr-xr-x 1 user user      4096 Jul  9 12:00 ..
--rw-r--r-- 1 user user      1234 Jul  9 12:00 mcp.js
-drwxr-xr-x 1 user user      4096 Jul  9 12:00 lib
-drwxr-xr-x 1 user user     65536 Jul  9 12:00 node_modules
-...
-(56,947 lines total)
-            </pre>
-
-            <h3>After (897 chars)</h3>
-            <pre style="color: #006600;">
-agentskin/backend/:
-total 551898
-mcp.js (1234 bytes)
-lib/ (4 files)
-node_modules/ (65536 bytes)
-...
-[9,185 lines omitted, sha256: abc123...]
-            </pre>
-        </div>
-    </div>
-
-    <div class="thesis-item">
-        <div class="thesis-number">04 / HTML SUPPORT</div>
-        <div class="thesis-content">
-            <h2>Web Page Extraction</h2>
-            <p>AgentSkin handles both APIs and web pages. When fetching HTML content, the engine parses semantic structure and converts to structured JSON before pruning.</p>
-            
-            <h3>Processing Pipeline</h3>
-            <pre>
-1. Fetch HTML content
-2. Parse with cheerio (HTML parser)
-3. Extract: title, h1/h2, paragraphs, links, meta
-4. Convert to structured JSON
-5. Prune with signals/aliases
-6. Output clean Markdown skin
-            </pre>
+            <h2>Compact terminal output</h2>
+            <pre>{ "input": "...terminal output...", "command": "git status" }</pre>
+            <p>Supplying <code>command</code> selects command-aware reduction through Tokenjuice.</p>
         </div>
     </div>
 </section>
@@ -676,69 +355,17 @@ node_modules/ (65536 bytes)
 const FAQ_CONTENT = `
 <section>
     <div class="thesis-item">
-        <div class="thesis-number">01 / INTEGRITY</div>
+        <div class="thesis-number">FAQ / 01</div>
         <div class="thesis-content">
-            <h2>How do I know this won't delete important data?</h2>
-            <p>Unlike LLM-based summarization, AgentSkin is <strong>Deterministic Code</strong>. It uses an explicit whitelist strategy. If a key is requested in the <code>signals</code> array, the recursive engine is physically incapable of omitting it. By utilizing <code>aliases</code>, you ensure that even inconsistent nomenclature is mapped correctly to your agent's internal schema. It is as safe as a SQL <code>SELECT</code> statement.</p>
+            <h2>Does AgentSkin promise one savings percentage?</h2>
+            <p>No. Reduction depends on payload shape, selected signals, and command type. Release tests report measured examples, but fidelity is the release criterion.</p>
         </div>
     </div>
-
     <div class="thesis-item">
-        <div class="thesis-number">02 / NECESSITY</div>
+        <div class="thesis-number">FAQ / 02</div>
         <div class="thesis-content">
-            <h2>Modern LLMs have 2M+ context windows. Why do I need this?</h2>
-            <p>A context window is a bucket; AgentSkin is a filter. Just because a model <em>can</em> read 2 million tokens doesn't mean it should. "Perceptual Drag" occurs when an LLM allocates attention heads to structural noise (JSON brackets, redundant IDs, ads). By pruning this noise, you free up the model's "IQ" to focus on reasoning. Users typically see a <strong>30-40% increase in reasoning accuracy</strong> on complex data sets.</p>
-        </div>
-    </div>
-
-    <div class="thesis-item">
-        <div class="thesis-number">03 / PERFORMANCE</div>
-        <div class="thesis-content">
-            <h2>What specific improvements will I see?</h2>
-            <ul style="margin: 15px 0; padding-left: 20px;">
-                <li>GitHub API: <strong>88.3%</strong> token reduction</li>
-                <li>CLI output (<code>ls -laR</code>): <strong>99.97%</strong> reduction</li>
-                <li>Agent replies (Caveman): <strong>65%</strong> output token reduction</li>
-                <li>Combined: <strong>60-80%</strong> of wasted context reclaimed</li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="thesis-item">
-        <div class="thesis-number">04 / SOVEREIGNTY</div>
-        <div class="thesis-content">
-            <h2>Why use the local reference server?</h2>
-            <p>Running <code>npx agentskin</code> ensures <strong>Self-Sovereign Perception</strong>. Your private session cookies, local network data, and API keys never leave your host machine. Perception and pruning happen locally, ensuring absolute privacy and zero-latency execution.</p>
-        </div>
-    </div>
-
-    <div class="thesis-item">
-        <div class="thesis-number">05 / SECURITY</div>
-        <div class="thesis-content">
-            <h2>What protections prevent malicious URLs?</h2>
-            <p>The reference implementation includes enterprise-grade security measures:</p>
-            <ul style="margin: 15px 0; padding-left: 20px;">
-                <li><strong>SSRF Protection:</strong> Blocks private network ranges (127.x, 10.x, 172.16-31.x, 192.168.x, 169.254.x) and IPv6 variants</li>
-                <li><strong>Cloud Metadata Blocking:</strong> Prevents access to GCP, Azure, and Kubernetes metadata services</li>
-                <li><strong>Rate Limiting:</strong> 60 requests/minute per client prevents abuse</li>
-                <li><strong>Input Validation:</strong> Zod schemas validate all tool inputs with type coercion</li>
-                <li><strong>URL Sanitization:</strong> javascript: and data: URL schemes blocked from HTML extraction</li>
-                <li><strong>Resource Limits:</strong> 30-second timeout prevents resource exhaustion</li>
-            </ul>
-            <p>All security features are open-source and include <strong>4,695 tests</strong> across 274 files for continuous validation.</p>
-        </div>
-    </div>
-
-    <div class="thesis-item">
-        <div class="thesis-number">06 / SUITE</div>
-        <div class="thesis-content">
-            <h2>What's in the AgentSkin Suite?</h2>
-            <p>Three complementary tools that eliminate token waste across the full AI agent cycle:</p>
-            <ul style="margin: 15px 0; padding-left: 20px;">
-                <li><strong>AgentSkin SSS</strong> — Semantic JSON pruning via MCP. Strips 60-88% of API response noise.</li>
-                <li><strong>Tokenjuice</strong> — Powers 3 unified MCP tools (reduce, estimate_tokens, apply_json_semantic). Up to 99.97% on large outputs. By <a href="https://github.com/vincentkoc/tokenjuice">Vincent Koc</a> (MIT License).</li>
-                <li><strong>Caveman</strong> — Output compression via prompt engineering. 65% output token reduction. By <a href="https://github.com/JuliusBrussee/caveman">Julius Brussee</a>.</li>
-            </ul>
+            <h2>Is Tokenjuice part of the source tree?</h2>
+            <p>AgentSkin consumes Tokenjuice as a normal npm dependency for CLI reduction. It is credited under its MIT license.</p>
         </div>
     </div>
 </section>
@@ -747,114 +374,11 @@ const FAQ_CONTENT = `
 const BASH_HOOK_CONTENT = `
 <section>
     <div class="thesis-item">
-        <div class="thesis-number">01 / OVERVIEW</div>
+        <div class="thesis-number">SHELL</div>
         <div class="thesis-content">
-            <h2>Transparent CLI Optimization</h2>
-            <p>The bash hook intercepts noisy CLI commands and pipes their output through the Tokenjuice reduce pipeline before you see it. Zero agent awareness needed.</p>
-            <ul style="margin: 20px 0; padding-left: 20px;">
-                <li><strong>Transparent:</strong> Works automatically when enabled</li>
-                <li><strong>Zero overhead:</strong> No MCP tool catalog cost (~2k tokens saved per session)</li>
-                <li><strong>Up to 99.97%:</strong> Reduction on large outputs like <code>ls -laR</code></li>
-                <li><strong>Cache-friendly:</strong> Results cached to <code>~/.cache/tokenjuice/</code></li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="thesis-item">
-        <div class="thesis-number">02 / INSTALL</div>
-        <div class="thesis-content">
-            <h2>One-Line Setup</h2>
-            <p>Add to your <code>~/.bashrc</code>:</p>
-            <pre>source /path/to/.agents/hooks/bash-optimizer.sh</pre>
-            <p>Or use the install script:</p>
-            <pre>bash .agents/hooks/install.sh</pre>
-            <p>Verify it works:</p>
-            <pre>tokenjuice-hook-status</pre>
-        </div>
-    </div>
-
-    <div class="thesis-item">
-        <div class="thesis-number">03 / USAGE</div>
-        <div class="thesis-content">
-            <h2>The <code>opt</code> Command</h2>
-            <p>Prefix any command with <code>opt</code> to optimize its output:</p>
-            <pre>opt curl -s https://api.github.com/repos/expressjs/express
-opt npm view express
-opt git log --oneline -30
-opt ls -laR node_modules/</pre>
-            
-            <h3>Transparent Alias Mode</h3>
-            <p>Enable auto-optimization for common commands without the prefix:</p>
-            <pre>export TOKENJUICE_HOOK_ALIAS=1</pre>
-            <p>When enabled, <code>curl</code>, <code>git</code>, <code>npm</code>, <code>pnpm</code>, <code>docker</code>, <code>kubectl</code>, and other noisy commands are automatically intercepted.</p>
-            
-            <h3>Disable for One Command</h3>
-            <pre>NO_OPTIMIZE=1 opt curl -s https://api.github.com/repos/expressjs/express</pre>
-        </div>
-    </div>
-
-    <div class="thesis-item">
-        <div class="thesis-number">04 / ENV VARS</div>
-        <div class="thesis-content">
-            <h2>Configuration</h2>
-            <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem;">
-                <thead>
-                    <tr style="border-bottom: 2px solid var(--border);">
-                        <th style="text-align: left; padding: 10px;">Variable</th>
-                        <th style="text-align: left; padding: 10px;">Default</th>
-                        <th style="text-align: left; padding: 10px;">Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px;"><code>TOKENJUICE_HOOK</code></td>
-                        <td style="padding: 10px;"><code>on</code></td>
-                        <td style="padding: 10px;"><code>on</code> or <code>off</code> — global toggle</td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px;"><code>TOKENJUICE_OPT</code></td>
-                        <td style="padding: 10px;"><code>auto</code></td>
-                        <td style="padding: 10px;"><code>always</code>, <code>auto</code>, or <code>off</code></td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px;"><code>TOKENJUICE_MIN_RAW</code></td>
-                        <td style="padding: 10px;"><code>4096</code></td>
-                        <td style="padding: 10px;">Min bytes before optimization kicks in (4KB)</td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px;"><code>TOKENJUICE_MAX_RAW</code></td>
-                        <td style="padding: 10px;"><code>10485760</code></td>
-                        <td style="padding: 10px;">Max bytes to capture (10MB cap)</td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px;"><code>TOKENJUICE_HOOK_ALIAS</code></td>
-                        <td style="padding: 10px;"><code>0</code></td>
-                        <td style="padding: 10px;"><code>1</code> to enable transparent aliases</td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px;"><code>TOKENJUICE_CACHE</code></td>
-                        <td style="padding: 10px;"><code>~/.cache/tokenjuice</code></td>
-                        <td style="padding: 10px;">Cache directory for optimized results</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px;"><code>NO_OPTIMIZE</code></td>
-                        <td style="padding: 10px;"><code>0</code></td>
-                        <td style="padding: 10px;"><code>1</code> to skip optimization for a single command</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="thesis-item">
-        <div class="thesis-number">05 / UNINSTALL</div>
-        <div class="thesis-content">
-            <h2>Clean Removal</h2>
-            <p>Use the uninstall script:</p>
-            <pre>bash .agents/hooks/uninstall.sh</pre>
-            <p>Or manually:</p>
-            <pre>sed -i '/bash-optimizer.sh/d' ~/.bashrc
-source ~/.bashrc</pre>
+            <h2>Optional terminal hook</h2>
+            <p>The npm package includes an optional shell helper that routes command output through the same Tokenjuice reduction engine used by the MCP server.</p>
+            <p>The MCP server does not require the hook.</p>
         </div>
     </div>
 </section>
@@ -862,20 +386,13 @@ source ~/.bashrc</pre>
 
 const WHITEPAPER_CONTENT = `
 <section>
-    <div class="metadata">Protocol Specification Document / 2026</div>
-    
-    <div style="margin-top: 40px; font-size: 1.1rem;">
-        <h3 style="font-family: 'IBM Plex Mono', monospace; font-size: 1rem; text-transform: uppercase; margin-bottom: 10px;">I. Abstract</h3>
-        <p style="margin-bottom: 30px;">The Semantic Shorthand Standard (SSS) addresses the systemic inefficiency of utilizing human-centric web data for Machine-to-Machine (M2M) perception. By providing a deterministic, mathematically verifiable layer of semantic compression, SSS eliminates the "Token Tax" associated with modern web architecture. The AgentSkin Suite bundles SSS alongside <strong>Tokenjuice</strong> (by <a href="https://github.com/vincentkoc/tokenjuice">Vincent Koc</a>, MIT License) and <strong>Caveman</strong> (by <a href="https://github.com/JuliusBrussee/caveman">Julius Brussee</a>) into one unified 7-tool MCP server.</p>
-        
-        <h3 style="font-family: 'IBM Plex Mono', monospace; font-size: 1rem; text-transform: uppercase; margin-bottom: 10px;">II. The Perceptual Drag Problem</h3>
-        <p style="margin-bottom: 30px;">Transformer models allocate attention across context windows indiscriminately. High-entropy structures (HTML DOMs, deeply nested JSON metadata) force models to process structural "noise," degrading performance, increasing latency, and introducing points of failure (hallucination) in autonomous pipelines.</p>
-        
-        <h3 style="font-family: 'IBM Plex Mono', monospace; font-size: 1rem; text-transform: uppercase; margin-bottom: 10px;">III. Protocol Architecture</h3>
-        <p style="margin-bottom: 30px;">The SSS implementation operates strictly as a local reference client via the Model Context Protocol (MCP). The unified <code>agentskin-suite</code> server exposes 7 tools: AgentSkin's semantic pruning (<code>fetch_optimized_data</code>, <code>skin_reasoning</code>, <code>classify_url</code>, <code>strip_ansi</code>) merged with Tokenjuice's reduction engine (<code>reduce</code>, <code>estimate_tokens</code>, <code>apply_json_semantic</code>). By remaining local, the protocol ensures absolute data sovereignty and session integrity.</p>
-        
-        <h3 style="font-family: 'IBM Plex Mono', monospace; font-size: 1rem; text-transform: uppercase; margin-bottom: 10px;">IV. Conclusion</h3>
-        <p>The adoption of SSS — combined with Tokenjuice's CLI reduction pipeline and Caveman's output compression — provides the critical infrastructure necessary for scalable, reliable autonomous agent ecosystems. By standardizing the format in which machines perceive the web, we remove the final bottleneck in agent workflows.</p>
+    <div class="thesis-item">
+        <div class="thesis-number">THESIS</div>
+        <div class="thesis-content">
+            <h2>Context should be selected before inference.</h2>
+            <p>Agent tools often return far more structure than a task requires. AgentSkin treats context selection as deterministic middleware: classify the source, preserve task-relevant fields, remove known noise, and expose what transformation occurred.</p>
+            <p>Compression is not accepted as success when required information is lost.</p>
+        </div>
     </div>
 </section>
 `;
@@ -888,10 +405,8 @@ const AUTONOMY_RATINGS_CONTENT = `
             <h2>Autonomy Ratings</h2>
             <p><strong>Autonomy Ratings</strong> is an independent ratings initiative for autonomous systems — measuring whether agents can be trusted with access, authority, tools, data, and money.</p>
             <blockquote>The independent rating agency for autonomous systems.</blockquote>
-            <h3>Rating Model</h3>
-            <p>A quantitative risk score is paired with institutional-style letter ratings for security, reliability, authority control, financial risk, and insurability.</p>
             <h3>Status</h3>
-            <p>In development. Brand and metric names are working titles while final name clearance and the public rating methodology are prepared.</p>
+            <p>In development. Brand and metric names are working titles while the public rating methodology is prepared.</p>
         </div>
     </div>
 </section>
@@ -900,80 +415,18 @@ const AUTONOMY_RATINGS_CONTENT = `
 const SUITE_CONTENT = `
 <section>
     <div class="thesis-item">
-        <div class="thesis-number">01 / AGENTSKIN SSS</div>
+        <div class="thesis-number">ARCH / 01</div>
         <div class="thesis-content">
-            <h2>Semantic JSON Pruning</h2>
-            <p>The core protocol. Recursively prunes JSON/HTML into high-density Markdown skins.</p>
-            <ul style="margin: 15px 0; padding-left: 20px;">
-                <li><strong>Creator:</strong> Shawn Nichols Sr. (Nichols Transco LLC)</li>
-                <li><strong>Savings:</strong> 60-88% on rich APIs</li>
-                <li><strong>Auto-Classification:</strong> 11 URL rule families</li>
-                <li><strong>3-Layer Config:</strong> Builtin → User → Project override semantics</li>
-                <li><strong>MCP Tools (4):</strong> fetch_optimized_data, skin_reasoning, classify_url, strip_ansi</li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="thesis-item">
-        <div class="thesis-number">02 / TOKENJUICE</div>
-        <div class="thesis-content">
-            <h2>Rule-Driven CLI Compaction</h2>
-            <p>Strips ANSI codes, compacts dependency trees, truncates repeated patterns, preserves head/tail of large outputs.</p>
-            <ul style="margin: 15px 0; padding-left: 20px;">
-                <li><strong>Creator:</strong> <a href="https://github.com/vincentkoc/tokenjuice">Vincent Koc</a> (MIT License)</li>
-                <li><strong>Savings:</strong> Up to 99.97% on large outputs</li>
-                <li><strong>Rules:</strong> 136 rules, 143 fixtures</li>
-                <li><strong>Bash Hook:</strong> Transparent CLI optimization via <code>opt</code> prefix</li>
-                <li><strong>Pipeline:</strong> 3,030 fixtures/sec (0.33ms avg)</li>
-                <li><strong>MCP Tools (3):</strong> reduce, estimate_tokens, apply_json_semantic (merged into unified server)</li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="thesis-item">
-        <div class="thesis-number">03 / CAVEMAN</div>
-        <div class="thesis-content">
-            <h2>Output Compression via Prompt Engineering</h2>
-            <p>Makes agents talk like cavemen. Same answers, 65% fewer output tokens. Brain still big. Mouth small.</p>
-            <ul style="margin: 15px 0; padding-left: 20px;">
-                <li><strong>Creator:</strong> <a href="https://github.com/JuliusBrussee/caveman">Julius Brussee</a></li>
-                <li><strong>Savings:</strong> 65% average output token reduction</li>
-                <li><strong>Memory Compression:</strong> 46% smaller files, saved forever</li>
-                <li><strong>Skills:</strong> caveman, caveman-commit, caveman-review, caveman-stats, caveman-compress, cavecrew</li>
-                <li><strong>Agents:</strong> Claude Code, Codex, Gemini, Cursor, Windsurf, Cline, Copilot, 30+ others</li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="thesis-item">
-        <div class="thesis-number">04 / COMBINED</div>
-        <div class="thesis-content">
-            <h2>Full Stack Setup</h2>
-            <p>Three commands. Full token optimization stack.</p>
-            <pre>
-# 1. Bash hook (transparent CLI optimization)
-echo "source $(pwd)/.agents/hooks/bash-optimizer.sh" >> ~/.bashrc && source ~/.bashrc
-
-# 2. Caveman skills — already active via AGENTS.md
-# (auto-discovered by Claude Code, Codex, Cursor, etc.)
-
-# 3. MCP server — add to agent config (unified 7-tool server)
-{
-  "mcpServers": {
-    "agentskin-suite": {
-      "command": "npx",
-      "args": ["-y", "agentskin@latest"]
-    }
-  }
-}
-            </pre>
-            <h3>Expected Savings (Per Session)</h3>
-            <ul style="margin: 15px 0; padding-left: 20px;">
-                <li>Bash Hook: <strong>17.1% net</strong> (up to 99.97% on large outputs)</li>
-                <li>Caveman: <strong>65%</strong> of output tokens</li>
-                <li>MCP (AgentSkin): <strong>60-88%</strong> per API call</li>
-                <li><strong>Combined: 60-80% of wasted context reclaimed</strong></li>
-            </ul>
+            <h2>One product, one runtime path</h2>
+            <p>Semantic pruning is implemented by AgentSkin. Command-aware reduction is provided by the Tokenjuice npm dependency. The MCP and npm package use the same runtime path.</p>
+            <pre>API / JSON / shell output
+          |
+          v
+      AgentSkin
+ classify -> preserve -> reduce
+          |
+          v
+ compact task-relevant context</pre>
         </div>
     </div>
 </section>

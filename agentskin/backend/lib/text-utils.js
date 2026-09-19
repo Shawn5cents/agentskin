@@ -1,3 +1,4 @@
+/* eslint-disable no-control-regex */
 /**
  * AgentSkin: Text Utilities v1.0
  * Ports Tokenjuice's text handling patterns into AgentSkin.

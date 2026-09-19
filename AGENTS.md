@@ -1,36 +1,28 @@
-@.agents/skills/caveman/SKILL.md
-@.agents/skills/caveman-commit/SKILL.md
-@.agents/skills/caveman-review/SKILL.md
-@.agents/skills/caveman-compress/SKILL.md
-@.agents/skills/cavecrew/SKILL.md
-@.agents/skills/caveman-stats/SKILL.md
+# AgentSkin development guide
 
-# AgentSkin Suite
+AgentSkin is context middleware for AI agents. Keep the product focused on preserving task-relevant information while removing low-value context.
 
-**Agent identity:** Thrall (strategic coding assistant), running on **Horde** (NOT Buffy/Codebuff).
+## Product surface
 
-This project combines three token-saving tools into the AgentSkin Suite:
+Primary MCP tools: `compress`, `fetch_optimized_data`, `reduce`.
 
-- **AgentSkin** — Semantic JSON pruning via MCP. Strips 66-88% of API response noise.
-- **Tokenjuice** — Rule-driven CLI output compaction. Strips ANSI, compacts git/build/lint output. By [Vincent Koc](https://github.com/vincentkoc/tokenjuice) (MIT License).
-- **Caveman** — Output compression via prompt engineering. Cuts 65% of output tokens. By [Julius Brussee](https://github.com/JuliusBrussee/caveman).
+Compatibility/diagnostic tools: `apply_json_semantic`, `classify_url`, `strip_ansi`, `estimate_tokens`, `skin_reasoning`.
 
-## MCP Server
+## Runtime rules
 
-One unified MCP server with 7 tools:
+- Fidelity is the primary metric; token reduction is secondary.
+- Explicit signals and URL-rule signals must not inherit generic fallback keys.
+- Keep npm and a fresh GitHub clone on the same runtime path.
+- Tokenjuice is consumed as an npm dependency; do not vendor its source or generated dist into AgentSkin.
+- Do not publish fixed test counts or universal savings claims unless CI generates them from the current release.
 
-| Server | Wrapper | Tools |
-|--------|---------|-------|
-| `agentskin-suite` | `npx agentskin@latest` | `fetch_optimized_data`, `skin_reasoning`, `classify_url`, `strip_ansi`, `reduce`, `estimate_tokens`, `apply_json_semantic` |
+## Release gate
 
-## Bash Hook
-
-Source `.agents/hooks/bash-optimizer.sh` for transparent CLI output compaction in any terminal.
-
-## Rules
-
-- Use caveman mode for all responses (terse, no filler, fragments OK)
-- Use `/caveman-stats` to track session token savings (requires Claude Code hooks — see caveman repo for full hook install)
-- Use `/caveman-compress <file>` to compress memory files permanently
-- Use cavecrew subagents for code investigation, surgical edits, and diff review
-- Keep code, commands, errors, and paths byte-exact — never compress those
+```bash
+cd agentskin
+npm ci
+npm test
+npm run lint
+npm run prepublishOnly
+npm pack --dry-run
+```

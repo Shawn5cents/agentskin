@@ -1,15 +1,14 @@
 #!/usr/bin/env node
-import "dotenv/config";
 import { z } from "zod";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 import axios from "axios";
 import * as cheerio from "cheerio";
-import { recursive_prune, to_markdown_skin, skin, classify_url, createCompactionMetadata } from "./lib/skin-engine.js";
+import { skin, classify_url } from "./lib/skin-engine.js";
 import { skinReasoning } from "./lib/reasoning-skin.js";
 import { stripAnsi, estimateTokens } from "./lib/text-utils.js";
-import { reduceExecution } from "../suite/tokenjuice/dist/core/reduce.js";
+import { reduceExecution } from "tokenjuice";
 
 // --- Input Validation ---
 
@@ -45,7 +44,15 @@ const ApplyJsonSemanticArgsSchema = z.object({
     smallThreshold: z.number().min(0).default(300)
 });
 
-const MAX_REASONING_CHARS = 50_000;
+const CompressArgsSchema = z.object({
+    input: z.string().min(1, "input is required").max(5_000_000, "input exceeds 5MB limit"),
+    mode: z.enum(["auto", "json", "cli", "text"]).default("auto"),
+    command: z.string().optional(),
+    url: z.string().url().optional(),
+    signals: z.array(z.string()).default([]),
+    aliases: z.record(z.string(), z.string()).default({})
+});
+
 
 // --- Rate Limiting ---
 
@@ -108,7 +115,7 @@ export function htmlToText(html) {
 // --- MCP Server ---
 
 const server = new Server(
-    { name: "agentskin-suite", version: "5.0.0" },
+    { name: "agentskin", version: "5.1.0" },
     { capabilities: { tools: {} } }
 );
 
@@ -117,8 +124,24 @@ const server = new Server(
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
     tools: [
         {
+            name: "compress",
+            description: "Single front door for context compaction. Auto-detects CLI output when command is supplied, JSON when parseable, otherwise applies safe text cleanup without rewriting prose.",
+            inputSchema: {
+                type: "object",
+                properties: {
+                    input: { type: "string", description: "Raw context to compact" },
+                    mode: { type: "string", enum: ["auto", "json", "cli", "text"], description: "Compaction mode; auto is the default" },
+                    command: { type: "string", description: "Original command; supplying this selects CLI reduction in auto mode" },
+                    url: { type: "string", description: "Optional source URL used only to select JSON pruning rules" },
+                    signals: { type: "array", items: { type: "string" }, description: "Optional JSON keys to preserve" },
+                    aliases: { type: "object", description: "Optional JSON key aliases" }
+                },
+                required: ["input"]
+            }
+        },
+        {
             name: "fetch_optimized_data",
-            description: "Fetch any API or Web URL and return a token-optimized 'Skin'. Up to 88% token reduction for structured JSON. Supports auto-classification for GitHub, npm, HackerNews, weather APIs, and more. Pass signals to specify which keys to keep, or let the URL auto-classify.",
+            description: "Fetch a public API or webpage and return compact context. Structured JSON is pruned with URL-specific rules when available.",
             inputSchema: {
                 type: "object",
                 properties: {
@@ -271,6 +294,47 @@ const withTimeout = (promise, ms = 30_000) =>
         new Promise((_, reject) => setTimeout(() => reject(new Error("Processing timeout (30s exceeded)")), ms))
     ]);
 
+const formatSkinResult = (result) => {
+    let responseText = result.skin;
+    const metaLines = [];
+    if (result.rule) metaLines.push(`[auto-classified: ${result.rule.id}]`);
+    if (result.metrics.applied) {
+        metaLines.push(`[${result.metrics.savings_ratio} reduction, ${result.metrics.raw_est_tokens} -> ${result.metrics.skin_est_tokens} tokens]`);
+    } else if (result.metrics.reason) {
+        metaLines.push(`[${result.metrics.reason}]`);
+    }
+    return metaLines.length > 0 ? metaLines.join(' ') + '\n' + responseText : responseText;
+};
+
+const reduceCommandOutput = async ({ command, output, cwd, exitCode, toolName = "mcp-reduce" }) => {
+    const input = {
+        toolName,
+        command,
+        argv: command.split(/\s+/),
+        stdout: output,
+        stderr: ""
+    };
+    if (cwd) input.cwd = cwd;
+    if (exitCode != null) input.exitCode = exitCode;
+
+    const result = await withTimeout(reduceExecution(input), 30_000);
+    if (!result) return "(no reduction applied)";
+
+    const lines = [];
+    if (result.classification?.matchedReducer) lines.push(`[classified: ${result.classification.matchedReducer}]`);
+    if (result.stats) {
+        const ratio = ((1 - result.stats.reducedChars / result.stats.rawChars) * 100).toFixed(1);
+        lines.push(`[reduction: ${ratio}%, ${result.stats.rawChars} -> ${result.stats.reducedChars} chars]`);
+    }
+    lines.push(result.inlineText ?? "(empty result)");
+    return lines.join("\n");
+};
+
+const compactTextSafely = (text) => stripAnsi(text)
+    .replace(/[ \t]+$/gm, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+
 // --- Tool Logic ---
 
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
@@ -279,6 +343,54 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
     try {
         switch (name) {
+            case "compress": {
+                const validated = CompressArgsSchema.parse(args);
+                let mode = validated.mode;
+                let parsedJson = null;
+
+                if (mode === "auto") {
+                    if (validated.command) {
+                        mode = "cli";
+                    } else {
+                        try {
+                            parsedJson = JSON.parse(stripAnsi(validated.input));
+                            mode = "json";
+                        } catch {
+                            mode = "text";
+                        }
+                    }
+                }
+
+                if (mode === "cli") {
+                    if (!validated.command) {
+                        return { content: [{ type: "text", text: "Validation error: command is required for cli mode" }] };
+                    }
+                    const text = await reduceCommandOutput({ command: validated.command, output: validated.input, toolName: "mcp-compress" });
+                    return { content: [{ type: "text", text: `[mode: cli]\n${text}` }] };
+                }
+
+                if (mode === "json") {
+                    if (parsedJson === null) {
+                        try {
+                            parsedJson = JSON.parse(stripAnsi(validated.input));
+                        } catch {
+                            return { content: [{ type: "text", text: "Error: Invalid JSON string provided." }] };
+                        }
+                    }
+                    const result = await withTimeout(Promise.resolve(skin(parsedJson, {
+                        url: validated.url || '',
+                        signals: validated.signals,
+                        aliases: validated.aliases,
+                        stripAnsiCodes: true,
+                        smallThreshold: 0
+                    })), 30_000);
+                    return { content: [{ type: "text", text: `[mode: json]\n${formatSkinResult(result) || "(empty result)"}` }] };
+                }
+
+                const compacted = compactTextSafely(validated.input);
+                return { content: [{ type: "text", text: `[mode: text]\n${compacted}` }] };
+            }
+
             case "fetch_optimized_data": {
                 const validated = FetchArgsSchema.parse(args);
                 
@@ -326,22 +438,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                     30_000
                 );
                 
-                // Build response with metadata
-                let responseText = result.skin;
-                const metaLines = [];
-                if (result.rule) {
-                    metaLines.push(`[auto-classified: ${result.rule.id}]`);
-                }
-                if (result.metrics.applied) {
-                    metaLines.push(`[${result.metrics.savings_ratio} reduction, ${result.metrics.raw_est_tokens} -> ${result.metrics.skin_est_tokens} tokens]`);
-                } else if (result.metrics.reason) {
-                    metaLines.push(`[${result.metrics.reason}]`);
-                }
-                if (metaLines.length > 0) {
-                    responseText = metaLines.join(' ') + '\n' + responseText;
-                }
-                
-                return { content: [{ type: "text", text: responseText || "(empty result)" }] };
+                return { content: [{ type: "text", text: formatSkinResult(result) || "(empty result)" }] };
             }
 
             case "skin_reasoning": {
@@ -367,32 +464,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
             case "reduce": {
                 const validated = ReduceArgsSchema.parse(args);
-                const input = {
-                    toolName: "mcp-reduce",
-                    command: validated.command,
-                    argv: validated.command.split(/\s+/),
-                    stdout: validated.output,
-                    stderr: ""
-                };
-                if (validated.cwd) input.cwd = validated.cwd;
-                if (validated.exitCode != null) input.exitCode = validated.exitCode;
-
-                const result = await withTimeout(reduceExecution(input), 30_000);
-
-                if (!result) {
-                    return { content: [{ type: "text", text: "(no reduction applied)" }] };
-                }
-
-                const lines = [];
-                if (result.classification?.matchedReducer) {
-                    lines.push(`[classified: ${result.classification.matchedReducer}]`);
-                }
-                if (result.stats) {
-                    const ratio = ((1 - result.stats.reducedChars / result.stats.rawChars) * 100).toFixed(1);
-                    lines.push(`[reduction: ${ratio}%, ${result.stats.rawChars} → ${result.stats.reducedChars} chars]`);
-                }
-                lines.push(result.inlineText ?? "(empty result)");
-                return { content: [{ type: "text", text: lines.join("\n") }] };
+                const text = await reduceCommandOutput({ ...validated, output: validated.output });
+                return { content: [{ type: "text", text }] };
             }
 
             case "estimate_tokens": {
@@ -427,22 +500,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                     30_000
                 );
 
-                let responseText = result.skin;
-                const metaLines = [];
-                if (result.rule) metaLines.push(`[auto-classified: ${result.rule.id}]`);
-                if (result.metrics.applied) {
-                    metaLines.push(`[${result.metrics.savings_ratio} reduction, ${result.metrics.raw_est_tokens} → ${result.metrics.skin_est_tokens} tokens]`);
-                } else if (result.metrics.reason) {
-                    metaLines.push(`[${result.metrics.reason}]`);
-                }
-                if (metaLines.length > 0) {
-                    responseText = metaLines.join(' ') + '\n' + responseText;
-                }
-                return { content: [{ type: "text", text: responseText || "(empty result)" }] };
+                return { content: [{ type: "text", text: formatSkinResult(result) || "(empty result)" }] };
             }
 
             default:
-                return { content: [{ type: "text", text: `Error: Unknown tool: ${name}. Available: fetch_optimized_data, skin_reasoning, classify_url, strip_ansi, reduce, estimate_tokens, apply_json_semantic` }] };
+                return { content: [{ type: "text", text: `Error: Unknown tool: ${name}. Available: compress, fetch_optimized_data, reduce, apply_json_semantic, skin_reasoning, classify_url, strip_ansi, estimate_tokens` }] };
         }
     } catch (error) {
         if (error instanceof z.ZodError) {
@@ -457,4 +519,4 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
 const transport = new StdioServerTransport();
 await server.connect(transport);
-console.error("AgentSkin Suite MCP Server v5.0.0 running via Stdio");
+console.error("AgentSkin MCP Server v5.1.0 running via Stdio");
