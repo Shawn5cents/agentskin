@@ -27,5 +27,5 @@ jobs:
       - run: npm audit --omit=dev --audit-level=high
       - run: npm run prepublishOnly
       - run: npm pack --dry-run 2>&1 | tee pack-output.txt
-      - run: grep -q 'package/backend/mcp.js' pack-output.txt
-      - run: grep -q 'package/suite/agent-optimizer.mjs' pack-output.txt
+      - run: grep -q 'backend/mcp.js' pack-output.txt
+      - run: grep -q 'suite/agent-optimizer.mjs' pack-output.txt
