@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "consumer": "agentskin",
+  "workload": "agentskin__core-v51",
+  "command": ["node", "scripts/sparse-env-core-eval.mjs"],
+  "expected_stdout_sha256": "a50f2c71c04f0a49f1ae9b3986820f6a29dfb1d6d6f5735e3d3c759968412dd2",
+  "expected": {
+    "github_rule_id": "github/repos",
+    "github_authoritative": true,
+    "github_excludes_junk": true,
+    "explicit_excludes_secret": true,
+    "fallback_exact": true,
+    "ansi_strip_exact": true,
+    "grapheme_count": 3
+  }
+}
