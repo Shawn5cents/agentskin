@@ -15,6 +15,7 @@ Compatibility/diagnostic tools: `apply_json_semantic`, `classify_url`, `strip_an
 - Keep npm and a fresh GitHub clone on the same runtime path.
 - Tokenjuice is consumed as an npm dependency; do not vendor its source or generated dist into AgentSkin.
 - Do not publish fixed test counts or universal savings claims unless CI generates them from the current release.
+- For the accepted Sparse Env core-evaluation path, AgentSkin supplies workload/cache intent only; Sparse Env owns environment/snapshotter selection and lifecycle. See `agentskin/docs/SPARSE_ENV.md`.
 
 ## Release gate
 
