@@ -5,6 +5,8 @@
 
 **Context middleware for AI agents.** AgentSkin removes low-value API, JSON, and terminal noise before it enters model context.
 
+The frozen AgentSkin 5.1 offline core evaluation also has an accepted Sparse Env execution path. AgentSkin preserves the workload correctness contract while Sparse Env owns cold/warm environment selection and lifecycle; see `agentskin/docs/SPARSE_ENV.md`.
+
 ## What it does
 
 AgentSkin has three primary workflows:
