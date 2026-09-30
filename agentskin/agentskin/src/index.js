@@ -481,8 +481,10 @@ const LAYOUT = (content, activeTab = 'introduction') => `
             <div class="footer-row">
                 <div>&copy; 2026 Nichols Transco LLC / AgentSkin</div>
                 <div class="footer-links">
-                    <a href="https://nicholsai.com" target="_blank" rel="noopener">Nichols AI ↗</a>
+                    <a href="https://nicholsai.com" target="_blank" rel="noopener">Nichols SI ↗</a>
                     <a href="https://link2note.com" target="_blank" rel="noopener">Link2Note ↗</a>
+                    <a href="https://nicholsai.com/geltre/" target="_blank" rel="noopener">Geltre ↗</a>
+                    <a href="https://nicholsai.com/link2machine/" target="_blank" rel="noopener">Link2Machine ↗</a>
                     <a href="https://github.com/Shawn5cents/grok-build-legion-edition" target="_blank" rel="noopener">Legion ↗</a>
                     <a href="https://github.com/vincentkoc/tokenjuice" target="_blank" rel="noopener">Tokenjuice ↗</a>
                 </div>
